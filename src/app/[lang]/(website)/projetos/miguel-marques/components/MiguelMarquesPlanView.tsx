@@ -6,7 +6,7 @@ import React, {
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle,
-  ShoppingCart, Trash2, Layers, ChevronDown, ChevronUp,
+  ShoppingCart, Trash2, Maximize2, Minimize2,
 } from 'lucide-react'
 import { ALL_LOTS, type Lot } from '../data/lotsData'
 import {
@@ -19,6 +19,8 @@ import {
 const MIN_SCALE = 0.08
 const MAX_SCALE = 10
 const WHATSAPP_NUMBER = '5581986141487'
+const GOLD = '#C8A44A'
+const NAVY = '#0B1928'
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', {
@@ -28,13 +30,13 @@ const fmtBRL = (v: number) =>
 const fmtM2 = (v: number) =>
   `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(v)} m²`
 
-// Status colours — dark theme matching AltoBellevue
-const STATUS_STYLES: Record<string, { label: string; fill: string; stroke: string; text: string }> = {
-  disponivel:   { label: 'Disponível',   fill: 'rgba(34,197,94,0.22)',  stroke: '#22C55E', text: '#16A34A' },
-  vendido:      { label: 'Vendido',      fill: 'rgba(30,41,59,0.65)',   stroke: '#334155', text: '#94A3B8' },
-  negociacao:   { label: 'Negociação',   fill: 'rgba(234,179,8,0.22)',  stroke: '#EAB308', text: '#CA8A04' },
-  proprietario: { label: 'Proprietário', fill: 'rgba(59,130,246,0.18)', stroke: '#3B82F6', text: '#2563EB' },
-  igreja:       { label: 'Igreja',       fill: 'rgba(167,139,250,0.2)', stroke: '#A78BFA', text: '#7C3AED' },
+// Status colours — matching AltoBellevuePlanView STATUS_CFG visual language
+const STATUS_STYLES: Record<string, { label: string; fill: string; stroke: string; dot: string; badgeBg: string; badgeText: string }> = {
+  disponivel:   { label: 'Disponível',   fill: 'rgba(34,197,94,0.68)',   stroke: '#16A34A', dot: '#16A34A', badgeBg: '#DCFCE7', badgeText: '#166534' },
+  vendido:      { label: 'Vendido',      fill: 'rgba(55,65,81,0.88)',    stroke: '#374151', dot: '#EF4444', badgeBg: '#FEE2E2', badgeText: '#991B1B' },
+  negociacao:   { label: 'Negociação',   fill: 'rgba(245,158,11,0.72)',  stroke: '#D97706', dot: '#D97706', badgeBg: '#FEF3C7', badgeText: '#92400E' },
+  proprietario: { label: 'Proprietário', fill: 'rgba(59,130,246,0.65)',  stroke: '#2563EB', dot: '#2563EB', badgeBg: '#DBEAFE', badgeText: '#1E40AF' },
+  igreja:       { label: 'Igreja',       fill: 'rgba(13,148,136,0.55)',  stroke: '#0D9488', dot: '#0D9488', badgeBg: '#CCFBF1', badgeText: '#115E59' },
 }
 const getStyle = (s: string) => STATUS_STYLES[s] ?? STATUS_STYLES['disponivel']
 
@@ -43,24 +45,10 @@ const PAYMENT_CONDITIONS = [
   { label: '12 meses',  desc: '15% desc + 10% ent.', calc: (p: number) => p * 0.85 },
   { label: '36 meses',  desc: '8% desc + 10% ent.',  calc: (p: number) => p * 0.92 },
   { label: '60 meses',  desc: '5% desc + 10% ent.',  calc: (p: number) => p * 0.95 },
-  { label: '120 meses', desc: 'INCC/IPCA+0,5%/m',    calc: (p: number) => p },
+  { label: '150 meses', desc: 'Carnê direto',         calc: (p: number) => p },
 ]
 
-const FILTER_OPTIONS = [
-  { key: 'ALL',          label: 'Todos os lotes' },
-  { key: 'disponivel',   label: 'Disponível' },
-  { key: 'vendido',      label: 'Vendido' },
-  { key: 'negociacao',   label: 'Negociação' },
-  { key: 'proprietario', label: 'Proprietário' },
-  { key: 'igreja',       label: 'Igreja' },
-  { key: 'lt160',        label: '< 160 m²' },
-  { key: 'eq160',        label: '= 160 m²' },
-  { key: 'gt200',        label: '> 200 m²' },
-  { key: 'lt25k',        label: 'Até R$ 25k' },
-  { key: 'mid',          label: 'R$ 25k–37k' },
-  { key: 'gt37k',        label: 'Acima R$ 37k' },
-  { key: 'lakefront',    label: '🌊 Beira-lago' },
-]
+const STATUS_FILTER_KEYS = ['ALL', 'disponivel', 'vendido', 'negociacao', 'proprietario'] as const
 
 // ─── Lot grid position generator ─────────────────────────────────────────────
 
@@ -83,6 +71,31 @@ function generateLotPositions(layout: QuadraLayout): LotPos[] {
   }
   return positions
 }
+
+// ─── MapBtn — matches Alto Bellevue control style ─────────────────────────────
+
+const MapBtn = memo(function MapBtn({ onClick, label, children, active }: {
+  onClick: () => void; label: string; children: React.ReactNode; active?: boolean
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label={label}
+      className="flex items-center justify-center active:scale-95 transition-all"
+      style={{
+        width: 40, height: 40, borderRadius: 10,
+        background: active ? NAVY : 'rgba(255,255,255,0.92)',
+        color: active ? '#fff' : NAVY,
+        border: active ? `1.5px solid ${GOLD}` : '1.5px solid rgba(184,179,168,0.4)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+      }}
+    >
+      {children}
+    </button>
+  )
+})
 
 // ─── CartPanel ────────────────────────────────────────────────────────────────
 
@@ -115,22 +128,26 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b border-white/10">
+      <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: 'rgba(184,179,168,0.2)' }}>
         <div className="flex items-center gap-2">
-          <ShoppingCart size={16} className="text-emerald-400" />
-          <span className="font-semibold text-white text-sm">
+          <ShoppingCart size={15} style={{ color: GOLD }} />
+          <span className="font-semibold text-sm" style={{ color: NAVY }}>
             {cart.length} {cart.length === 1 ? 'lote' : 'lotes'}
           </span>
         </div>
         {cart.length > 0 && (
-          <button onClick={onClear} className="text-slate-500 hover:text-red-400 text-xs flex items-center gap-1">
-            <Trash2 size={12} /> Limpar
+          <button
+            onClick={onClear}
+            className="text-xs flex items-center gap-1 transition-colors hover:opacity-70"
+            style={{ color: '#EF4444' }}
+          >
+            <Trash2 size={11} /> Limpar
           </button>
         )}
       </div>
 
       {cart.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500 p-6 text-center">
+        <div className="flex-1 flex flex-col items-center justify-center gap-3 p-6 text-center" style={{ color: '#948F84' }}>
           <ShoppingCart size={32} className="opacity-30" />
           <p className="text-sm">Selecione lotes no mapa para adicionar à proposta</p>
         </div>
@@ -138,17 +155,18 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
         <>
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {cart.map(lot => (
-              <div key={lot.id} className="bg-white/5 rounded-lg p-3 flex items-start gap-2">
+              <div key={lot.id} className="rounded-xl p-3 flex items-start gap-2" style={{ background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.25)' }}>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-white text-sm">
+                  <div className="font-semibold text-sm" style={{ color: NAVY }}>
                     Quadra {lot.quadra} · Lote {lot.lote}
                   </div>
-                  <div className="text-slate-400 text-xs">{fmtM2(lot.metragem)}</div>
-                  <div className="text-emerald-400 text-xs font-medium mt-0.5">{fmtBRL(lot.valor)}</div>
+                  <div className="text-xs mt-0.5" style={{ color: '#948F84' }}>{fmtM2(lot.metragem)}</div>
+                  <div className="text-xs font-semibold mt-0.5" style={{ color: '#16A34A' }}>{fmtBRL(lot.valor)}</div>
                 </div>
                 <button
                   onClick={() => onRemove(lot.id)}
-                  className="text-slate-600 hover:text-red-400 flex-shrink-0 mt-0.5"
+                  className="flex-shrink-0 mt-0.5 hover:opacity-70"
+                  style={{ color: '#948F84' }}
                 >
                   <X size={14} />
                 </button>
@@ -156,30 +174,30 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
             ))}
           </div>
 
-          <div className="p-3 border-t border-white/10 space-y-3">
-            <div className="bg-white/5 rounded-lg p-3 space-y-1.5">
-              <div className="flex justify-between text-xs text-slate-400">
+          <div className="p-3 space-y-3" style={{ borderTop: '1px solid rgba(184,179,168,0.2)' }}>
+            <div className="rounded-xl p-3 space-y-1.5" style={{ background: '#F8F6F2' }}>
+              <div className="flex justify-between text-xs" style={{ color: '#948F84' }}>
                 <span>Área total</span><span>{fmtM2(totalArea)}</span>
               </div>
-              <div className="flex justify-between text-sm font-semibold text-white">
+              <div className="flex justify-between text-sm font-bold" style={{ color: NAVY }}>
                 <span>Valor total</span><span>{fmtBRL(totalPrice)}</span>
               </div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-xs text-slate-500 mb-1">Condição de pagamento:</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#948F84' }}>Condição</div>
               {PAYMENT_CONDITIONS.map((c, i) => (
                 <button
                   key={i}
                   onClick={() => setPayIdx(i)}
-                  className={`w-full flex justify-between px-3 py-1.5 rounded text-xs transition-colors ${
-                    i === payIdx
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'hover:bg-white/5 text-slate-400'
-                  }`}
+                  className="w-full flex justify-between px-3 py-2 rounded-lg text-xs transition-all"
+                  style={i === payIdx
+                    ? { background: '#F0FDF4', border: '1.5px solid #86EFAC', color: '#15803D' }
+                    : { background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.25)', color: '#948F84' }
+                  }
                 >
-                  <span>{c.label}</span>
-                  <span className="font-medium">{fmtBRL(c.calc(totalPrice))}</span>
+                  <span className="font-semibold">{c.label}</span>
+                  <span className="font-bold">{fmtBRL(c.calc(totalPrice))}</span>
                 </button>
               ))}
             </div>
@@ -188,10 +206,11 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
           <div className="p-3 pt-0">
             <button
               onClick={sendWhatsApp}
-              className="w-full bg-[#25D366] hover:bg-[#22c55e] active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all shadow-lg shadow-green-500/20"
+              className="w-full active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all"
+              style={{ background: '#25D366', boxShadow: '0 4px 14px rgba(37,211,102,0.25)' }}
             >
-              <MessageCircle size={16} />
-              Enviar Proposta no WhatsApp
+              <MessageCircle size={15} />
+              Enviar Proposta via WhatsApp
             </button>
           </div>
         </>
@@ -200,7 +219,7 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
   )
 })
 
-// ─── LotInfoPanel ─────────────────────────────────────────────────────────────
+// ─── LotInfoPanel — light theme matching Alto Bellevue bottom sheet ───────────
 
 interface LotInfoProps {
   lot: Lot
@@ -208,6 +227,7 @@ interface LotInfoProps {
   onAddToCart: () => void
   onRemoveFromCart: () => void
   onClose: () => void
+  portalTarget?: HTMLElement | null
 }
 
 function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: LotInfoProps) {
@@ -228,32 +248,34 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
           display: 'flex',
           flexDirection: 'column',
           background: '#fff',
-          border: '1px solid rgba(0,0,0,0.08)',
+          border: '1px solid rgba(184,179,168,0.3)',
+          boxShadow: '0 8px 40px rgba(0,0,0,0.14)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
-        {/* Drag handle — mobile only */}
+        {/* Drag handle */}
         <div className="md:hidden flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full bg-gray-200" />
+          <div className="w-10 h-1 rounded-full" style={{ background: '#E5E0D8' }} />
         </div>
 
         {/* Header */}
-        <div className="flex items-start justify-between px-5 pt-4 pb-3 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-start justify-between px-5 pt-4 pb-3 flex-shrink-0" style={{ borderBottom: '1px solid rgba(184,179,168,0.15)' }}>
           <div>
             <span
               className="inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-2"
-              style={{ background: `${st.stroke}18`, color: st.text }}
+              style={{ background: st.badgeBg, color: st.badgeText }}
             >
               {st.label}
-              {lot.isLakefront && <span className="ml-1.5 text-blue-500">· Beira-lago</span>}
+              {lot.isLakefront && <span className="ml-1.5" style={{ color: '#2563EB' }}>· Beira-lago</span>}
             </span>
-            <div className="font-bold text-[#0B1928] text-lg leading-tight">
+            <div className="font-bold text-lg leading-tight" style={{ color: NAVY }}>
               Quadra {lot.quadra} · Lote {lot.lote}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-600 flex items-center justify-center transition-all flex-shrink-0 mt-0.5"
+            className="flex items-center justify-center flex-shrink-0 mt-0.5 transition-all hover:opacity-70 active:scale-95"
+            style={{ width: 32, height: 32, borderRadius: '50%', background: '#F8F6F2', color: '#948F84' }}
           >
             <X size={15} />
           </button>
@@ -269,9 +291,9 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
                 <div className="font-bold text-lg leading-tight" style={{ color: '#15803D' }}>{fmtBRL(priceVista)}</div>
                 <div className="text-[11px] mt-1 font-medium" style={{ color: '#4ADE80' }}>20% desconto</div>
               </div>
-              <div style={{ background: '#F8F6F2', border: '1.5px solid #E5E0D8', borderRadius: 14, padding: '14px 16px' }}>
+              <div style={{ background: '#F8F6F2', border: '1.5px solid rgba(184,179,168,0.35)', borderRadius: 14, padding: '14px 16px' }}>
                 <div className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#948F84' }}>TABELA</div>
-                <div className="font-bold text-lg leading-tight" style={{ color: '#0B1928' }}>{fmtBRL(lot.valor)}</div>
+                <div className="font-bold text-lg leading-tight" style={{ color: NAVY }}>{fmtBRL(lot.valor)}</div>
                 <div className="text-[11px] mt-1" style={{ color: '#948F84' }}>
                   {fmtBRL(lot.valor / lot.metragem)}/m²
                 </div>
@@ -279,14 +301,14 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
             </div>
 
             {/* Área */}
-            <div className="flex items-center justify-between py-2 border-b border-gray-100">
+            <div className="flex items-center justify-between py-2" style={{ borderBottom: '1px solid rgba(184,179,168,0.15)' }}>
               <span style={{ color: '#948F84', fontSize: 14 }}>Área do lote</span>
-              <span style={{ color: '#0B1928', fontWeight: 700, fontSize: 14 }}>{fmtM2(lot.metragem)}</span>
+              <span style={{ color: NAVY, fontWeight: 700, fontSize: 14 }}>{fmtM2(lot.metragem)}</span>
             </div>
 
             {/* Payment conditions */}
             <div className="space-y-1.5">
-              <div style={{ fontSize: 10, color: '#948F84', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+              <div style={{ fontSize: 10, color: '#948F84', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', fontFamily: "'Outfit', sans-serif" }}>
                 Condições de Pagamento
               </div>
               {PAYMENT_CONDITIONS.map((c, i) => (
@@ -295,14 +317,14 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
                   className="flex justify-between items-center px-3 py-2.5 rounded-xl"
                   style={i === 0
                     ? { background: '#F0FDF4', border: '1.5px solid #86EFAC' }
-                    : { background: '#F8F6F2', border: '1px solid #E5E0D8' }
+                    : { background: '#F8F6F2', border: '1px solid rgba(184,179,168,0.25)' }
                   }
                 >
                   <div>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : '#0B1928' }}>{c.label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : NAVY }}>{c.label}</span>
                     <span style={{ fontSize: 11, color: '#948F84', marginLeft: 6 }}>{c.desc}</span>
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : '#0B1928' }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#15803D' : NAVY }}>
                     {fmtBRL(c.calc(lot.valor))}
                   </span>
                 </div>
@@ -314,13 +336,13 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
         {/* CTA */}
         {lot.status === 'disponivel' && (
           <div
-            className="px-5 py-4 border-t border-gray-100 flex-shrink-0"
-            style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}
+            className="px-5 py-4 flex-shrink-0"
+            style={{ borderTop: '1px solid rgba(184,179,168,0.15)', paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}
           >
             {inCart ? (
               <button
                 onClick={onRemoveFromCart}
-                className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                 style={{ border: '1.5px solid #FCA5A5', color: '#DC2626', background: '#FFF1F1' }}
               >
                 <X size={14} /> Remover da proposta
@@ -329,7 +351,7 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
               <button
                 onClick={onAddToCart}
                 className="w-full active:scale-[0.98] text-white py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all"
-                style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.3)' }}
+                style={{ background: '#16A34A', boxShadow: '0 4px 14px rgba(22,163,74,0.28)' }}
               >
                 <ShoppingCart size={15} /> Adicionar à proposta
               </button>
@@ -337,11 +359,10 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
           </div>
         )}
 
-        {/* WhatsApp direct CTA for non-available lots */}
         {lot.status === 'negociacao' && (
           <div
-            className="px-5 py-4 border-t border-gray-100 flex-shrink-0"
-            style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}
+            className="px-5 py-4 flex-shrink-0"
+            style={{ borderTop: '1px solid rgba(184,179,168,0.15)', paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}
           >
             <button
               onClick={() => {
@@ -349,7 +370,7 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
                 window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank')
               }}
               className="w-full active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all"
-              style={{ background: '#25D366', boxShadow: '0 4px 14px rgba(37,211,102,0.3)' }}
+              style={{ background: '#25D366', boxShadow: '0 4px 14px rgba(37,211,102,0.25)' }}
             >
               <MessageCircle size={16} /> Consultar via WhatsApp
             </button>
@@ -360,20 +381,6 @@ function LotInfoPanel({ lot, inCart, onAddToCart, onRemoveFromCart, onClose }: L
   )
 }
 
-// ─── Mobile hook ─────────────────────────────────────────────────────────────
-
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false)
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
-    setIsMobile(mq.matches)
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-  return isMobile
-}
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 interface MiguelMarquesPlanViewProps {
@@ -382,32 +389,35 @@ interface MiguelMarquesPlanViewProps {
 
 export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesPlanViewProps) {
   const lots = lotsProp ?? ALL_LOTS
-  const isMobile = useIsMobile()
   const containerRef = useRef<HTMLDivElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
-  // Pan/zoom state
+  // Pointer-based pan/zoom — uses Pointer Events only (matches Alto Bellevue)
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 })
-  const isPanning = useRef(false)
-  const lastPan = useRef({ x: 0, y: 0 })
-  const pinchRef = useRef<{ dist: number } | null>(null)
+  const pointerCache = useRef<Map<number, { x: number; y: number }>>(new Map())
+  const didDrag = useRef(false)
+  const downPos = useRef({ x: 0, y: 0 })
+  const lastPos = useRef({ x: 0, y: 0 })
+  const clickTargetRef = useRef<Element | null>(null)
 
   // UI state
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [cart, setCart] = useState<Lot[]>([])
   const [showCart, setShowCart] = useState(false)
-  const [filterKey, setFilterKey] = useState('ALL')
-  const [showFilters, setShowFilters] = useState(false)
+  const [activeStatus, setActiveStatus] = useState('ALL')
+  const [activeQuadra, setActiveQuadra] = useState('ALL')
 
-  // Set initial scale to fit canvas into container
+  // Fit canvas on mount
   useEffect(() => {
     const timer = setTimeout(() => {
       if (containerRef.current) {
         const el = containerRef.current
         const scaleX = el.clientWidth / CANVAS_W
         const scaleY = el.clientHeight / CANVAS_H
-        const fit = Math.min(scaleX, scaleY, 1) * 0.92
+        const fit = Math.min(scaleX, scaleY, 1) * 0.90
         setTransform({ x: 0, y: 0, scale: Math.max(fit, MIN_SCALE) })
       }
       setLoading(false)
@@ -415,30 +425,49 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     return () => clearTimeout(timer)
   }, [])
 
-  // Filtered lots
-  const filteredLots = useMemo(() => {
-    if (filterKey === 'ALL') return lots
-    if (filterKey === 'lt160') return lots.filter(l => l.metragem < 160)
-    if (filterKey === 'eq160') return lots.filter(l => l.metragem === 160)
-    if (filterKey === 'gt200') return lots.filter(l => l.metragem > 200)
-    if (filterKey === 'lt25k') return lots.filter(l => l.valor > 0 && l.valor < 25_000)
-    if (filterKey === 'mid') return lots.filter(l => l.valor >= 25_000 && l.valor <= 37_000)
-    if (filterKey === 'gt37k') return lots.filter(l => l.valor > 37_000)
-    if (filterKey === 'lakefront') return lots.filter(l => l.isLakefront)
-    return lots.filter(l => l.status === filterKey)
-  }, [filterKey, lots])
+  // Fullscreen API
+  const toggleFullscreen = useCallback(async () => {
+    if (!document.fullscreenElement) {
+      await wrapperRef.current?.requestFullscreen().catch(() => null)
+      setIsFullscreen(true)
+    } else {
+      await document.exitFullscreen().catch(() => null)
+      setIsFullscreen(false)
+    }
+  }, [])
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', handler)
+    return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
 
-  const filteredIds = useMemo(() => new Set(filteredLots.map(l => l.id)), [filteredLots])
+  // Filtered lots
+  const filteredIds = useMemo(() => {
+    const result = lots.filter(l => {
+      if (activeStatus !== 'ALL' && l.status !== activeStatus) return false
+      if (activeQuadra !== 'ALL' && l.quadra !== activeQuadra) return false
+      return true
+    })
+    return new Set(result.map(l => l.id))
+  }, [lots, activeStatus, activeQuadra])
+
   const lotsById = useMemo(() => new Map(lots.map(l => [l.id, l])), [lots])
 
-  const disponiveisCount = useMemo(() => lots.filter(l => l.status === 'disponivel').length, [lots])
+  // Quadras derived from data
+  const quadras = useMemo(() => [...new Set(lots.map(l => l.quadra))].sort(), [lots])
+
+  // Stats
+  const stats = useMemo(() => {
+    const byStatus: Record<string, number> = {}
+    for (const l of lots) byStatus[l.status] = (byStatus[l.status] ?? 0) + 1
+    return { total: lots.length, byStatus }
+  }, [lots])
 
   // Zoom
-  const doZoom = useCallback((factor: number, cx = CANVAS_W / 2, cy = CANVAS_H / 2) => {
+  const doZoom = useCallback((factor: number) => {
     setTransform(t => {
       const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, t.scale * factor))
-      const ratio = newScale / t.scale
-      return { scale: newScale, x: cx - (cx - t.x) * ratio, y: cy - (cy - t.y) * ratio }
+      return { ...t, scale: newScale }
     })
   }, [])
 
@@ -447,10 +476,8 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
       const el = containerRef.current
       const scaleX = el.clientWidth / CANVAS_W
       const scaleY = el.clientHeight / CANVAS_H
-      const fit = Math.min(scaleX, scaleY, 1) * 0.92
+      const fit = Math.min(scaleX, scaleY, 1) * 0.90
       setTransform({ x: 0, y: 0, scale: Math.max(fit, MIN_SCALE) })
-    } else {
-      setTransform({ x: 0, y: 0, scale: 0.18 })
     }
   }, [])
 
@@ -460,404 +487,451 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     if (!el) return
     function onWheel(e: WheelEvent) {
       e.preventDefault()
-      const rect = el!.getBoundingClientRect()
-      const cx = ((e.clientX - rect.left) / rect.width) * CANVAS_W
-      const cy = ((e.clientY - rect.top) / rect.height) * CANVAS_H
       const delta = e.deltaMode === 1 ? e.deltaY * 28 : e.deltaMode === 2 ? e.deltaY * 500 : e.deltaY
-      doZoom(delta > 0 ? 0.88 : 1.14, cx, cy)
+      doZoom(delta > 0 ? 0.88 : 1.14)
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
   }, [doZoom])
 
-  // Mouse pan
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as Element).closest('[data-lot]')) return
-    isPanning.current = true
-    lastPan.current = { x: e.clientX, y: e.clientY }
+  // Pointer events — handles both mouse and touch (matches Alto Bellevue pattern)
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    if (pointerCache.current.size === 1) {
+      clickTargetRef.current = e.target as Element
+      didDrag.current = false
+      downPos.current = { x: e.clientX, y: e.clientY }
+      lastPos.current = { x: e.clientX, y: e.clientY }
+    }
   }, [])
 
-  const onMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isPanning.current) return
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!pointerCache.current.has(e.pointerId)) return
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
-    const dx = ((e.clientX - lastPan.current.x) / rect.width) * CANVAS_W
-    const dy = ((e.clientY - lastPan.current.y) / rect.height) * CANVAS_H
-    lastPan.current = { x: e.clientX, y: e.clientY }
-    setTransform(t => ({ ...t, x: t.x + dx / t.scale, y: t.y + dy / t.scale }))
-  }, [])
 
-  const onMouseUp = useCallback(() => { isPanning.current = false }, [])
-
-  // Touch pan/pinch
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX
-      const dy = e.touches[0].clientY - e.touches[1].clientY
-      pinchRef.current = { dist: Math.sqrt(dx * dx + dy * dy) }
-    } else {
-      lastPan.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+    if (pointerCache.current.size === 2) {
+      // Pinch-to-zoom
+      const ids = [...pointerCache.current.keys()]
+      const otherId = ids.find(id => id !== e.pointerId)!
+      const other = pointerCache.current.get(otherId)!
+      const prev = pointerCache.current.get(e.pointerId)!
+      const prevDist = Math.hypot(prev.x - other.x, prev.y - other.y)
+      const currDist = Math.hypot(e.clientX - other.x, e.clientY - other.y)
+      pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+      if (prevDist > 1) doZoom(prevDist / currDist)
+      didDrag.current = true
+      return
     }
-  }, [])
 
-  const onTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    if (e.touches.length === 2 && pinchRef.current) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX
-      const dy = e.touches[0].clientY - e.touches[1].clientY
-      const newDist = Math.sqrt(dx * dx + dy * dy)
-      doZoom(newDist / pinchRef.current.dist)
-      pinchRef.current = { dist: newDist }
-    } else if (e.touches.length === 1) {
-      const rect = containerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      const ddx = ((e.touches[0].clientX - lastPan.current.x) / rect.width) * CANVAS_W
-      const ddy = ((e.touches[0].clientY - lastPan.current.y) / rect.height) * CANVAS_H
-      lastPan.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-      setTransform(t => ({ ...t, x: t.x + ddx / t.scale, y: t.y + ddy / t.scale }))
-    }
+    // Single pointer drag — pan with cumulative slop
+    const slop = e.pointerType === 'touch' ? 12 : 4
+    const movedFromDown = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y)
+    if (movedFromDown >= slop) didDrag.current = true
+    const dx = e.clientX - lastPos.current.x
+    const dy = e.clientY - lastPos.current.y
+    lastPos.current = { x: e.clientX, y: e.clientY }
+    pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    if (!didDrag.current) return
+    setTransform(t => ({
+      ...t,
+      x: t.x + (dx / rect.width) * CANVAS_W / t.scale,
+      y: t.y + (dy / rect.height) * CANVAS_H / t.scale,
+    }))
   }, [doZoom])
+
+  const handlePointerUp = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
+    pointerCache.current.delete(_e.pointerId)
+    if (pointerCache.current.size > 0) return
+    const target = clickTargetRef.current
+    clickTargetRef.current = null
+    if (!didDrag.current && target) {
+      let el: Element | null = target
+      while (el) {
+        const lotId = el.getAttribute?.('data-lot-id')
+        if (lotId) {
+          const lot = lotsById.get(lotId)
+          if (lot && lot.status !== 'vendido') {
+            setSelectedLot(prev => prev?.id === lotId ? null : lot)
+          }
+          break
+        }
+        el = el.parentElement
+      }
+    }
+  }, [lotsById])
 
   // Cart helpers
   const cartIds = useMemo(() => new Set(cart.map(l => l.id)), [cart])
-
   const addToCart = useCallback((lot: Lot) => {
     setCart(c => cartIds.has(lot.id) ? c : [...c, lot])
     setShowCart(true)
   }, [cartIds])
-
   const removeFromCart = useCallback((id: string) => setCart(c => c.filter(l => l.id !== id)), [])
 
-  // Lot click
-  const handleLotClick = useCallback((lotId: string) => {
-    const lot = lotsById.get(lotId)
-    if (!lot) return
-    if (lot.status === 'vendido') return
-    setSelectedLot(prev => prev?.id === lotId ? null : lot)
-  }, [lotsById])
+  const showLotNumbers = transform.scale >= 2.5
 
-  const showScale = transform.scale >= 2.5
-
-  // Build quadra centroid map for labels
+  // Quadra centroids for labels
   const quadraCentroids = useMemo(() => {
     const map: Record<string, { x: number; y: number }> = {}
     for (const layout of QUADRA_LAYOUTS) {
-      const cx = layout.x + (layout.cols * layout.lotW) / 2
-      const cy = layout.y + (layout.rows * layout.lotH) / 2
-      map[layout.id] = { x: cx, y: cy }
+      map[layout.id] = {
+        x: layout.x + (layout.cols * layout.lotW) / 2,
+        y: layout.y + (layout.rows * layout.lotH) / 2,
+      }
     }
     return map
   }, [])
 
-  const activeFilterLabel = FILTER_OPTIONS.find(o => o.key === filterKey)?.label ?? 'Todos'
-
   return (
     <div
-      className="relative w-full h-full flex bg-[#070E16] overflow-hidden select-none"
-      style={{ minHeight: '100%' }}
+      ref={wrapperRef}
+      className="relative w-full h-full flex flex-col select-none overflow-hidden"
+      style={{ background: '#F7F5F2', minHeight: '100%' }}
     >
-      {/* Map SVG */}
+      {/* ── Filter bar — matches Alto Bellevue pill style ── */}
       <div
-        ref={containerRef}
-        className="flex-1 relative overflow-hidden"
-        style={{ cursor: isPanning.current ? 'grabbing' : 'grab' }}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={() => { pinchRef.current = null }}
+        className="flex-shrink-0 px-3 pt-3 pb-2 space-y-2"
+        style={{ background: '#fff', borderBottom: '1px solid rgba(184,179,168,0.2)' }}
       >
-        <svg
-          viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
+        {/* Status pills */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+          {STATUS_FILTER_KEYS.map(key => {
+            const isActive = activeStatus === key
+            const count = key === 'ALL' ? lots.length : (stats.byStatus[key] ?? 0)
+            const dot = key === 'ALL' ? GOLD : getStyle(key).dot
+            const label = key === 'ALL' ? 'Todos' : getStyle(key).label
+            return (
+              <button
+                key={key}
+                onClick={() => { setActiveStatus(key); setSelectedLot(null) }}
+                className="flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 transition-all active:scale-95"
+                style={{
+                  height: 32, paddingLeft: 10, paddingRight: 10, borderRadius: 20,
+                  fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+                  border: isActive ? `1.5px solid ${GOLD}` : '1.5px solid rgba(184,179,168,0.35)',
+                  background: isActive ? NAVY : '#fff',
+                  color: isActive ? '#fff' : '#636363',
+                  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.10)' : 'none',
+                }}
+              >
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: isActive ? 'rgba(255,255,255,0.5)' : dot, display: 'inline-block', flexShrink: 0 }} />
+                {label}
+                <span style={{ fontSize: 9, fontWeight: 800, opacity: 0.65, fontFamily: "'JetBrains Mono', monospace" }}>{count}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Quadra row */}
+        <div className="flex gap-1.5 overflow-x-auto items-center" style={{ scrollbarWidth: 'none' }}>
+          <span style={{ fontSize: 9, fontWeight: 700, color: '#C8C3BB', textTransform: 'uppercase', letterSpacing: '0.15em', flexShrink: 0, marginRight: 2 }}>
+            Quadra
+          </span>
+          {(['ALL', ...quadras] as string[]).map(q => {
+            const isActive = activeQuadra === q
+            const avail = q === 'ALL' ? 0 : lots.filter(l => l.quadra === q && l.status === 'disponivel').length
+            return (
+              <button
+                key={q}
+                onClick={() => { setActiveQuadra(q); setSelectedLot(null) }}
+                className="transition-all active:scale-95 flex-shrink-0 relative"
+                style={{
+                  height: 28, paddingLeft: 10, paddingRight: 10, borderRadius: 14,
+                  fontSize: 10, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+                  border: isActive ? 'none' : '1.5px solid rgba(0,0,0,0.09)',
+                  background: isActive ? NAVY : '#F7F8FA',
+                  color: isActive ? '#fff' : '#636363',
+                }}
+              >
+                {q === 'ALL' ? 'Todas' : q}
+                {avail > 0 && !isActive && (
+                  <span style={{ position: 'absolute', top: -2, right: -2, width: 7, height: 7, borderRadius: '50%', background: '#32D17C', border: '1.5px solid #fff' }} />
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ── Map canvas ─────────────────────────────────────── */}
+      <div className="flex-1 relative overflow-hidden">
+        <div
+          ref={containerRef}
           className="w-full h-full"
-          style={{ overflow: 'visible' }}
+          style={{ cursor: pointerCache.current.size > 0 && didDrag.current ? 'grabbing' : 'grab', touchAction: 'none' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+          onPointerCancel={handlePointerUp}
         >
-          <defs>
-            <radialGradient id="mm-lake-grad" cx="50%" cy="40%" r="60%">
-              <stop offset="0%" stopColor="#1E4E8C" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#0C2E5A" stopOpacity="0.7" />
-            </radialGradient>
-            <filter id="mm-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
+          <svg
+            viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}
+            className="w-full h-full"
+            style={{ overflow: 'visible', touchAction: 'none' }}
+          >
+            <defs>
+              {/* Warm parchment base — Google Maps inspired, matches Alto Bellevue */}
+              <linearGradient id="mm-base" x1="0" y1="0" x2="0.1" y2="1">
+                <stop offset="0%" stopColor="#EBE5D5" />
+                <stop offset="100%" stopColor="#DDD7C6" />
+              </linearGradient>
+              {/* Topographic terrain */}
+              <radialGradient id="mm-terrain" cx="42%" cy="52%" r="60%" gradientUnits="objectBoundingBox">
+                <stop offset="0%" stopColor="#F2EDD8" stopOpacity="0.7" />
+                <stop offset="60%" stopColor="#D5C9A8" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#B8AC8C" stopOpacity="0.55" />
+              </radialGradient>
+              {/* Lake gradient */}
+              <radialGradient id="mm-lake" cx="50%" cy="40%" r="60%">
+                <stop offset="0%" stopColor="#BAE6FD" stopOpacity="0.9" />
+                <stop offset="60%" stopColor="#7DD3FC" stopOpacity="0.75" />
+                <stop offset="100%" stopColor="#0EA5E9" stopOpacity="0.60" />
+              </radialGradient>
+              {/* Lake glow */}
+              <filter id="mm-lake-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              {/* Green area gradient */}
+              <linearGradient id="mm-green" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#D4E8CC" />
+                <stop offset="100%" stopColor="#C8DFC0" />
+              </linearGradient>
+            </defs>
 
-          <g transform={`scale(${transform.scale}) translate(${transform.x},${transform.y})`}>
-            {/* Canvas background */}
-            <rect x={0} y={0} width={CANVAS_W} height={CANVAS_H} fill="#0D1B2A" />
+            <g transform={`scale(${transform.scale}) translate(${transform.x},${transform.y})`}>
+              {/* Base terrain */}
+              <rect x={0} y={0} width={CANVAS_W} height={CANVAS_H} fill="url(#mm-base)" />
+              <rect x={0} y={0} width={CANVAS_W} height={CANVAS_H} fill="url(#mm-terrain)" />
 
-            {/* Roads / streets — dark fill */}
-            {/* Horizontal streets */}
-            <rect x={0}    y={0}    width={CANVAS_W} height={60}  fill="#111827" />
-            <rect x={0}    y={230}  width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={510}  width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={790}  width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={1060} width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={1330} width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={1610} width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={1880} width={CANVAS_W} height={32}  fill="#111827" />
-            <rect x={0}    y={2060} width={CANVAS_W} height={60}  fill="#111827" />
-            {/* Vertical streets */}
-            <rect x={0}    y={0} width={60}  height={CANVAS_H} fill="#111827" />
-            <rect x={580}  y={0} width={32}  height={CANVAS_H} fill="#111827" />
-            <rect x={1140} y={0} width={50}  height={CANVAS_H} fill="#111827" />
-            <rect x={1720} y={0} width={32}  height={CANVAS_H} fill="#111827" />
-            <rect x={2100} y={0} width={32}  height={CANVAS_H} fill="#111827" />
-            <rect x={2360} y={0} width={40}  height={CANVAS_H} fill="#111827" />
+              {/* Green vegetation areas (north/south boundaries) */}
+              <rect x={0} y={0} width={CANVAS_W} height={60} fill="url(#mm-green)" opacity={0.6} />
+              <rect x={0} y={2040} width={CANVAS_W} height={60} fill="url(#mm-green)" opacity={0.6} />
 
-            {/* Lake */}
-            <ellipse
-              cx={LAKE.cx} cy={LAKE.cy}
-              rx={LAKE.rx} ry={LAKE.ry}
-              fill="url(#mm-lake-grad)"
-              stroke="#2563EB"
-              strokeWidth={3}
-              opacity={0.85}
-            />
-            <text
-              x={LAKE.cx} y={LAKE.cy}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="#60A5FA"
-              fontSize={28}
-              fontWeight="bold"
-              fontFamily="system-ui"
-              style={{ pointerEvents: 'none', opacity: 0.7 }}
-            >
-              Lago
-            </text>
+              {/* Roads — warm light roads like Alto Bellevue */}
+              {/* Horizontal streets */}
+              <rect x={0}    y={0}    width={CANVAS_W} height={60}  fill="#C8C2AD" />
+              <rect x={0}    y={230}  width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={510}  width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={790}  width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={1060} width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={1330} width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={1610} width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={1880} width={CANVAS_W} height={32}  fill="#D5D0C0" />
+              <rect x={0}    y={2060} width={CANVAS_W} height={60}  fill="#C8C2AD" />
+              {/* Vertical streets */}
+              <rect x={0}    y={0} width={60}  height={CANVAS_H} fill="#C8C2AD" />
+              <rect x={580}  y={0} width={32}  height={CANVAS_H} fill="#D5D0C0" />
+              <rect x={1140} y={0} width={50}  height={CANVAS_H} fill="#C8C2AD" />
+              <rect x={1720} y={0} width={32}  height={CANVAS_H} fill="#D5D0C0" />
+              <rect x={2100} y={0} width={32}  height={CANVAS_H} fill="#D5D0C0" />
+              <rect x={2360} y={0} width={40}  height={CANVAS_H} fill="#C8C2AD" />
 
-            {/* Lot grid rendering */}
-            {QUADRA_LAYOUTS.map(layout => {
-              const positions = generateLotPositions(layout)
-              return positions.map(pos => {
-                const lotIdx = pos.lotIndex
-                // Build lot id matching lotsData format: quadra letter + "-" + (lotIdx+1)
-                const lotId = `${layout.id}-${lotIdx + 1}`
-                const lot = lotsById.get(lotId)
-                if (!lot) return null
+              {/* Road center lines (subtle dashes for main roads) */}
+              <line x1={0} y1={30} x2={CANVAS_W} y2={30} stroke="#B8B3A0" strokeWidth={0.5} strokeDasharray="20,12" opacity={0.5} />
+              <line x1={0} y1={2080} x2={CANVAS_W} y2={2080} stroke="#B8B3A0" strokeWidth={0.5} strokeDasharray="20,12" opacity={0.5} />
+              <line x1={30} y1={0} x2={30} y2={CANVAS_H} stroke="#B8B3A0" strokeWidth={0.5} strokeDasharray="20,12" opacity={0.5} />
 
-                const isFiltered = !filteredIds.has(lotId)
-                const isHovered = hoveredId === lotId
-                const isSelected = selectedLot?.id === lotId
-                const inCart = cartIds.has(lotId)
-                const st = getStyle(lot.status)
+              {/* Lake area (green buffer around lake) */}
+              <ellipse
+                cx={LAKE.cx} cy={LAKE.cy}
+                rx={LAKE.rx + 40} ry={LAKE.ry + 40}
+                fill="url(#mm-green)"
+                opacity={0.5}
+              />
 
-                const fillColor = isFiltered
-                  ? 'rgba(15,20,30,0.4)'
-                  : isSelected
-                    ? 'rgba(245,210,40,0.35)'
-                    : inCart
-                      ? 'rgba(52,211,153,0.32)'
-                      : st.fill
+              {/* Lake */}
+              <ellipse
+                cx={LAKE.cx} cy={LAKE.cy}
+                rx={LAKE.rx} ry={LAKE.ry}
+                fill="url(#mm-lake)"
+                stroke="#38BDF8"
+                strokeWidth={2}
+                filter="url(#mm-lake-glow)"
+              />
+              <text
+                x={LAKE.cx} y={LAKE.cy}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="#0369A1"
+                fontSize={24}
+                fontWeight="bold"
+                fontFamily="system-ui"
+                style={{ pointerEvents: 'none', opacity: 0.8 }}
+              >
+                Lago
+              </text>
 
-                const strokeColor = isFiltered
-                  ? '#1E293B'
-                  : isSelected
-                    ? '#F5D228'
-                    : inCart
-                      ? '#34D399'
-                      : isHovered
-                        ? '#FFFFFF'
-                        : st.stroke
+              {/* Lot grid rendering */}
+              {QUADRA_LAYOUTS.map(layout => {
+                const positions = generateLotPositions(layout)
+                return positions.map(pos => {
+                  const lotId = `${layout.id}-${pos.lotIndex + 1}`
+                  const lot = lotsById.get(lotId)
+                  if (!lot) return null
 
-                const strokeWidth = (isSelected || isHovered ? 1.5 : 0.8) / transform.scale
+                  const isFiltered = !filteredIds.has(lotId)
+                  const isHovered = hoveredId === lotId
+                  const isSelected = selectedLot?.id === lotId
+                  const inCart = cartIds.has(lotId)
+                  const st = getStyle(lot.status)
 
-                return (
-                  <rect
-                    key={lotId}
-                    data-lot={lotId}
-                    x={pos.x}
-                    y={pos.y}
-                    width={pos.w}
-                    height={pos.h}
-                    fill={fillColor}
-                    stroke={strokeColor}
-                    strokeWidth={strokeWidth}
-                    style={{
-                      cursor: lot.status === 'vendido' ? 'default' : 'pointer',
-                      transition: 'fill 0.1s, stroke 0.1s',
-                    }}
-                    onMouseEnter={() => setHoveredId(lotId)}
-                    onMouseLeave={() => setHoveredId(null)}
-                    onClick={(e) => { e.stopPropagation(); handleLotClick(lotId) }}
-                  />
-                )
-              })
-            })}
+                  const fillColor = isFiltered
+                    ? 'rgba(220,214,200,0.4)'
+                    : isSelected
+                      ? 'rgba(200,164,74,0.45)'
+                      : inCart
+                        ? 'rgba(34,197,94,0.40)'
+                        : st.fill
 
-            {/* Lot number labels — only when zoomed in */}
-            {showScale && QUADRA_LAYOUTS.map(layout => {
-              const positions = generateLotPositions(layout)
-              return positions.map(pos => {
-                const lotId = `${layout.id}-${pos.lotIndex + 1}`
-                if (!filteredIds.has(lotId)) return null
-                const cx = pos.x + pos.w / 2
-                const cy = pos.y + pos.h / 2
-                const fontSize = Math.max(2, Math.min(5, 8 / transform.scale))
-                return (
-                  <text
-                    key={`lbl-${lotId}`}
-                    x={cx}
-                    y={cy}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    fontSize={fontSize}
-                    fill={selectedLot?.id === lotId ? '#F5D228' : '#FFFFFFCC'}
-                    style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 600 }}
-                  >
-                    {pos.lotIndex + 1}
-                  </text>
-                )
-              })
-            })}
+                  const strokeColor = isFiltered
+                    ? 'rgba(184,179,168,0.4)'
+                    : isSelected
+                      ? GOLD
+                      : inCart
+                        ? '#16A34A'
+                        : isHovered
+                          ? NAVY
+                          : st.stroke
 
-            {/* Quadra label badges — only when zoomed out */}
-            {!showScale && (
-              <g style={{ pointerEvents: 'none' }}>
-                {Object.entries(quadraCentroids).map(([q, { x, y }]) => (
-                  <g key={q} transform={`translate(${x},${y})`}>
-                    <circle
-                      r={12 / transform.scale}
-                      fill="#0A1828CC"
-                      stroke="#FFFFFF33"
-                      strokeWidth={0.5 / transform.scale}
+                  const strokeWidth = (isSelected || isHovered ? 1.5 : 0.7) / transform.scale
+
+                  return (
+                    <rect
+                      key={lotId}
+                      data-lot-id={lotId}
+                      x={pos.x}
+                      y={pos.y}
+                      width={pos.w}
+                      height={pos.h}
+                      fill={fillColor}
+                      stroke={strokeColor}
+                      strokeWidth={strokeWidth}
+                      rx={1}
+                      style={{
+                        cursor: lot.status === 'vendido' ? 'default' : 'pointer',
+                        transition: 'fill 0.1s, stroke 0.1s',
+                      }}
+                      onMouseEnter={() => setHoveredId(lotId)}
+                      onMouseLeave={() => setHoveredId(null)}
                     />
+                  )
+                })
+              })}
+
+              {/* Lot number labels when zoomed in */}
+              {showLotNumbers && QUADRA_LAYOUTS.map(layout => {
+                const positions = generateLotPositions(layout)
+                return positions.map(pos => {
+                  const lotId = `${layout.id}-${pos.lotIndex + 1}`
+                  if (!filteredIds.has(lotId)) return null
+                  const cx = pos.x + pos.w / 2
+                  const cy = pos.y + pos.h / 2
+                  const fontSize = Math.max(2.5, Math.min(5, 8 / transform.scale))
+                  return (
                     <text
+                      key={`lbl-${lotId}`}
+                      x={cx}
+                      y={cy}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fontSize={10 / transform.scale}
-                      fill="#FFFFFF"
-                      fontWeight="bold"
-                      fontFamily="system-ui"
+                      fontSize={fontSize}
+                      fill={selectedLot?.id === lotId ? NAVY : 'rgba(11,25,40,0.75)'}
+                      style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 600 }}
                     >
-                      {q}
+                      {pos.lotIndex + 1}
                     </text>
-                  </g>
-                ))}
-              </g>
-            )}
-          </g>
-        </svg>
+                  )
+                })
+              })}
 
-        {/* Zoom controls — top-left */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20">
-          <button
-            onClick={() => doZoom(1.3)}
-            className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform"
-          >
-            <ZoomIn size={15} />
-          </button>
-          <button
-            onClick={() => doZoom(0.77)}
-            className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform"
-          >
-            <ZoomOut size={15} />
-          </button>
-          <button
-            onClick={resetView}
-            className="w-9 h-9 md:w-8 md:h-8 bg-[#0A1828]/90 border border-white/10 rounded-lg text-white flex items-center justify-center hover:bg-white/10 active:scale-95 transition-transform"
-          >
-            <RotateCcw size={14} />
-          </button>
-        </div>
+              {/* Quadra label badges when zoomed out */}
+              {!showLotNumbers && (
+                <g style={{ pointerEvents: 'none' }}>
+                  {Object.entries(quadraCentroids).map(([q, { x, y }]) => {
+                    const r = Math.max(8, 36 / transform.scale)
+                    const fontSize = Math.max(5, 22 / transform.scale)
+                    return (
+                      <g key={q} transform={`translate(${x},${y})`}>
+                        <circle
+                          r={r}
+                          fill="rgba(255,255,255,0.88)"
+                          stroke="rgba(184,179,168,0.4)"
+                          strokeWidth={0.5 / transform.scale}
+                        />
+                        <text
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          fontSize={fontSize}
+                          fill={NAVY}
+                          fontWeight="bold"
+                          fontFamily="system-ui"
+                        >
+                          {q}
+                        </text>
+                      </g>
+                    )
+                  })}
+                </g>
+              )}
+            </g>
+          </svg>
 
-        {/* Filter bar + Cart — top-right */}
-        <div className="absolute top-3 right-3 flex items-center gap-1.5 md:gap-2 z-20 max-w-[calc(100%-52px)]">
-          {/* Filter dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowFilters(f => !f)}
-              className="flex items-center gap-1.5 h-9 md:h-8 px-3 bg-[#0A1828]/90 border border-white/10 rounded-lg text-slate-300 text-xs hover:bg-white/10 transition-colors"
-            >
-              <Layers size={12} />
-              <span className="hidden sm:inline">
-                {filterKey === 'ALL' ? 'Todos' : activeFilterLabel}
-              </span>
-              <ChevronDown size={10} />
-            </button>
-            {showFilters && (
-              <div className="absolute right-0 top-full mt-1 bg-[#0A1828] border border-white/10 rounded-xl shadow-2xl overflow-hidden min-w-40 z-30">
-                {FILTER_OPTIONS.map(opt => (
-                  <button
-                    key={opt.key}
-                    onClick={() => { setFilterKey(opt.key); setShowFilters(false) }}
-                    className={`w-full px-4 py-2.5 text-left text-xs hover:bg-white/5 transition-colors flex items-center gap-2 ${
-                      filterKey === opt.key ? 'text-emerald-400' : 'text-slate-300'
-                    }`}
+          {/* ── Map controls — top-right (matches Alto Bellevue) ── */}
+          <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
+            <MapBtn onClick={() => setShowCart(s => !s)} label={showCart ? 'Fechar proposta' : 'Abrir proposta'} active={showCart}>
+              <div className="relative">
+                <ShoppingCart size={16} />
+                {cart.length > 0 && (
+                  <span
+                    className="absolute -top-2 -right-2 flex items-center justify-center font-bold"
+                    style={{ width: 14, height: 14, borderRadius: '50%', background: GOLD, color: NAVY, fontSize: 8 }}
                   >
-                    {STATUS_STYLES[opt.key] && (
-                      <span
-                        className="w-2 h-2 rounded-sm flex-shrink-0"
-                        style={{
-                          background: STATUS_STYLES[opt.key].fill,
-                          border: `1px solid ${STATUS_STYLES[opt.key].stroke}`,
-                        }}
-                      />
-                    )}
-                    {opt.label}
-                  </button>
-                ))}
+                    {cart.length}
+                  </span>
+                )}
               </div>
-            )}
+            </MapBtn>
+            <MapBtn onClick={toggleFullscreen} label={isFullscreen ? 'Sair da tela cheia' : 'Expandir mapa'}>
+              {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            </MapBtn>
           </div>
 
-          {/* Cart / Proposta button */}
-          <button
-            onClick={() => { setShowCart(s => !s); setSelectedLot(null) }}
-            className="relative flex items-center gap-1.5 h-9 md:h-8 px-3 bg-emerald-500/20 border border-emerald-500/30 rounded-lg text-emerald-400 text-xs hover:bg-emerald-500/30 transition-colors"
-          >
-            <ShoppingCart size={13} />
-            <span className="hidden sm:inline font-medium">Proposta</span>
-            {cart.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-emerald-500 text-white rounded-full text-[9px] flex items-center justify-center font-bold leading-none">
-                {cart.length}
-              </span>
-            )}
-          </button>
+          {/* ── Zoom controls — bottom-right ── */}
+          <div className="absolute bottom-3 right-3 flex flex-col gap-2 z-10">
+            <MapBtn onClick={() => doZoom(1.3)} label="Aproximar"><ZoomIn size={16} /></MapBtn>
+            <MapBtn onClick={() => doZoom(0.77)} label="Afastar"><ZoomOut size={16} /></MapBtn>
+            <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={14} /></MapBtn>
+          </div>
+
+          {/* ── Tap hint ── */}
+          <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+            <span
+              className="px-3 py-1.5 rounded-full text-[10px] font-semibold whitespace-nowrap"
+              style={{
+                background: 'rgba(255,255,255,0.90)',
+                color: 'rgba(60,40,10,0.80)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+                border: '1px solid rgba(184,179,168,0.40)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
+              }}
+            >
+              Toque em um lote para ver detalhes
+            </span>
+          </div>
+
+          {/* Loading spinner */}
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(247,245,242,0.85)' }}>
+              <div className="w-8 h-8 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(200,164,74,0.3)', borderTopColor: GOLD }} />
+            </div>
+          )}
         </div>
 
-        {/* Stats bar — bottom-left */}
-        {!(isMobile && selectedLot && !showCart) && (
-          <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-slate-500 z-20">
-            <span className="bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-              <span className="text-emerald-400 font-semibold">{disponiveisCount}</span> disponíveis
-            </span>
-            <span className="hidden sm:inline bg-[#0A1828]/80 border border-white/5 rounded-lg px-2.5 py-1">
-              <span className="text-white">{lots.length}</span> total
-            </span>
-          </div>
-        )}
-
-        {/* Legend — bottom-right */}
-        {!(isMobile && selectedLot && !showCart) && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-2 z-20">
-            {(['disponivel', 'negociacao', 'vendido'] as const).map(k => (
-              <div key={k} className="flex items-center gap-1 text-xs text-slate-400">
-                <div
-                  className="w-2.5 h-2.5 rounded-sm"
-                  style={{
-                    background: STATUS_STYLES[k].fill,
-                    border: `1px solid ${STATUS_STYLES[k].stroke}`,
-                  }}
-                />
-                <span className="hidden sm:inline">{STATUS_STYLES[k].label}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Loading spinner */}
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#070E16]/80 z-50">
-            <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-          </div>
-        )}
-
-        {/* Lot info panel */}
+        {/* ── Lot info panel (bottom sheet mobile / floating desktop) ── */}
         <AnimatePresence>
           {selectedLot && !showCart && (
             <LotInfoPanel
@@ -869,44 +943,87 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
             />
           )}
         </AnimatePresence>
+
+        {/* ── Cart desktop sidebar (md+) ── */}
+        <AnimatePresence>
+          {showCart && (
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 320, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              className="absolute right-0 top-0 bottom-0 overflow-hidden flex-shrink-0 z-30 hidden md:block"
+              style={{ background: '#fff', borderLeft: '1px solid rgba(184,179,168,0.25)', boxShadow: '-4px 0 24px rgba(0,0,0,0.06)' }}
+            >
+              <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
+                <span className="text-sm font-bold" style={{ color: NAVY }}>Proposta de Compra</span>
+                <button onClick={() => setShowCart(false)} className="hover:opacity-70" style={{ color: '#948F84' }}>
+                  <X size={16} />
+                </button>
+              </div>
+              <div style={{ height: 'calc(100% - 49px)', overflow: 'hidden' }}>
+                <CartPanel cart={cart} onRemove={removeFromCart} onClear={() => setCart([])} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Cart sidebar — desktop */}
-      <AnimatePresence>
-        {showCart && !isMobile && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 300, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            className="border-l border-white/10 bg-[#0A1828] overflow-hidden flex-shrink-0"
-          >
-            <div className="flex items-center justify-between p-4 border-b border-white/10">
-              <span className="text-sm font-semibold text-white">Proposta de Compra</span>
-              <button onClick={() => setShowCart(false)} className="text-slate-500 hover:text-white">
-                <X size={16} />
-              </button>
-            </div>
-            <div className="h-[calc(100%-49px)] overflow-hidden">
-              <CartPanel
-                cart={cart}
-                onRemove={removeFromCart}
-                onClear={() => setCart([])}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── Stats bar — matches Alto Bellevue gamified bar ── */}
+      <div
+        className="flex-shrink-0"
+        style={{ background: '#fff', borderTop: '1px solid rgba(184,179,168,0.2)', padding: '10px 16px 12px' }}
+      >
+        {(() => {
+          const total = lots.length
+          const avail = stats.byStatus['disponivel'] ?? 0
+          const sold = stats.byStatus['vendido'] ?? 0
+          const neg = stats.byStatus['negociacao'] ?? 0
+          const pctAvail = total > 0 ? Math.round((avail / total) * 100) : 0
+          const pctSold = total > 0 ? Math.round((sold / total) * 100) : 0
+          return (
+            <>
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#16A34A', fontFamily: "'Outfit', sans-serif" }}>
+                    🟢 {avail} disponíveis
+                  </span>
+                  <span style={{ fontSize: 9, fontWeight: 600, color: '#948F84' }}>
+                    {pctAvail}% disponível · {total} lotes
+                  </span>
+                </div>
+                <div style={{ height: 7, borderRadius: 4, background: '#F0EDE5', overflow: 'hidden', display: 'flex' }}>
+                  <div style={{ width: `${pctAvail}%`, background: 'linear-gradient(90deg, #22C55E, #16A34A)', transition: 'width 0.6s' }} />
+                  <div style={{ width: `${pctSold}%`, background: '#EF4444', transition: 'width 0.6s' }} />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                {[
+                  { dot: '#16A34A', label: 'Disponível', count: avail },
+                  { dot: '#D97706', label: 'Negociação', count: neg },
+                  { dot: '#EF4444', label: 'Vendido', count: sold },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: item.dot, display: 'inline-block' }} />
+                    <span style={{ fontSize: 11, color: '#636363', fontWeight: 600 }}>{item.count}</span>
+                    <span style={{ fontSize: 10, color: '#948F84' }}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )
+        })()}
+      </div>
 
-      {/* Cart bottom sheet — mobile */}
+      {/* ── Mobile cart bottom sheet ── */}
       <AnimatePresence>
-        {showCart && isMobile && (
+        {showCart && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[155]"
-              style={{ background: 'rgba(0,0,0,0.5)' }}
+              style={{ background: 'rgba(0,0,0,0.3)' }}
               onClick={() => setShowCart(false)}
             />
             <motion.div
@@ -914,36 +1031,28 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="fixed left-0 right-0 bg-[#0A1828] border-t border-white/10 rounded-t-[20px] z-[160] flex flex-col"
-              style={{ bottom: 0, maxHeight: '75vh', paddingBottom: 'env(safe-area-inset-bottom, 16px)' }}
+              className="fixed left-0 right-0 rounded-t-[20px] z-[160] flex flex-col md:hidden"
+              style={{ bottom: 0, maxHeight: '75vh', background: '#fff', paddingBottom: 'env(safe-area-inset-bottom, 16px)', boxShadow: '0 -4px 32px rgba(0,0,0,0.12)' }}
             >
-              {/* Drag handle */}
               <div className="flex justify-center pt-2.5 pb-1 flex-shrink-0">
-                <div className="w-8 h-1 rounded-full bg-white/25" />
+                <div className="w-8 h-1 rounded-full" style={{ background: '#E5E0D8' }} />
               </div>
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 flex-shrink-0">
+              <div className="flex items-center justify-between px-4 py-3 flex-shrink-0" style={{ borderBottom: '1px solid rgba(184,179,168,0.2)' }}>
                 <div className="flex items-center gap-2">
-                  <ShoppingCart size={15} className="text-emerald-400" />
-                  <span className="text-sm font-semibold text-white">Proposta de Compra</span>
+                  <ShoppingCart size={15} style={{ color: GOLD }} />
+                  <span className="text-sm font-bold" style={{ color: NAVY }}>Proposta de Compra</span>
                   {cart.length > 0 && (
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color: GOLD, background: 'rgba(200,164,74,0.12)' }}>
                       {cart.length} lote{cart.length !== 1 ? 's' : ''}
                     </span>
                   )}
                 </div>
-                <button
-                  onClick={() => setShowCart(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 text-slate-400 hover:text-white"
-                >
-                  <ChevronUp size={16} />
+                <button onClick={() => setShowCart(false)} className="hover:opacity-70" style={{ color: '#948F84' }}>
+                  <X size={16} />
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto min-h-0">
-                <CartPanel
-                  cart={cart}
-                  onRemove={removeFromCart}
-                  onClear={() => setCart([])}
-                />
+                <CartPanel cart={cart} onRemove={removeFromCart} onClear={() => setCart([])} />
               </div>
             </motion.div>
           </>
