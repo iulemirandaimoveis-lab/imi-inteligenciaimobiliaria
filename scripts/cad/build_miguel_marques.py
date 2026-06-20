@@ -23,7 +23,7 @@ for e in msp:
     if e.dxftype()=='LINE' and e.dxf.layer in ('A-DETL-THIN','A-DETL-MEDM','A-DETL'):
         a,b=e.dxf.start,e.dxf.end; p,q=(s(a.x),s(a.y)),(s(b.x),s(b.y))
         if p!=q: lines.append(LineString([p,q]))
-faces=[f for f in polygonize(unary_union(lines)) if 8e7<=f.area<=7e8]
+faces=[f for f in polygonize(unary_union(lines)) if 5e7<=f.area<=7e8]
 cent=[(f.centroid.x,f.centroid.y) for f in faces]
 nums=[];areas=[];ql=[]
 for e in msp:
@@ -39,14 +39,25 @@ atree=STRtree([Point(x,y) for _,x,y in areas])
 tok=[]
 for nv,x,y in nums:
     j=atree.nearest(Point(x,y)); av,ax,ay=areas[j]; tok.append((nv,av,(x+ax)/2,(y+ay)/2))
-ttree=STRtree([Point(t[2],t[3]) for t in tok])
-pr=[]
-for fi,(cx,cy) in enumerate(cent):
-    ti=ttree.nearest(Point(cx,cy)); pr.append((math.dist((cx,cy),(tok[ti][2],tok[ti][3])),fi,ti))
-pr.sort(); ft={};used=set()
-for d,fi,ti in pr:
-    if fi in ft or ti in used or d>40000:continue
-    ft[fi]=ti;used.add(ti)
+# Casamento por CONTENÇÃO: o rótulo (centro do lote) cai DENTRO do seu polígono —
+# muito mais fiel que "face mais próxima" (recupera ~170 lotes a mais). Fallback:
+# token sem face contedora pega a face livre mais próxima (≤25 m).
+ftree=STRtree(faces)
+ft={}; claimed=set()
+for ti,(nv,av,x,y) in enumerate(tok):
+    pt=Point(x,y)
+    for fi in ftree.query(pt):
+        if fi not in ft and faces[fi].contains(pt):
+            ft[fi]=ti; claimed.add(ti); break
+free=[fi for fi in range(len(faces)) if fi not in ft]
+if free:
+    ctree=STRtree([Point(*cent[fi]) for fi in free])
+    for ti,(nv,av,x,y) in enumerate(tok):
+        if ti in claimed: continue
+        fi=free[ctree.nearest(Point(x,y))]
+        if fi in ft: continue
+        if math.dist(cent[fi],(x,y))<25000:
+            ft[fi]=ti; claimed.add(ti)
 lote_of={fi:tok[ti][0] for fi,ti in ft.items()}
 area_of={fi:tok[ti][1] for fi,ti in ft.items()}
 
@@ -64,35 +75,69 @@ def lookup(L,Ar):
     cands=[c for c in cands if abs(c[2]-Ar)<=0.8]
     return cands
 
-quad={}; status={}
-for fi in ft:
-    c=lookup(lote_of[fi],area_of[fi])
-    qs=set(x[0] for x in c)
-    if len(qs)==1:
-        quad[fi]=c[0][0]; status[fi]=c[0][1]
-# adjacency
+# adjacency graph (faces sharing a boundary)
 tree=STRtree(faces); adj=defaultdict(set)
 for i in ft:
     for j in tree.query(faces[i].buffer(80)):
         if j!=i and j in ft and faces[i].distance(faces[j])<80: adj[i].add(j)
-# spatial fill (ambiguous first: pick candidate quadra supported by neighbours; then plain majority)
-for _ in range(8):
+
+# ── Atribuição GLOBAL a partir do quadro: cada linha (quadra,lote) reivindica UMA
+# face (a que casa lote+área e está mais perto da âncora da quadra). Isso garante
+# unicidade de (quadra,lote) por construção — sem ids duplicados. ──
+letter_pos={L[0]:(L[1],L[2]) for L in ql}
+faces_by_lote=defaultdict(list)
+for fi in ft: faces_by_lote[lote_of[fi]].append(fi)
+rows=[(q,r['lote'],r['area'],r['status']) for q,rs in sched.items() for r in rs]
+quad={}; status={}; used=set()
+for q,lote,area,st in rows:
+    anchor=letter_pos.get(q)
+    best=None; bd=1e18
+    for fi in faces_by_lote.get(lote,[]):
+        if fi in used or abs(area_of[fi]-area)>0.8: continue
+        d=math.dist(cent[fi],anchor) if anchor else 0
+        if d<bd: bd=d; best=fi
+    if best is not None:
+        quad[best]=q; status[best]=st; used.add(best)
+confirmed=set(used)
+
+# ── Lotes sem linha no quadro: quadra por adjacência (voto dos vizinhos já
+# rotulados), preferindo um candidato do quadro quando houver; depois maioria. ──
+for _ in range(10):
+    changed=False
     for fi in ft:
         if fi in quad: continue
         votes=Counter(quad[j] for j in adj[fi] if j in quad)
         if not votes: continue
-        c=lookup(lote_of[fi],area_of[fi]); qs=set(x[0] for x in c)
-        if qs:
-            best=[(votes.get(q,0),q) for q in qs]; best.sort(reverse=True)
-            if best[0][0]>0:
-                quad[fi]=best[0][1]
-                status[fi]=next(x[1] for x in c if x[0]==best[0][1])
-        else:
-            quad[fi]=votes.most_common(1)[0][0]
+        cand=set(x[0] for x in lookup(lote_of[fi],area_of[fi]))
+        pick=None
+        if cand:
+            ranked=sorted(((votes.get(q,0),q) for q in cand),reverse=True)
+            if ranked[0][0]>0: pick=ranked[0][1]
+        if pick is None: pick=votes.most_common(1)[0][0]
+        quad[fi]=pick; status.setdefault(fi,'disponivel'); changed=True
+    if not changed: break
 def nearest_letter(x,y): return min(ql,key=lambda q:(q[1]-x)**2+(q[2]-y)**2)[0]
 for fi in ft:
     if fi not in quad: quad[fi]=nearest_letter(*cent[fi])
     status.setdefault(fi,'disponivel')
+
+# ── Resolve colisões residuais de (quadra,lote): mantém a face confirmada pelo
+# quadro; move as demais para uma quadra vizinha que ainda não tem aquele lote. ──
+for _ in range(6):
+    bykey=defaultdict(list)
+    for fi in ft: bykey[(quad[fi],lote_of[fi])].append(fi)
+    coll=[v for v in bykey.values() if len(v)>1]
+    if not coll: break
+    moved=False
+    for fis in coll:
+        fis.sort(key=lambda fi: fi not in confirmed)  # confirmadas primeiro (mantidas)
+        for fi in fis[1:]:
+            if fi in confirmed: continue
+            taken={quad[g] for g in faces_by_lote[lote_of[fi]] if g!=fi}
+            nb=Counter(quad[j] for j in adj[fi]
+                       if j in quad and quad[j]!=quad[fi] and quad[j] not in taken)
+            if nb: quad[fi]=nb.most_common(1)[0][0]; moved=True
+    if not moved: break
 
 # transform
 rot=math.radians(-A.rot); cr,sr=math.cos(rot),math.sin(rot)
@@ -102,13 +147,18 @@ minx=min(p[0] for p in pts);maxx=max(p[0] for p in pts);miny=min(p[1] for p in p
 W=A.vbw; sc=W/(maxx-minx); H=round((maxy-miny)*sc,2)
 def norm(x,y):
     rx,ry=tf(x,y); return ((rx-minx)*sc,(maxy-ry)*sc)
-lots=[]
-for fi in sorted(ft,key=lambda i:(quad[i],lote_of[i])):
+lots=[]; seen=set()
+for fi in sorted(ft,key=lambda i:(quad[i],lote_of[i],-area_of[i])):
     poly=[norm(x,y) for x,y in faces[fi].exterior.coords[:-1]]
     cx,cy=norm(*cent[fi]); ar=round(area_of[fi],2)
-    lots.append({'id':f'{quad[fi]}-{lote_of[fi]}','quadra':quad[fi],'lote':str(lote_of[fi]),
+    base=f'{quad[fi]}-{lote_of[fi]}'; uid=base; k=2
+    while uid in seen: uid=f'{base}_{k}'; k+=1   # rede de segurança: id sempre único
+    seen.add(uid)
+    lots.append({'id':uid,'quadra':quad[fi],'lote':str(lote_of[fi]),
         'points':' '.join(f'{x:.2f},{y:.2f}' for x,y in poly),'area':ar,
         'labelX':round(cx,2),'labelY':round(cy,2),'status':status[fi],'price':round(ar*PPM2)})
+dups=sum(1 for l in lots if '_' in l['id'])
+print('residual duplicate (quadra,lote) suffixed:',dups,file=sys.stderr)
 perq=Counter(l['quadra'] for l in lots); st=Counter(l['status'] for l in lots)
 print('per-quadra:',dict(sorted(perq.items())),file=sys.stderr)
 print('status:',dict(st),'| total',len(lots),'| viewBox 0 0',W,H,file=sys.stderr)
