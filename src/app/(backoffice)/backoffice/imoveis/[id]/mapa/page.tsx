@@ -148,19 +148,41 @@ export default function MapaAreasComunsPage() {
   const uploadVideo = useCallback(async (areaId: string, file: File) => {
     setUploadingVideoFor(areaId)
     setMsg(null)
-    const fd = new FormData()
-    fd.append('file', file)
     try {
-      const res = await fetch('/api/upload?bucket=media&folder=alto-bellevue-areas', { method: 'POST', body: fd })
-      const data = await res.json()
-      const url = data?.data?.url
-      if (!res.ok || !url) { setMsg(data?.error || 'Falha no upload do vídeo'); return }
+      // Step 1: get a presigned URL — uploads bypass Vercel's 4.5 MB body limit
+      const presignRes = await fetch('/api/upload/presign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contentType: file.type || 'video/mp4',
+          filename: file.name,
+          bucket: 'media',
+          folder: 'alto-bellevue-areas',
+        }),
+      })
+      const presignData = await presignRes.json()
+      if (!presignRes.ok || !presignData.signedUrl) {
+        setMsg(presignData?.error || 'Falha ao iniciar upload do vídeo')
+        return
+      }
+
+      // Step 2: upload the file directly to Supabase Storage (no Vercel intermediary)
+      const uploadRes = await fetch(presignData.signedUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type || 'video/mp4' },
+        body: file,
+      })
+      if (!uploadRes.ok) {
+        setMsg(`Erro ao enviar para o storage (${uploadRes.status})`)
+        return
+      }
+
       setAreas(prev => {
         const a: MapAmenity = prev[areaId] ?? { id: areaId }
-        return { ...prev, [areaId]: { ...a, videos: [...(a.videos ?? []), url] } }
+        return { ...prev, [areaId]: { ...a, videos: [...(a.videos ?? []), presignData.publicUrl] } }
       })
-    } catch {
-      setMsg('Falha no upload do vídeo')
+    } catch (err) {
+      setMsg('Erro de rede ao enviar vídeo')
     } finally {
       setUploadingVideoFor(null)
     }
