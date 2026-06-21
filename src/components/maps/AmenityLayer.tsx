@@ -5,14 +5,14 @@ import type { AmenityPoint } from './useLotMap';
 
 interface AmenityLayerProps {
   amenities: AmenityPoint[];
-  scale: number; // current zoom scale (for icon sizing)
+  scale: number;
+  onAmenityClick?: (id: string) => void;
 }
 
 const ICON_R = 14; // base radius in SVG units
 
-export default function AmenityLayer({ amenities, scale }: AmenityLayerProps) {
+export default function AmenityLayer({ amenities, scale, onAmenityClick }: AmenityLayerProps) {
   const [hovered, setHovered] = useState<string | null>(null);
-  // Icon radius shrinks as scale grows so icons don't become giant
   const r = Math.max(8, ICON_R / Math.sqrt(scale));
 
   return (
@@ -20,11 +20,12 @@ export default function AmenityLayer({ amenities, scale }: AmenityLayerProps) {
       {amenities.map(a => (
         <g
           key={a.id}
-          role="listitem"
-          aria-label={a.label}
+          role="button"
+          aria-label={`Ver mídias: ${a.label}`}
           style={{ cursor: 'pointer' }}
           onMouseEnter={() => setHovered(a.id)}
           onMouseLeave={() => setHovered(null)}
+          onClick={(e) => { e.stopPropagation(); onAmenityClick?.(a.id); }}
         >
           {/* Glow ring when hovered */}
           {hovered === a.id && (

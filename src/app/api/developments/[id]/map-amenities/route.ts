@@ -14,6 +14,7 @@ const amenitySchema = z.object({
   description: z.string().max(2000).optional(),
   fn: z.string().max(120).optional(),
   photos: z.array(z.string().url().max(600)).max(30).optional(),
+  videos: z.array(z.string().url().max(600)).max(20).optional(),
   video: z.string().url().max(600).optional().or(z.literal("")),
   tour360: z.string().url().max(600).optional().or(z.literal("")),
 })
