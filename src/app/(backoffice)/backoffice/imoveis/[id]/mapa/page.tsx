@@ -92,6 +92,7 @@ export default function MapaAreasComunsPage() {
   const [msg, setMsg] = useState<string | null>(null)
   const [uploadingFor, setUploadingFor] = useState<string | null>(null)
   const [uploadingVideoFor, setUploadingVideoFor] = useState<string | null>(null)
+  const [videoUrlInputs, setVideoUrlInputs] = useState<Record<string, string>>({})
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
   const videoRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
@@ -145,6 +146,17 @@ export default function MapaAreasComunsPage() {
       return { ...prev, [areaId]: { ...a, photos } }
     })
 
+  const addVideoUrl = useCallback((areaId: string) => {
+    const url = (videoUrlInputs[areaId] ?? '').trim()
+    if (!url.startsWith('http')) { setMsg('URL inválida'); return }
+    setAreas(prev => {
+      const a: MapAmenity = prev[areaId] ?? { id: areaId }
+      return { ...prev, [areaId]: { ...a, videos: [...(a.videos ?? []), url] } }
+    })
+    setVideoUrlInputs(prev => ({ ...prev, [areaId]: '' }))
+    setMsg(null)
+  }, [videoUrlInputs])
+
   const uploadVideo = useCallback(async (areaId: string, file: File) => {
     setUploadingVideoFor(areaId)
     setMsg(null)
@@ -162,7 +174,7 @@ export default function MapaAreasComunsPage() {
       })
       const presignData = await presignRes.json()
       if (!presignRes.ok || !presignData.signedUrl) {
-        setMsg(presignData?.error || 'Falha ao iniciar upload do vídeo')
+        setMsg(presignData?.error || 'Falha ao obter URL de upload')
         return
       }
 
@@ -173,7 +185,9 @@ export default function MapaAreasComunsPage() {
         body: file,
       })
       if (!uploadRes.ok) {
-        setMsg(`Erro ao enviar para o storage (${uploadRes.status})`)
+        let detail = ''
+        try { const body = await uploadRes.json(); detail = body?.message ?? body?.error ?? '' } catch {}
+        setMsg(`Erro no upload (${uploadRes.status})${detail ? ': ' + detail : ''}`)
         return
       }
 
@@ -182,7 +196,7 @@ export default function MapaAreasComunsPage() {
         return { ...prev, [areaId]: { ...a, videos: [...(a.videos ?? []), presignData.publicUrl] } }
       })
     } catch (err) {
-      setMsg('Erro de rede ao enviar vídeo')
+      setMsg(`Erro de rede: ${err instanceof Error ? err.message : 'verifique a conexão'}`)
     } finally {
       setUploadingVideoFor(null)
     }
@@ -670,6 +684,34 @@ export default function MapaAreasComunsPage() {
                         e.target.value = ''
                       }}
                     />
+                  </div>
+
+                  {/* URL alternativa */}
+                  <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
+                    <input
+                      type="url"
+                      placeholder="Ou cole URL de vídeo (https://…)"
+                      value={videoUrlInputs[aId] ?? ''}
+                      onChange={e => setVideoUrlInputs(prev => ({ ...prev, [aId]: e.target.value }))}
+                      onKeyDown={e => { if (e.key === 'Enter') addVideoUrl(aId) }}
+                      style={{ ...INPUT_S, flex: 1, height: 32, fontSize: 12 }}
+                    />
+                    <button
+                      onClick={() => addVideoUrl(aId)}
+                      disabled={!(videoUrlInputs[aId] ?? '').trim()}
+                      style={{
+                        height: 32, padding: '0 12px', borderRadius: 8,
+                        background: 'rgba(200,164,74,0.10)',
+                        border: `1px solid ${GOLD_B}`,
+                        color: GOLD, fontSize: 13, fontWeight: 700,
+                        cursor: (videoUrlInputs[aId] ?? '').trim() ? 'pointer' : 'not-allowed',
+                        opacity: (videoUrlInputs[aId] ?? '').trim() ? 1 : 0.4,
+                        fontFamily: FS, flexShrink: 0,
+                      }}
+                      aria-label="Adicionar URL"
+                    >
+                      +
+                    </button>
                   </div>
 
                   {videoCount === 0 ? (

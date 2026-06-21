@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
       .createSignedUploadUrl(filePath)
 
     if (error || !data?.signedUrl) {
+      console.error('[presign] storage error:', error?.message, '| bucket:', bucket, '| path:', filePath, '| hasServiceKey:', hasServiceKey)
       return NextResponse.json(
         { error: 'Erro ao gerar URL de upload: ' + (error?.message ?? 'desconhecido') },
         { status: 500 },
