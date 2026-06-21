@@ -5,6 +5,7 @@ import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
 import { useLotMap, type LotMapEntry, type StatusFilter } from './useLotMap';
 import AmenityLayer from './AmenityLayer';
 import LotDetailPanel from './LotDetailPanel';
+import AmenityMediaModal, { type AmenityMediaData } from './AmenityMediaModal';
 
 function parseVb(s: string): ViewBox {
   const [x, y, w, h] = s.split(' ').map(Number);
@@ -130,6 +131,23 @@ export default function InteractiveLotMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Amenity media — editorial content (photos/videos) fetched from DB
+  const [amenityMedia, setAmenityMedia] = useState<Record<string, AmenityMediaData>>({});
+  const [selectedAmenityId, setSelectedAmenityId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!developmentId) return;
+    fetch(`/api/developments/${developmentId}/map-amenities`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!Array.isArray(d?.amenities)) return;
+        const map: Record<string, AmenityMediaData> = {};
+        for (const a of d.amenities) map[a.id] = a;
+        setAmenityMedia(map);
+      })
+      .catch(() => {});
+  }, [developmentId]);
 
   const [vbParts, setVbParts] = useState(() => parseVb(initialViewBox));
   const [vb, setVb] = useState<ViewBox>(() => parseVb(initialViewBox));
@@ -342,9 +360,16 @@ export default function InteractiveLotMap({
     dragStart.current = null;
   }, []);
 
+  // ─── Amenity click ───────────────────────────────────────────────────────────
+  const handleAmenityClick = useCallback((id: string) => {
+    setSelectedAmenityId(prev => prev === id ? null : id);
+    setSelectedLot(null);
+  }, [setSelectedLot]);
+
   // ─── Lot click ───────────────────────────────────────────────────────────────
   const handleLotClick = useCallback((lot: LotMapEntry, e: React.MouseEvent) => {
     e.stopPropagation();
+    setSelectedAmenityId(null);
     setSelectedLot(lot.id === selectedLot?.id ? null : lot);
   }, [selectedLot, setSelectedLot]);
 
@@ -667,7 +692,7 @@ export default function InteractiveLotMap({
             </g>
           )}
 
-          <AmenityLayer amenities={amenities} scale={scale} />
+          <AmenityLayer amenities={amenities} scale={scale} onAmenityClick={handleAmenityClick} />
         </svg>
 
         {/* ─── Map controls (bottom-right) ─── */}
@@ -760,6 +785,15 @@ export default function InteractiveLotMap({
           onRelease={() => selectedLot && releaseLot(selectedLot)}
           onNegotiate={opts => selectedLot && negotiateLot(selectedLot, opts)}
           onChangeStatus={(s, opts) => selectedLot && changeStatus(selectedLot, s, opts)}
+        />
+      )}
+
+      {/* ─── Amenity media modal ─── */}
+      {selectedAmenityId && (
+        <AmenityMediaModal
+          amenity={amenities.find(a => a.id === selectedAmenityId) ?? null}
+          media={amenityMedia[selectedAmenityId]}
+          onClose={() => setSelectedAmenityId(null)}
         />
       )}
     </div>

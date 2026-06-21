@@ -14,6 +14,7 @@ interface MapAmenity {
   description?: string
   fn?: string
   photos?: string[]
+  videos?: string[]
   video?: string
   tour360?: string
 }
@@ -90,7 +91,9 @@ export default function MapaAreasComunsPage() {
   const [saved, setSaved] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
   const [uploadingFor, setUploadingFor] = useState<string | null>(null)
+  const [uploadingVideoFor, setUploadingVideoFor] = useState<string | null>(null)
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({})
+  const videoRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
     Promise.all([
@@ -142,10 +145,40 @@ export default function MapaAreasComunsPage() {
       return { ...prev, [areaId]: { ...a, photos } }
     })
 
+  const uploadVideo = useCallback(async (areaId: string, file: File) => {
+    setUploadingVideoFor(areaId)
+    setMsg(null)
+    const fd = new FormData()
+    fd.append('file', file)
+    try {
+      const res = await fetch('/api/upload?bucket=media&folder=alto-bellevue-areas', { method: 'POST', body: fd })
+      const data = await res.json()
+      const url = data?.data?.url
+      if (!res.ok || !url) { setMsg(data?.error || 'Falha no upload do vídeo'); return }
+      setAreas(prev => {
+        const a: MapAmenity = prev[areaId] ?? { id: areaId }
+        return { ...prev, [areaId]: { ...a, videos: [...(a.videos ?? []), url] } }
+      })
+    } catch {
+      setMsg('Falha no upload do vídeo')
+    } finally {
+      setUploadingVideoFor(null)
+    }
+  }, [])
+
+  const removeVideo = (areaId: string, idx: number) =>
+    setAreas(prev => {
+      const a: MapAmenity = prev[areaId]
+      const videos = [...(a.videos ?? [])]
+      videos.splice(idx, 1)
+      return { ...prev, [areaId]: { ...a, videos } }
+    })
+
   const save = useCallback(async () => {
     setSaving(true); setMsg(null); setSaved(false)
     const payload = Object.values(areas).filter(
-      a => a.description || a.title || a.subtitle || a.video || a.tour360 || (a.photos && a.photos.length),
+      a => a.description || a.title || a.subtitle || a.video || a.tour360
+        || (a.photos && a.photos.length) || (a.videos && a.videos.length),
     )
     try {
       const [amenRes, tourRes] = await Promise.all([
@@ -182,7 +215,8 @@ export default function MapaAreasComunsPage() {
   )
 
   const filledCount = Object.values(areas).filter(
-    a => a.title || a.description || a.video || a.tour360 || (a.photos?.length ?? 0) > 0
+    a => a.title || a.description || a.video || a.tour360
+      || (a.photos?.length ?? 0) > 0 || (a.videos?.length ?? 0) > 0
   ).length
   const totalCount = AREA_META.length
   const progressPct = Math.round((filledCount / totalCount) * 100)
@@ -339,8 +373,10 @@ export default function MapaAreasComunsPage() {
         {AREA_META.map(({ id: aId, label, Icon }, index) => {
           const a = areas[aId] ?? { id: aId }
           const isUploading = uploadingFor === aId
+          const isUploadingVideo = uploadingVideoFor === aId
           const photoCount = a.photos?.length ?? 0
-          const hasSomeData = !!(a.title || a.subtitle || a.description || a.video || a.tour360 || photoCount)
+          const videoCount = a.videos?.length ?? 0
+          const hasSomeData = !!(a.title || a.subtitle || a.description || a.video || a.tour360 || photoCount || videoCount)
 
           return (
             <div
@@ -548,6 +584,114 @@ export default function MapaAreasComunsPage() {
                           <button
                             onClick={() => removePhoto(aId, i)}
                             aria-label="Remover foto"
+                            style={{
+                              position: 'absolute', top: -6, right: -6,
+                              width: 22, height: 22, borderRadius: '50%',
+                              background: '#F87171',
+                              border: `2px solid ${BG}`,
+                              color: '#fff',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 8px rgba(248,113,113,0.4)',
+                            }}
+                          >
+                            <X size={10} strokeWidth={2.5} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Vídeos uploadados */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <label style={{ ...LABEL_S, marginBottom: 0 }}>
+                      <Video size={11} /> Vídeos
+                      {videoCount > 0 && (
+                        <span style={{
+                          fontSize: 10, color: T2, fontFamily: FM,
+                          background: 'rgba(255,255,255,0.06)',
+                          padding: '1px 6px', borderRadius: 10,
+                          border: '1px solid rgba(255,255,255,0.1)',
+                        }}>
+                          {videoCount}
+                        </span>
+                      )}
+                    </label>
+                    <button
+                      onClick={() => videoRefs.current[aId]?.click()}
+                      disabled={isUploadingVideo}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 5,
+                        height: 30, padding: '0 12px', borderRadius: 8,
+                        background: 'rgba(200,164,74,0.10)',
+                        border: `1px solid ${GOLD_B}`,
+                        color: GOLD, fontSize: 11, fontWeight: 700,
+                        letterSpacing: '0.8px', textTransform: 'uppercase',
+                        cursor: isUploadingVideo ? 'wait' : 'pointer',
+                        opacity: isUploadingVideo ? 0.6 : 1,
+                        transition: 'all .18s', fontFamily: FS,
+                      }}
+                    >
+                      <Upload size={11} />
+                      {isUploadingVideo ? 'Enviando…' : 'Enviar vídeo'}
+                    </button>
+                    <input
+                      ref={el => { videoRefs.current[aId] = el }}
+                      type="file"
+                      accept="video/*"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const f = e.target.files?.[0]
+                        if (f) uploadVideo(aId, f)
+                        e.target.value = ''
+                      }}
+                    />
+                  </div>
+
+                  {videoCount === 0 ? (
+                    <button
+                      onClick={() => videoRefs.current[aId]?.click()}
+                      style={{
+                        width: '100%', padding: '22px 0',
+                        border: '1px dashed rgba(200,164,74,0.20)',
+                        borderRadius: 10,
+                        background: 'rgba(200,164,74,0.025)',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                        cursor: 'pointer', transition: 'all .18s',
+                      }}
+                    >
+                      <div style={{
+                        width: 36, height: 36, borderRadius: 10,
+                        background: 'rgba(200,164,74,0.08)',
+                        border: `1px solid rgba(200,164,74,0.15)`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Video size={16} style={{ color: T3 }} />
+                      </div>
+                      <span style={{ fontSize: 12, color: T2 }}>Nenhum vídeo adicionado</span>
+                      <span style={{ fontSize: 10, color: GOLD, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                        Toque para enviar
+                      </span>
+                    </button>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {(a.videos ?? []).map((url: string, i: number) => (
+                        <div key={i} style={{ position: 'relative' }}>
+                          <video
+                            src={url}
+                            preload="metadata"
+                            style={{
+                              width: '100%', height: 120,
+                              objectFit: 'cover', borderRadius: 10,
+                              border: '1px solid rgba(255,255,255,0.08)',
+                              display: 'block', background: '#000',
+                            }}
+                          />
+                          <button
+                            onClick={() => removeVideo(aId, i)}
+                            aria-label="Remover vídeo"
                             style={{
                               position: 'absolute', top: -6, right: -6,
                               width: 22, height: 22, borderRadius: '50%',
