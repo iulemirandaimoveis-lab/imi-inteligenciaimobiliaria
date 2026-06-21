@@ -1248,7 +1248,7 @@ function MapSkeleton() {
 
 function LotBottomSheet({
   lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot, streetLabels,
-  onAddToCompare, isInCompare, portalTarget,
+  onAddToCompare, isInCompare, portalTarget, isFullscreen,
 }: {
   lot: PlanLot;
   priceEntry?: PriceEntry;
@@ -1260,6 +1260,7 @@ function LotBottomSheet({
   onAddToCompare?: (lot: PlanLot) => void;
   isInCompare?: boolean;
   portalTarget?: HTMLElement | null;
+  isFullscreen?: boolean;
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -1284,6 +1285,19 @@ function LotBottomSheet({
   const isCorner = lot.special_type === 'ESQUINA' || dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  // Defesa em profundidade contra o "ghost click": mesmo com o preventDefault no
+  // touchstart do mapa, alguns navegadores (iOS Safari) ainda podem sintetizar um
+  // pointerup/click logo após abrir o card. Ignoramos qualquer tentativa de fechar
+  // pelo backdrop nos primeiros ~450 ms (a animação de abertura leva ~300 ms; um
+  // toque humano real para dispensar sempre chega bem depois disso).
+  const openedAt = useRef(0);
+  useEffect(() => { openedAt.current = performance.now(); }, []);
+  const dismissFromBackdrop = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    if (performance.now() - openedAt.current < 450) return;
+    onClose();
+  };
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1319,14 +1333,20 @@ function LotBottomSheet({
 
   return createPortal(
     <>
+      {/* Backdrop. Em tela cheia ele fica TRANSPARENTE e sem captura de toque
+          (pointer-events-none): o mapa continua visível e interativo ao lado do
+          card, dividindo a tela — em vez de ser escondido por um overlay escuro.
+          Fora da tela cheia mantém o escurecimento e fecha ao tocar fora. */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.18 }}
-        className="fixed inset-0 z-[9998] lg:pointer-events-none"
-        style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
-        onPointerUp={(e) => { e.stopPropagation(); onClose(); }}
+        className={`fixed inset-0 z-[9998] lg:pointer-events-none${isFullscreen ? ' pointer-events-none' : ''}`}
+        style={isFullscreen
+          ? { background: 'transparent' }
+          : { background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
+        onPointerUp={isFullscreen ? undefined : dismissFromBackdrop}
       />
 
       <motion.div
@@ -1336,7 +1356,9 @@ function LotBottomSheet({
         transition={{ type: 'spring', damping: 30, stiffness: 320 }}
         className="fixed bottom-0 left-0 right-0 z-[9999] overflow-y-auto rounded-t-[24px] sm:bottom-4 sm:left-auto sm:right-4 sm:w-[400px] sm:max-w-[calc(100vw-2rem)] sm:rounded-[22px]"
         style={{
-          maxHeight: '92vh',
+          // Em tela cheia o card divide a tela com o mapa: altura limitada para
+          // que o mapa permaneça visível acima (mobile) / ao lado (desktop).
+          maxHeight: isFullscreen ? 'min(52vh, 560px)' : '92vh',
           background: '#fff',
           boxShadow: '0 -24px 80px rgba(0,0,0,0.35)',
           paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))',
@@ -1637,7 +1659,7 @@ function AmenityIcon({ id, color, size = 22 }: { id: string; color: string; size
 // ── Common-area Bottom Sheet ──────────────────────────────────────────────────
 
 function AmenityBottomSheet({
-  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360, portalTarget,
+  amenity, onClose, onLocate, whatsappPhone, developmentName, fallbackTour360, portalTarget, isFullscreen,
 }: {
   amenity: Amenity;
   onClose: () => void;
@@ -1646,6 +1668,7 @@ function AmenityBottomSheet({
   developmentName: string;
   fallbackTour360?: string;
   portalTarget?: HTMLElement | null;
+  isFullscreen?: boolean;
 }) {
   const rawInfo = getAmenityInfo(amenity);
   const info = fallbackTour360 && !rawInfo.tour360 ? { ...rawInfo, tour360: fallbackTour360 } : rawInfo;
@@ -1654,6 +1677,15 @@ function AmenityBottomSheet({
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
   }, []);
+
+  // Mesma defesa contra ghost click do LotBottomSheet (ver comentário lá).
+  const openedAt = useRef(0);
+  useEffect(() => { openedAt.current = performance.now(); }, []);
+  const dismissFromBackdrop = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    if (performance.now() - openedAt.current < 450) return;
+    onClose();
+  };
 
   const waText = encodeURIComponent(
     `Olá! Gostaria de conhecer melhor a área "${info.title}" do ${developmentName}.`,
@@ -1670,9 +1702,9 @@ function AmenityBottomSheet({
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        onPointerUp={(e) => { e.stopPropagation(); onClose(); }}
-        className="fixed inset-0 z-[9998] lg:pointer-events-none"
-        style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
+        onPointerUp={isFullscreen ? undefined : dismissFromBackdrop}
+        className={`fixed inset-0 z-[9998] lg:pointer-events-none${isFullscreen ? ' pointer-events-none' : ''}`}
+        style={isFullscreen ? { background: 'transparent' } : { background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
       <motion.div
         initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
@@ -1682,7 +1714,7 @@ function AmenityBottomSheet({
         className="fixed left-0 right-0 bottom-0 z-[9999] sm:left-1/2 sm:right-auto sm:bottom-auto sm:top-[8vh] sm:w-[440px] sm:max-w-[92vw] sm:ml-[-220px] sm:rounded-[22px]"
         style={{
           background: '#fff', borderTopLeftRadius: 22, borderTopRightRadius: 22,
-          boxShadow: '0 -8px 40px rgba(0,0,0,0.30)', maxHeight: '82vh', overflowY: 'auto',
+          boxShadow: '0 -8px 40px rgba(0,0,0,0.30)', maxHeight: isFullscreen ? 'min(52vh, 560px)' : '82vh', overflowY: 'auto',
           paddingBottom: 'env(safe-area-inset-bottom, 12px)',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -2554,12 +2586,26 @@ export default function AltoBellevuePlanView({
   // pointerup), and that event carries clientX/Y = 0 — breaking the tap detection
   // even after the lastPos fix. Calling preventDefault() on touchstart tells the
   // browser "I own this touch", so pointerup always fires with correct coordinates.
-  // We skip interactive controls (buttons, links) so their click events still work.
+  //
+  // CRÍTICO (correção do "pisca-pisca" do card no celular): também precisamos do
+  // preventDefault sobre os LOTES/áreas/badges do SVG. Eles usam role="button" só
+  // por acessibilidade, mas o toque é resolvido pelo nosso sistema de pointer
+  // events (handlePointerUp → dispatchTapFromTarget), NUNCA por click nativo. Se
+  // não chamarmos preventDefault neles, o navegador emite a sequência sintética de
+  // compatibilidade (~300 ms depois): pointerdown/up "mouse" + mousedown/up + click,
+  // o chamado "ghost click". Esse ghost pointerup cai sobre o backdrop do card
+  // (fixed inset-0) que acabou de abrir e dispara onClose → o card fecha no mesmo
+  // instante em que abre. Por isso só pulamos controles HTML reais (<button>/<a>);
+  // os elementos SVG com role="button" SÃO interceptados (sem ghost, sem flicker).
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const onTouchStart = (e: TouchEvent) => {
-      if ((e.target as Element)?.closest?.('button, a, [role="button"]')) return;
+      const target = e.target as Element | null;
+      // Só pula controles HTML reais — cujo clique nativo precisamos preservar.
+      // Não usar [role="button"] aqui: ele casa com os <polygon>/<g> do SVG e
+      // reintroduz o ghost click que fecha o card instantaneamente.
+      if (target?.closest?.('button, a, input, textarea, select')) return;
       if (e.cancelable) e.preventDefault();
     };
     el.addEventListener('touchstart', onTouchStart, { passive: false });
@@ -2624,6 +2670,28 @@ export default function AltoBellevuePlanView({
     const targetH = targetW * (SVG_H / SVG_W);
     animateTo({ x: a.x - targetW / 2, y: a.y - targetH / 2, w: targetW, h: targetH });
   }, [animateTo]);
+
+  // Split-screen inteligente em tela cheia: ao selecionar um lote, o card divide a
+  // tela com o mapa (bottom no mobile, lateral no desktop). Reposicionamos o mapa
+  // para que o lote escolhido fique na metade VISÍVEL (não coberta pelo card),
+  // mantendo o zoom atual — como um "minimapa" que sempre foca o alvo. Mantém o
+  // gesto desacoplado do clique (animateTo é independente do handler do toque).
+  useEffect(() => {
+    if (!isFullscreen || !selectedLot?.centroid) return;
+    const [cx, cy] = selectedLot.centroid;
+    if (!Number.isFinite(cx) || !Number.isFinite(cy)) return;
+    const cur = vbLive.current;
+    const id = requestAnimationFrame(() => {
+      if (isMobile) {
+        // Card ocupa ~52vh embaixo → centro útil do mapa ≈ 24% da altura.
+        animateTo({ x: cx - cur.w / 2, y: cy - cur.h * 0.24, w: cur.w, h: cur.h });
+      } else {
+        // Card flutua à direita (~420px) → desloca o lote para o centro da área livre.
+        animateTo({ x: cx - cur.w * 0.34, y: cy - cur.h / 2, w: cur.w, h: cur.h });
+      }
+    });
+    return () => cancelAnimationFrame(id);
+  }, [selectedLot, isFullscreen, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleFullscreen = useCallback(async () => {
     const el = wrapperRef.current;
@@ -3334,6 +3402,7 @@ export default function AltoBellevuePlanView({
             onAddToCompare={toggleCompare}
             isInCompare={compareLots.some(l => l.id === selectedLot.id)}
             portalTarget={fsPortalTarget}
+            isFullscreen={isFullscreen}
           />
         )}
       </AnimatePresence>
@@ -3349,6 +3418,7 @@ export default function AltoBellevuePlanView({
             developmentName={developmentName}
             fallbackTour360={virtualTourUrl}
             portalTarget={fsPortalTarget}
+            isFullscreen={isFullscreen}
           />
         )}
       </AnimatePresence>
