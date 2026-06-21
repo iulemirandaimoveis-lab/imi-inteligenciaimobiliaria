@@ -464,6 +464,8 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   const [activeStatus, setActiveStatus] = useState('ALL')
   const [activeQuadra, setActiveQuadra] = useState('ALL')
   const [showTapHint, setShowTapHint] = useState(true)
+  const [search, setSearch] = useState('')
+  const [searchMiss, setSearchMiss] = useState(false)
 
   // Tap hint dismisses itself so it never permanently covers the map.
   useEffect(() => {
@@ -541,6 +543,21 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   const resetView = useCallback(() => {
     setTransform({ x: 0, y: 0, scale: 1 })
   }, [])
+
+  // Busca "Quadra-Lote" (ex.: A-12 / A12 / a 12) → seleciona e centraliza o lote.
+  const focusLot = useCallback((lot: GeoLot) => {
+    setActiveStatus('ALL'); setActiveQuadra('ALL'); setSelectedLot(lot)
+    const S = Math.min(MAX_SCALE, 4)
+    setTransform(clampTransform({ scale: S, x: CW / (2 * S) - lot.labelX, y: CH / (2 * S) - lot.labelY }))
+  }, [CW, CH, clampTransform])
+
+  const runSearch = useCallback((raw: string) => {
+    const q = raw.trim().toUpperCase().replace(/\s+/g, '')
+    const m = q.match(/^([A-Z]+)-?0*(\d+)$/)
+    const lot = m ? lotsById.get(`${m[1]}-${parseInt(m[2], 10)}`) : undefined
+    if (lot) { setSearchMiss(false); focusLot(lot) }
+    else setSearchMiss(true)
+  }, [lotsById, focusLot])
 
   // Wheel zoom
   useEffect(() => {
@@ -662,6 +679,39 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
         className="flex-shrink-0 px-3 pt-3 pb-2 space-y-2"
         style={{ background: '#fff', borderBottom: '1px solid rgba(184,179,168,0.2)' }}
       >
+        {/* Busca por lote — ex.: A-12 */}
+        <form onSubmit={(e) => { e.preventDefault(); runSearch(search) }} className="flex items-center gap-2">
+          <input
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); if (searchMiss) setSearchMiss(false) }}
+            placeholder="Buscar lote — ex.: A-12"
+            aria-label="Buscar lote por quadra e número"
+            className="flex-1 min-w-0"
+            style={{
+              height: 34, borderRadius: 10, padding: '0 12px', fontSize: 12,
+              fontFamily: "'Outfit', sans-serif", fontWeight: 600, color: NAVY,
+              border: `1.5px solid ${searchMiss ? '#E5484D' : 'rgba(184,179,168,0.4)'}`,
+              background: '#F7F8FA', outline: 'none',
+            }}
+          />
+          <button
+            type="submit" aria-label="Buscar lote"
+            className="flex-shrink-0 active:scale-95 transition-transform"
+            style={{
+              height: 34, paddingLeft: 14, paddingRight: 14, borderRadius: 10,
+              fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+              border: 'none', background: NAVY, color: '#fff',
+            }}
+          >
+            Buscar
+          </button>
+        </form>
+        {searchMiss && (
+          <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: '#E5484D', fontFamily: "'Outfit', sans-serif" }}>
+            Lote não encontrado. Use Quadra-Lote, ex.: A-12.
+          </p>
+        )}
+
         {/* Status pills */}
         <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {STATUS_FILTER_KEYS.map(key => {
