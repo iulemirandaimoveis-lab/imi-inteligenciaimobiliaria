@@ -90,6 +90,24 @@ function useGeometry(): { geo: GeoData | null; error: boolean } {
   return { geo, error }
 }
 
+// Camadas de contexto (ruas + perímetro) derivadas dos polígonos reais dos lotes —
+// mesmas coordenadas do viewBox. Ver public/maps/miguel-marques-cad-context.json.
+interface MapContext { perimeter: string[]; roads: string[] }
+function useMapContext(): MapContext | null {
+  const [ctx, setCtx] = useState<MapContext | null>(null)
+  useEffect(() => {
+    let alive = true
+    fetch('/maps/miguel-marques-cad-context.json')
+      .then(r => r.json())
+      .then((d: { perimeter?: string[]; roads?: string[] }) => {
+        if (alive) setCtx({ perimeter: d.perimeter ?? [], roads: d.roads ?? [] })
+      })
+      .catch(() => { /* opcional — o mapa funciona sem o contexto */ })
+    return () => { alive = false }
+  }, [])
+  return ctx
+}
+
 // ─── MapBtn — matches Alto Bellevue control style ─────────────────────────────
 
 const MapBtn = memo(function MapBtn({ onClick, label, children, active }: {
@@ -407,6 +425,7 @@ interface MiguelMarquesPlanViewProps {
 
 export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesPlanViewProps) {
   const { geo, error: geoError } = useGeometry()
+  const mapCtx = useMapContext()
   const CW = geo?.w ?? DEFAULT_VB.w
   const CH = geo?.h ?? DEFAULT_VB.h
 
@@ -445,6 +464,8 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   const [activeStatus, setActiveStatus] = useState('ALL')
   const [activeQuadra, setActiveQuadra] = useState('ALL')
   const [showTapHint, setShowTapHint] = useState(true)
+  const [search, setSearch] = useState('')
+  const [searchMiss, setSearchMiss] = useState(false)
 
   // Tap hint dismisses itself so it never permanently covers the map.
   useEffect(() => {
@@ -522,6 +543,21 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   const resetView = useCallback(() => {
     setTransform({ x: 0, y: 0, scale: 1 })
   }, [])
+
+  // Busca "Quadra-Lote" (ex.: A-12 / A12 / a 12) → seleciona e centraliza o lote.
+  const focusLot = useCallback((lot: GeoLot) => {
+    setActiveStatus('ALL'); setActiveQuadra('ALL'); setSelectedLot(lot)
+    const S = Math.min(MAX_SCALE, 4)
+    setTransform(clampTransform({ scale: S, x: CW / (2 * S) - lot.labelX, y: CH / (2 * S) - lot.labelY }))
+  }, [CW, CH, clampTransform])
+
+  const runSearch = useCallback((raw: string) => {
+    const q = raw.trim().toUpperCase().replace(/\s+/g, '')
+    const m = q.match(/^([A-Z]+)-?0*(\d+)$/)
+    const lot = m ? lotsById.get(`${m[1]}-${parseInt(m[2], 10)}`) : undefined
+    if (lot) { setSearchMiss(false); focusLot(lot) }
+    else setSearchMiss(true)
+  }, [lotsById, focusLot])
 
   // Wheel zoom
   useEffect(() => {
@@ -643,6 +679,39 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
         className="flex-shrink-0 px-3 pt-3 pb-2 space-y-2"
         style={{ background: '#fff', borderBottom: '1px solid rgba(184,179,168,0.2)' }}
       >
+        {/* Busca por lote — ex.: A-12 */}
+        <form onSubmit={(e) => { e.preventDefault(); runSearch(search) }} className="flex items-center gap-2">
+          <input
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); if (searchMiss) setSearchMiss(false) }}
+            placeholder="Buscar lote — ex.: A-12"
+            aria-label="Buscar lote por quadra e número"
+            className="flex-1 min-w-0"
+            style={{
+              height: 34, borderRadius: 10, padding: '0 12px', fontSize: 12,
+              fontFamily: "'Outfit', sans-serif", fontWeight: 600, color: NAVY,
+              border: `1.5px solid ${searchMiss ? '#E5484D' : 'rgba(184,179,168,0.4)'}`,
+              background: '#F7F8FA', outline: 'none',
+            }}
+          />
+          <button
+            type="submit" aria-label="Buscar lote"
+            className="flex-shrink-0 active:scale-95 transition-transform"
+            style={{
+              height: 34, paddingLeft: 14, paddingRight: 14, borderRadius: 10,
+              fontSize: 11, fontWeight: 700, fontFamily: "'Outfit', sans-serif",
+              border: 'none', background: NAVY, color: '#fff',
+            }}
+          >
+            Buscar
+          </button>
+        </form>
+        {searchMiss && (
+          <p style={{ margin: 0, fontSize: 10, fontWeight: 600, color: '#E5484D', fontFamily: "'Outfit', sans-serif" }}>
+            Lote não encontrado. Use Quadra-Lote, ex.: A-12.
+          </p>
+        )}
+
         {/* Status pills */}
         <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {STATUS_FILTER_KEYS.map(key => {
@@ -735,12 +804,45 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                 <stop offset="60%" stopColor="#D5C9A8" stopOpacity="0.35" />
                 <stop offset="100%" stopColor="#B8AC8C" stopOpacity="0.55" />
               </radialGradient>
+              {/* Vias/asfalto — claro, estilo Google Maps */}
+              <linearGradient id="mm-road" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FCFBF8" />
+                <stop offset="100%" stopColor="#F1ECE1" />
+              </linearGradient>
             </defs>
 
             <g transform={`scale(${transform.scale}) translate(${transform.x},${transform.y})`}>
               {/* Terreno (base) — sem ruas/lago sintéticos: a geometria é a planta real */}
               <rect x={0} y={0} width={CW} height={CH} fill="url(#mm-base)" />
               <rect x={0} y={0} width={CW} height={CH} fill="url(#mm-terrain)" style={{ pointerEvents: 'none' }} />
+
+              {/* Ruas + perímetro — derivados dos polígonos reais dos lotes (mesmas coords) */}
+              {mapCtx && (
+                <g style={{ pointerEvents: 'none' }}>
+                  {mapCtx.roads.map((d, i) => (
+                    <path
+                      key={`road-${i}`}
+                      d={d}
+                      fillRule="evenodd"
+                      fill="url(#mm-road)"
+                      stroke="rgba(190,165,115,0.45)"
+                      strokeWidth={Math.max(0.15, 0.5 / transform.scale)}
+                      strokeLinejoin="round"
+                    />
+                  ))}
+                  {mapCtx.perimeter.map((pts, i) => (
+                    <polygon
+                      key={`perim-${i}`}
+                      points={pts}
+                      fill="none"
+                      stroke="rgba(200,164,74,0.8)"
+                      strokeWidth={Math.max(0.8, 2.2 / transform.scale)}
+                      strokeDasharray={`${8 / transform.scale} ${4 / transform.scale}`}
+                      strokeLinejoin="round"
+                    />
+                  ))}
+                </g>
+              )}
 
               {/* Lotes — polígonos REAIS extraídos do CAD oficial */}
               {lots.map(lot => {
