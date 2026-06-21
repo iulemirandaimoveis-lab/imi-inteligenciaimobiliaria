@@ -2497,11 +2497,17 @@ export default function AltoBellevuePlanView({
     setIsDragging(false);
     const clickTarget = clickTargetRef.current;
     clickTargetRef.current = null;
+    // On Android/Chrome a small finger wobble (≥ 12px slop) sets didDrag=true even
+    // on a stationary tap. Use displacement from downPos as the authoritative tap
+    // check — anything ≤ 24px from the touch-down point is still a tap.
+    const displacement = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y);
+    if (displacement <= 24) didDrag.current = false;
     if (!didDrag.current && clickTarget) {
       const dispatched = dispatchTapFromTarget(clickTarget);
       // Tap on empty terrain → dismiss any open card/amenity.
       if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
     }
+    didDrag.current = false;
   }, [dispatchTapFromTarget]);
 
   // Pointer left the container (or capture released) — cleanup only, no click dispatch.
@@ -2517,10 +2523,11 @@ export default function AltoBellevuePlanView({
 
   // Browser cancelled the pointer (scroll, system gesture). iOS Safari can emit this
   // instead of pointerup on a plain tap — so still resolve the tap (open the card).
-  // We measure raw displacement from downPos instead of checking didDrag.current because
-  // a 12px finger wobble can set didDrag=true even on a stationary tap, silently blocking
-  // the card from opening. pointercancel fires close to where the touch began, so a 24px
-  // threshold reliably distinguishes a real drag from a fingertip wobble.
+  // We measure raw displacement from downPos as the tap check. IMPORTANT: we must
+  // reset didDrag.current = false before calling dispatchTapFromTarget, because that
+  // function also guards on didDrag.current — without this reset a ≥12px wobble that
+  // set didDrag=true would silently block the card from opening even with a valid
+  // displacement (the original incomplete fix in #290).
   const handlePointerCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
     if (pointerCache.current.size > 0) return;
@@ -2531,7 +2538,10 @@ export default function AltoBellevuePlanView({
       e.clientX - downPos.current.x,
       e.clientY - downPos.current.y,
     );
-    if (displacement <= 24 && clickTarget) dispatchTapFromTarget(clickTarget);
+    if (displacement <= 24 && clickTarget) {
+      didDrag.current = false; // override: small displacement = tap, not a drag
+      dispatchTapFromTarget(clickTarget);
+    }
     didDrag.current = false;
   }, [dispatchTapFromTarget]);
 
