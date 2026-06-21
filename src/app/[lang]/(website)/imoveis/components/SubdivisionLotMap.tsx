@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -12,10 +13,30 @@ import {
 } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 import AltoBellevuePlanView from './AltoBellevuePlanView';
+import type { Lot as MiguelMarquesLot } from '../../projetos/miguel-marques/data/lotsData';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
 
+// Mapa vetorial premium do Miguel Marques (geometria CAD) — carregado sob demanda,
+// client-only (usa Pointer Events / fullscreen). Mesma fonte de /projetos/miguel-marques.
+const MiguelMarquesPlanView = dynamic(
+  () => import('../../projetos/miguel-marques/components/MiguelMarquesPlanView'),
+  { ssr: false },
+);
+
 const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
+const MM_DEV_ID = '8b9f6835-1bd0-4850-80b0-aaef2223300d';
+
+// Status da planilha viva (Supabase, MAIÚSCULO) → status do mapa vetorial do MM.
+// Status sem equivalente no MM (ex.: RESERVADO) são omitidos para o lote manter o
+// status do CAD/quadro em vez de cair no fallback verde "Disponível".
+const MM_STATUS_MAP: Record<string, MiguelMarquesLot['status']> = {
+  DISPONIVEL: 'disponivel',
+  VENDIDO: 'vendido',
+  NEGOCIACAO: 'negociacao',
+  PROPRIETARIO: 'proprietario',
+  IGREJA: 'igreja',
+};
 
 interface Lot {
   id: string;
@@ -1198,7 +1219,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   if (lots.length === 0 && !hasPlanView) return null;
 
   // Alto Bellevue sources polygon data from JSON (not Supabase), so always render its plan view
-  if (lots.length === 0 && hasPlanView && developmentId !== AB_DEV_ID) {
+  if (lots.length === 0 && hasPlanView && developmentId !== AB_DEV_ID && developmentId !== MM_DEV_ID) {
     return (
       <SubdivisionPlanView
         lots={[]}
@@ -1210,8 +1231,17 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
     );
   }
 
-  // Premium Alto Bellevue experience — self-contained with its own filters and bottom sheet
-  if (developmentId === AB_DEV_ID && viewMode === 'plan') {
+  // Premium self-contained vector maps (Alto Bellevue + Miguel Marques) — own filters/sheet.
+  if ((developmentId === AB_DEV_ID || developmentId === MM_DEV_ID) && viewMode === 'plan') {
+    // Status vivo (Supabase) → formato do mapa vetorial do MM. Lotes sem status
+    // mapeável mantêm o status do CAD (não entram no override).
+    const mmLots: MiguelMarquesLot[] = developmentId === MM_DEV_ID
+      ? lots.reduce<MiguelMarquesLot[]>((acc, l) => {
+          const status = MM_STATUS_MAP[String(l.status).toUpperCase()];
+          if (status) acc.push({ id: `${l.quadra}-${l.lot_number}`, quadra: l.quadra, lote: l.lot_number, metragem: l.area_m2, valor: l.price ?? 0, status });
+          return acc;
+        }, [])
+      : [];
     return (
       <div className="scroll-mt-32">
         {/* Cabeçalho semântico (B1) — heading real + alternância de visão alinhada */}
@@ -1271,14 +1301,20 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             </div>
           )}
         </div>
-        <AltoBellevuePlanView
-          lots={lots}
-          developmentId={developmentId}
-          developmentName={developmentName}
-          whatsappPhone={whatsappPhone}
-          amenityOverrides={mapAmenities}
-          virtualTourUrl={virtualTourUrl}
-        />
+        {developmentId === MM_DEV_ID ? (
+          <div className="rounded-2xl overflow-hidden w-full" style={{ height: 'clamp(500px, 72vh, 780px)' }}>
+            <MiguelMarquesPlanView lots={mmLots} />
+          </div>
+        ) : (
+          <AltoBellevuePlanView
+            lots={lots}
+            developmentId={developmentId}
+            developmentName={developmentName}
+            whatsappPhone={whatsappPhone}
+            amenityOverrides={mapAmenities}
+            virtualTourUrl={virtualTourUrl}
+          />
+        )}
       </div>
     );
   }

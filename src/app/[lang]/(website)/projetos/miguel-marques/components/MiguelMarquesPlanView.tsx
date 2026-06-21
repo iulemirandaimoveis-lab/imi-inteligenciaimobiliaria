@@ -719,6 +719,9 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
             viewBox={`0 0 ${CW} ${CH}`}
             className="w-full h-full"
             style={{ overflow: 'visible', touchAction: 'none' }}
+            role="application"
+            aria-label="Mapa interativo de lotes — Loteamento Miguel Marques"
+            aria-roledescription="Mapa interativo — arraste para mover, pince para dar zoom, toque num lote para ver detalhes"
           >
             <defs>
               {/* Warm parchment base — Google Maps inspired, matches Alto Bellevue */}
@@ -772,12 +775,22 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                     stroke={strokeColor}
                     strokeWidth={strokeWidth}
                     strokeLinejoin="round"
+                    role="button"
+                    tabIndex={lot.status === 'vendido' ? -1 : 0}
+                    aria-label={`Lote ${lot.lote} Quadra ${lot.quadra} — ${st.label}, ${fmtM2(lot.metragem)}`}
                     style={{
                       cursor: lot.status === 'vendido' ? 'default' : 'pointer',
                       transition: 'fill 0.1s, stroke 0.1s',
+                      outline: 'none',
                     }}
                     onMouseEnter={() => setHoveredId(lot.id)}
                     onMouseLeave={() => setHoveredId(null)}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && lot.status !== 'vendido') {
+                        e.preventDefault()
+                        setSelectedLot(prev => (prev?.id === lot.id ? null : lot))
+                      }
+                    }}
                   />
                 )
               })}
