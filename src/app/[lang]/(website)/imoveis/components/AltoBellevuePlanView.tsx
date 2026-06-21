@@ -2497,11 +2497,12 @@ export default function AltoBellevuePlanView({
     setIsDragging(false);
     const clickTarget = clickTargetRef.current;
     clickTargetRef.current = null;
-    // On Android/Chrome a small finger wobble (≥ 12px slop) sets didDrag=true even
-    // on a stationary tap. Use displacement from downPos as the authoritative tap
-    // check — anything ≤ 24px from the touch-down point is still a tap.
+    // Touch wobble override: a finger can drift ≤ 24px on a stationary tap (Android
+    // tremor). For mouse/pen the slop is only 4px — a 4–24px mouse drag is a real
+    // pan and must NOT also open a card, so only reset didDrag for touch pointers.
     const displacement = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y);
-    if (displacement <= 24) didDrag.current = false;
+    const tapSlop = e.pointerType === 'touch' ? 24 : 4;
+    if (displacement <= tapSlop) didDrag.current = false;
     if (!didDrag.current && clickTarget) {
       const dispatched = dispatchTapFromTarget(clickTarget);
       // Tap on empty terrain → dismiss any open card/amenity.
