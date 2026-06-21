@@ -50,6 +50,10 @@
         {
             "path": "/api/cron/expire-reservations",
             "schedule": "0 3 * * *"
+        },
+        {
+            "path": "/api/cron/sync-miguel-marques-availability",
+            "schedule": "0 4 * * *"
         }
     ]
 }

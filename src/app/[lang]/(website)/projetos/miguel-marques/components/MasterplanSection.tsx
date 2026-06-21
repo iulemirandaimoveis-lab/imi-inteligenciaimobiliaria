@@ -24,8 +24,6 @@ const DEVELOPMENT_SLUG = 'loteamento-miguel-marques'
 export default function MasterplanSection() {
   const [baseLots, setBaseLots] = useState<Lot[]>([])
   const [overrides, setOverrides] = useState<Map<string, Lot['status']>>(new Map())
-  // Disponibilidade ao vivo da planilha "Mi Gestão" (prioridade sobre o Supabase).
-  const [sheetOverrides, setSheetOverrides] = useState<Map<string, Lot['status']>>(new Map())
 
   // Carrega o universo de lotes da geometria real (CAD).
   useEffect(() => {
@@ -69,28 +67,9 @@ export default function MasterplanSection() {
     syncStatuses()
   }, [])
 
-  // Disponibilidade em tempo real (planilha Mi Gestão via /api). Poll a cada 60s.
-  // Degradação segura: sem a env MM_AVAILABILITY_CSV_URL a rota responde vazio.
-  useEffect(() => {
-    let alive = true
-    const pull = async () => {
-      try {
-        const r = await fetch('/api/projetos/miguel-marques/availability', { cache: 'no-store' })
-        if (!r.ok) return
-        const data: { availability?: Record<string, Lot['status']> } = await r.json()
-        if (!alive || !data.availability) return
-        const m = new Map(Object.entries(data.availability))
-        if (m.size > 0) setSheetOverrides(m)
-      } catch { /* mantém o último estado conhecido */ }
-    }
-    pull()
-    const id = setInterval(pull, 60_000)
-    return () => { alive = false; clearInterval(id) }
-  }, [])
-
   const effectiveLots = useMemo(
-    () => baseLots.map(l => ({ ...l, status: sheetOverrides.get(l.id) ?? overrides.get(l.id) ?? l.status })),
-    [baseLots, overrides, sheetOverrides],
+    () => baseLots.map(l => ({ ...l, status: overrides.get(l.id) ?? l.status })),
+    [baseLots, overrides],
   )
 
   const stats = useMemo(() => {
