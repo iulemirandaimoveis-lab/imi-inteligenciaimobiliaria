@@ -2523,20 +2523,20 @@ export default function AltoBellevuePlanView({
 
   // Browser cancelled the pointer (scroll, system gesture). iOS Safari can emit this
   // instead of pointerup on a plain tap — so still resolve the tap (open the card).
-  // We measure raw displacement from downPos as the tap check. IMPORTANT: we must
-  // reset didDrag.current = false before calling dispatchTapFromTarget, because that
-  // function also guards on didDrag.current — without this reset a ≥12px wobble that
-  // set didDrag=true would silently block the card from opening even with a valid
-  // displacement (the original incomplete fix in #290).
+  // IMPORTANT: Android Chrome mobile fires pointercancel with clientX/clientY = 0,
+  // so we use lastPos (last reliable pointer coordinates from pointermove/pointerdown)
+  // instead of the event coordinates. Without this, displacement = ~400px and the
+  // displacement check always fails, so no card ever opens on Android mobile.
   const handlePointerCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
     if (pointerCache.current.size > 0) return;
     setIsDragging(false);
     const clickTarget = clickTargetRef.current;
     clickTargetRef.current = null;
+    // Use lastPos instead of e.clientX/e.clientY — pointercancel often reports (0, 0).
     const displacement = Math.hypot(
-      e.clientX - downPos.current.x,
-      e.clientY - downPos.current.y,
+      lastPos.current.x - downPos.current.x,
+      lastPos.current.y - downPos.current.y,
     );
     if (displacement <= 24 && clickTarget) {
       didDrag.current = false; // override: small displacement = tap, not a drag
@@ -2544,6 +2544,23 @@ export default function AltoBellevuePlanView({
     }
     didDrag.current = false;
   }, [dispatchTapFromTarget]);
+
+  // Prevent Android Chrome (mobile mode) from stealing map touches for page scroll.
+  // When the browser intercepts a touch for scrolling it fires pointercancel (not
+  // pointerup), and that event carries clientX/Y = 0 — breaking the tap detection
+  // even after the lastPos fix. Calling preventDefault() on touchstart tells the
+  // browser "I own this touch", so pointerup always fires with correct coordinates.
+  // We skip interactive controls (buttons, links) so their click events still work.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onTouchStart = (e: TouchEvent) => {
+      if ((e.target as Element)?.closest?.('button, a, [role="button"]')) return;
+      if (e.cancelable) e.preventDefault();
+    };
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    return () => el.removeEventListener('touchstart', onTouchStart);
+  }, []);
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
