@@ -90,6 +90,24 @@ function useGeometry(): { geo: GeoData | null; error: boolean } {
   return { geo, error }
 }
 
+// Camadas de contexto (ruas + perímetro) derivadas dos polígonos reais dos lotes —
+// mesmas coordenadas do viewBox. Ver public/maps/miguel-marques-cad-context.json.
+interface MapContext { perimeter: string[]; roads: string[] }
+function useMapContext(): MapContext | null {
+  const [ctx, setCtx] = useState<MapContext | null>(null)
+  useEffect(() => {
+    let alive = true
+    fetch('/maps/miguel-marques-cad-context.json')
+      .then(r => r.json())
+      .then((d: { perimeter?: string[]; roads?: string[] }) => {
+        if (alive) setCtx({ perimeter: d.perimeter ?? [], roads: d.roads ?? [] })
+      })
+      .catch(() => { /* opcional — o mapa funciona sem o contexto */ })
+    return () => { alive = false }
+  }, [])
+  return ctx
+}
+
 // ─── MapBtn — matches Alto Bellevue control style ─────────────────────────────
 
 const MapBtn = memo(function MapBtn({ onClick, label, children, active }: {
@@ -407,6 +425,7 @@ interface MiguelMarquesPlanViewProps {
 
 export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesPlanViewProps) {
   const { geo, error: geoError } = useGeometry()
+  const mapCtx = useMapContext()
   const CW = geo?.w ?? DEFAULT_VB.w
   const CH = geo?.h ?? DEFAULT_VB.h
 
@@ -735,12 +754,45 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                 <stop offset="60%" stopColor="#D5C9A8" stopOpacity="0.35" />
                 <stop offset="100%" stopColor="#B8AC8C" stopOpacity="0.55" />
               </radialGradient>
+              {/* Vias/asfalto — claro, estilo Google Maps */}
+              <linearGradient id="mm-road" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FCFBF8" />
+                <stop offset="100%" stopColor="#F1ECE1" />
+              </linearGradient>
             </defs>
 
             <g transform={`scale(${transform.scale}) translate(${transform.x},${transform.y})`}>
               {/* Terreno (base) — sem ruas/lago sintéticos: a geometria é a planta real */}
               <rect x={0} y={0} width={CW} height={CH} fill="url(#mm-base)" />
               <rect x={0} y={0} width={CW} height={CH} fill="url(#mm-terrain)" style={{ pointerEvents: 'none' }} />
+
+              {/* Ruas + perímetro — derivados dos polígonos reais dos lotes (mesmas coords) */}
+              {mapCtx && (
+                <g style={{ pointerEvents: 'none' }}>
+                  {mapCtx.roads.map((d, i) => (
+                    <path
+                      key={`road-${i}`}
+                      d={d}
+                      fillRule="evenodd"
+                      fill="url(#mm-road)"
+                      stroke="rgba(190,165,115,0.45)"
+                      strokeWidth={Math.max(0.15, 0.5 / transform.scale)}
+                      strokeLinejoin="round"
+                    />
+                  ))}
+                  {mapCtx.perimeter.map((pts, i) => (
+                    <polygon
+                      key={`perim-${i}`}
+                      points={pts}
+                      fill="none"
+                      stroke="rgba(200,164,74,0.8)"
+                      strokeWidth={Math.max(0.8, 2.2 / transform.scale)}
+                      strokeDasharray={`${8 / transform.scale} ${4 / transform.scale}`}
+                      strokeLinejoin="round"
+                    />
+                  ))}
+                </g>
+              )}
 
               {/* Lotes — polígonos REAIS extraídos do CAD oficial */}
               {lots.map(lot => {
