@@ -1284,6 +1284,11 @@ function LotBottomSheet({
   const isCorner = lot.special_type === 'ESQUINA' || dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
   const closeRef = useRef<HTMLButtonElement>(null);
+  // Guard against Android's compatibility mouse pointerup events (fired ~1-5 ms after
+  // the touch pointerup that opened this card). Those events land on the backdrop because
+  // React's microtask has already committed it to the DOM, causing the card to close
+  // immediately. Any real tap to dismiss takes > 350 ms after the card appears.
+  const mountedAtRef = useRef(Date.now());
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1326,7 +1331,7 @@ function LotBottomSheet({
         transition={{ duration: 0.18 }}
         className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
-        onPointerUp={(e) => { e.stopPropagation(); onClose(); }}
+        onPointerUp={(e) => { e.stopPropagation(); if (Date.now() - mountedAtRef.current >= 350) onClose(); }}
       />
 
       <motion.div
@@ -1649,6 +1654,8 @@ function AmenityBottomSheet({
 }) {
   const rawInfo = getAmenityInfo(amenity);
   const info = fallbackTour360 && !rawInfo.tour360 ? { ...rawInfo, tour360: fallbackTour360 } : rawInfo;
+  // Same ghost-click / compatibility-event guard as LotBottomSheet — see comment there.
+  const mountedAtRef = useRef(Date.now());
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1670,7 +1677,7 @@ function AmenityBottomSheet({
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        onPointerUp={(e) => { e.stopPropagation(); onClose(); }}
+        onPointerUp={(e) => { e.stopPropagation(); if (Date.now() - mountedAtRef.current >= 350) onClose(); }}
         className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
