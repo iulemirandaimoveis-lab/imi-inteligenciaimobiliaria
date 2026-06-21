@@ -1326,7 +1326,7 @@ function LotBottomSheet({
         transition={{ duration: 0.18 }}
         className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
-        onClick={onClose}
+        onPointerUp={(e) => { e.stopPropagation(); onClose(); }}
       />
 
       <motion.div
@@ -1342,6 +1342,7 @@ function LotBottomSheet({
           paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))',
         }}
         onClick={(e) => e.stopPropagation()}
+        onPointerUp={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label={`Detalhes do lote ${lot.lot_number}, quadra ${lot.quadra}`}
@@ -1669,7 +1670,7 @@ function AmenityBottomSheet({
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        onClick={onClose}
+        onPointerUp={(e) => { e.stopPropagation(); onClose(); }}
         className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
@@ -1684,6 +1685,8 @@ function AmenityBottomSheet({
           boxShadow: '0 -8px 40px rgba(0,0,0,0.30)', maxHeight: '82vh', overflowY: 'auto',
           paddingBottom: 'env(safe-area-inset-bottom, 12px)',
         }}
+        onClick={(e) => e.stopPropagation()}
+        onPointerUp={(e) => e.stopPropagation()}
         role="dialog"
         aria-label={`Detalhes da área ${info.title}`}
       >
