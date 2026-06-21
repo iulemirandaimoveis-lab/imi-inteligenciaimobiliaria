@@ -2516,15 +2516,22 @@ export default function AltoBellevuePlanView({
   }, []);
 
   // Browser cancelled the pointer (scroll, system gesture). iOS Safari can emit this
-  // instead of pointerup on a plain tap — so still resolve the tap (open the card)
-  // when no drag happened, then clean up.
+  // instead of pointerup on a plain tap — so still resolve the tap (open the card).
+  // We measure raw displacement from downPos instead of checking didDrag.current because
+  // a 12px finger wobble can set didDrag=true even on a stationary tap, silently blocking
+  // the card from opening. pointercancel fires close to where the touch began, so a 24px
+  // threshold reliably distinguishes a real drag from a fingertip wobble.
   const handlePointerCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
     if (pointerCache.current.size > 0) return;
     setIsDragging(false);
     const clickTarget = clickTargetRef.current;
     clickTargetRef.current = null;
-    if (!didDrag.current && clickTarget) dispatchTapFromTarget(clickTarget);
+    const displacement = Math.hypot(
+      e.clientX - downPos.current.x,
+      e.clientY - downPos.current.y,
+    );
+    if (displacement <= 24 && clickTarget) dispatchTapFromTarget(clickTarget);
     didDrag.current = false;
   }, [dispatchTapFromTarget]);
 

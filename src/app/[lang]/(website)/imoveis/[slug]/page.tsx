@@ -375,13 +375,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 lotMapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : undefined}
                             />
                         </section>
-                        <section id="detalhes">
-                            <DevelopmentDetails
-                                development={development}
-                                financingEnabled={data.financing_enabled !== false}
-                                lang={params.lang}
-                            />
-                        </section>
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
                             {params.slug === 'alto-bellevue' ? (
                                 <SubdivisionLotMap
@@ -404,6 +397,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             ) : (
                                 <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
                             )}
+                        </section>
+                        <section id="detalhes">
+                            <DevelopmentDetails
+                                development={development}
+                                financingEnabled={data.financing_enabled !== false}
+                                lang={params.lang}
+                            />
                         </section>
                         <section id="localizacao">
                             <DevelopmentLocation development={development} />
