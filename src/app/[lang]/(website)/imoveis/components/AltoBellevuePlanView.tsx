@@ -464,6 +464,7 @@ interface MapInnerProps {
   onLotClick: (lot: PlanLot) => void;
   onAmenityClick: (amenity: Amenity) => void;
   onQuadraClick: (quadra: string) => void;
+  onBackgroundClick: () => void;
   onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
@@ -473,7 +474,7 @@ interface MapInnerProps {
 
 const MapInner = memo(function MapInner({
   lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
-  activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onPointerDown, onPointerMove, onPointerUp,
+  activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onBackgroundClick, onPointerDown, onPointerMove, onPointerUp,
   onPointerLeave, onPointerCancel,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
@@ -630,6 +631,7 @@ const MapInner = memo(function MapInner({
         aria-label="Mapa interativo de lotes Alto Bellevue"
         aria-roledescription="Mapa interativo — arraste para mover, role para dar zoom, toque num lote para ver detalhes"
         role="application"
+        onClick={onBackgroundClick}
       >
         <defs>
           <filter id="ab-sel-glow" x="-60%" y="-60%" width="220%" height="220%">
@@ -838,6 +840,7 @@ const MapInner = memo(function MapInner({
                   role="button"
                   tabIndex={0}
                   aria-label={`Área comum: ${a.label}`}
+                  onClick={(e) => { e.stopPropagation(); onAmenityClick(a); }}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick(a); } }}
                 >
                   {/* Glow ring for portaria */}
@@ -948,6 +951,7 @@ const MapInner = memo(function MapInner({
               role="button"
               aria-label={`Lote ${lot.lot_number} Quadra ${lot.quadra} — ${cfg.label}${lot.area_m2 ? `, ${Math.round(lot.area_m2 as number)}m²` : ''}${lot.price ? `, ${fmtBRL(lot.price as number)}` : ''}`}
               tabIndex={0}
+              onClick={(e) => { e.stopPropagation(); onLotClick(lot); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.stopPropagation();
@@ -1124,6 +1128,7 @@ const MapInner = memo(function MapInner({
               tabIndex={0}
               aria-label={`Quadra ${quadra} — ${avail} de ${total} lotes disponíveis. Aproximar quadra.`}
               style={{ pointerEvents: 'auto', cursor: 'pointer', outline: 'none' }}
+              onClick={(e) => { e.stopPropagation(); onQuadraClick(quadra); }}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onQuadraClick(quadra); } }}
             >
               <circle cx={cx} cy={cy} r={hitR} fill="transparent" />
@@ -2303,11 +2308,6 @@ export default function AltoBellevuePlanView({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
   const pointerCache = useRef(new Map<number, { x: number; y: number }>());
-  const clickTargetRef = useRef<Element | null>(null);
-  const allLotsRef = useRef<PlanLot[]>([]);
-  const handleLotClickRef = useRef<((lot: PlanLot) => void) | null>(null);
-  const handleAmenityClickRef = useRef<((a: Amenity) => void) | null>(null);
-  const handleQuadraBadgeClickRef = useRef<((q: string) => void) | null>(null);
 
   const scale = SVG_W / vb.w;
 
@@ -2363,7 +2363,6 @@ export default function AltoBellevuePlanView({
       return status === l.status ? l : { ...l, status };
     });
   }, [dbLots, planLots, availability]);
-  allLotsRef.current = allLots;
 
   const stats = useMemo(() => {
     const byStatus: Record<string, number> = {};
@@ -2402,34 +2401,16 @@ export default function AltoBellevuePlanView({
     [allLots]
   );
 
-  // Resolve a tap on the SVG to its lot / amenity / quadra-badge action by walking
-  // up from the element under the finger. Shared by pointerup AND pointercancel so a
-  // tap still opens the card on iOS Safari (which can emit pointercancel on a tap).
-  const dispatchTapFromTarget = useCallback((clickTarget: Element | null): boolean => {
-    if (didDrag.current || !clickTarget) return false;
-    let el: Element | null = clickTarget;
-    while (el) {
-      const lotId = el.getAttribute?.('data-lot-id');
-      if (lotId) {
-        const lot = allLotsRef.current.find(l => l.id === lotId);
-        if (lot) handleLotClickRef.current?.(lot);
-        return true;
-      }
-      const amenityId = el.getAttribute?.('data-amenity-id');
-      if (amenityId) {
-        const amenity = mapData?.amenities.find(a => a.id === amenityId);
-        if (amenity) handleAmenityClickRef.current?.(amenity);
-        return true;
-      }
-      const quadraBadge = el.getAttribute?.('data-quadra-badge');
-      if (quadraBadge) {
-        handleQuadraBadgeClickRef.current?.(quadraBadge);
-        return true;
-      }
-      el = el.parentElement;
-    }
-    return false;
-  }, [mapData]);
+  // SELEÇÃO de lote/área/quadra é via onClick NATIVO em cada elemento do SVG (ver
+  // MapInner) — o mecanismo que funcionava de forma confiável no celular. Com
+  // `touch-action: none` o navegador não rola/zooma a partir do mapa, mas o `click`
+  // de toque continua disparando normalmente. NÃO usamos preventDefault no
+  // touchstart (ele suprimia o click → era a causa da regressão em que o card não
+  // abria no celular, só em "modo desktop"). O pan só acontece quando o dedo passa
+  // do TAP_SLOP; abaixo disso é toque e o onClick do lote abre o card. `didDrag`
+  // persiste até o próximo pointerdown, então o onClick (que dispara DEPOIS do
+  // pointerup) sabe distinguir um toque de um arraste.
+  const TAP_SLOP = 8;
 
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -2459,9 +2440,8 @@ export default function AltoBellevuePlanView({
         return;
       }
       lastTapRef.current = { time: now, x: e.clientX, y: e.clientY };
-      clickTargetRef.current = e.target as Element;
       setIsDragging(true);
-      didDrag.current = false;
+      didDrag.current = false; // novo gesto começa como "tap"
       lastPos.current = { x: e.clientX, y: e.clientY };
       downPos.current = { x: e.clientX, y: e.clientY };
     }
@@ -2496,6 +2476,7 @@ export default function AltoBellevuePlanView({
       const pivotX = cur.x + (midClientX - rect.left) / rect.width * cur.w;
       const pivotY = cur.y + (midClientY - rect.top) / rect.height * cur.h;
 
+      didDrag.current = true; // pinça é gesto, não toque — não abre card
       setVb(prev => zoomViewBox(prev, factor, pivotX, pivotY));
       return;
     }
@@ -2505,14 +2486,10 @@ export default function AltoBellevuePlanView({
     // and would be stale on the first pointermove after pointerdown (React hasn't
     // re-rendered yet). pointerCache already guarantees we have an active pointer.
     //
-    // "Tap slop": medido a partir do pointerdown (não incremental). Um toque no
-    // celular sempre treme alguns px — com limiar incremental de 3px todo TAP virava
-    // "drag" e o card NUNCA abria no mobile. O dedo treme mais que o mouse, então o
-    // limiar do toque é maior. Enquanto dentro do slop, não consideramos drag nem
-    // movemos o mapa (assim o tap abre o card e não arrasta sem querer).
-    const slop = e.pointerType === 'touch' ? 12 : 4;
+    // "Tap slop": medido a partir do pointerdown. Enquanto dentro do slop é toque —
+    // não marcamos didDrag nem movemos o mapa, então o onClick do lote abre o card.
     const movedFromDown = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y);
-    if (movedFromDown >= slop) didDrag.current = true;
+    if (movedFromDown >= TAP_SLOP) didDrag.current = true;
 
     const dx = e.clientX - lastPos.current.x;
     const dy = e.clientY - lastPos.current.y;
@@ -2526,91 +2503,24 @@ export default function AltoBellevuePlanView({
     }));
   }, []);
 
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  // pointerup / leave / cancel: APENAS limpeza do estado do gesto. A SELEÇÃO é feita
+  // pelo onClick nativo dos elementos (lote/área/quadra) e o deselect pelo onClick do
+  // fundo do SVG — não despachamos toque aqui (era o sistema frágil que quebrava no
+  // celular). IMPORTANTE: NÃO resetar `didDrag` aqui — ele precisa sobreviver até o
+  // `click`, que dispara logo DEPOIS do pointerup, para o handler saber se houve pan.
+  // O reset acontece no próximo pointerdown.
+  const endGesture = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
-    if (pointerCache.current.size > 0) return;
-    setIsDragging(false);
-    const clickTarget = clickTargetRef.current;
-    clickTargetRef.current = null;
-    // Touch wobble override: a finger can drift ≤ 24px on a stationary tap (Android
-    // tremor). For mouse/pen the slop is only 4px — a 4–24px mouse drag is a real
-    // pan and must NOT also open a card, so only reset didDrag for touch pointers.
-    const displacement = Math.hypot(e.clientX - downPos.current.x, e.clientY - downPos.current.y);
-    const tapSlop = e.pointerType === 'touch' ? 24 : 4;
-    if (displacement <= tapSlop) didDrag.current = false;
-    if (!didDrag.current && clickTarget) {
-      const dispatched = dispatchTapFromTarget(clickTarget);
-      // Tap on empty terrain → dismiss any open card/amenity.
-      if (!dispatched) { setSelectedLot(null); setSelectedAmenity(null); }
-    }
-    didDrag.current = false;
-  }, [dispatchTapFromTarget]);
-
-  // Pointer left the container (or capture released) — cleanup only, no click dispatch.
-  const handlePointerLeave = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!pointerCache.current.has(e.pointerId)) return;
-    pointerCache.current.delete(e.pointerId);
-    if (pointerCache.current.size === 0) {
-      setIsDragging(false);
-      clickTargetRef.current = null;
-      didDrag.current = false;
-    }
+    if (pointerCache.current.size === 0) setIsDragging(false);
   }, []);
+  const handlePointerUp = endGesture;
+  const handlePointerLeave = endGesture;
+  const handlePointerCancel = endGesture;
 
-  // Browser cancelled the pointer (scroll, system gesture). iOS Safari can emit this
-  // instead of pointerup on a plain tap — so still resolve the tap (open the card).
-  // IMPORTANT: Android Chrome mobile fires pointercancel with clientX/clientY = 0,
-  // so we use lastPos (last reliable pointer coordinates from pointermove/pointerdown)
-  // instead of the event coordinates. Without this, displacement = ~400px and the
-  // displacement check always fails, so no card ever opens on Android mobile.
-  const handlePointerCancel = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    pointerCache.current.delete(e.pointerId);
-    if (pointerCache.current.size > 0) return;
-    setIsDragging(false);
-    const clickTarget = clickTargetRef.current;
-    clickTargetRef.current = null;
-    // Use lastPos instead of e.clientX/e.clientY — pointercancel often reports (0, 0).
-    const displacement = Math.hypot(
-      lastPos.current.x - downPos.current.x,
-      lastPos.current.y - downPos.current.y,
-    );
-    if (displacement <= 24 && clickTarget) {
-      didDrag.current = false; // override: small displacement = tap, not a drag
-      dispatchTapFromTarget(clickTarget);
-    }
-    didDrag.current = false;
-  }, [dispatchTapFromTarget]);
-
-  // Prevent Android Chrome (mobile mode) from stealing map touches for page scroll.
-  // When the browser intercepts a touch for scrolling it fires pointercancel (not
-  // pointerup), and that event carries clientX/Y = 0 — breaking the tap detection
-  // even after the lastPos fix. Calling preventDefault() on touchstart tells the
-  // browser "I own this touch", so pointerup always fires with correct coordinates.
-  //
-  // CRÍTICO (correção do "pisca-pisca" do card no celular): também precisamos do
-  // preventDefault sobre os LOTES/áreas/badges do SVG. Eles usam role="button" só
-  // por acessibilidade, mas o toque é resolvido pelo nosso sistema de pointer
-  // events (handlePointerUp → dispatchTapFromTarget), NUNCA por click nativo. Se
-  // não chamarmos preventDefault neles, o navegador emite a sequência sintética de
-  // compatibilidade (~300 ms depois): pointerdown/up "mouse" + mousedown/up + click,
-  // o chamado "ghost click". Esse ghost pointerup cai sobre o backdrop do card
-  // (fixed inset-0) que acabou de abrir e dispara onClose → o card fecha no mesmo
-  // instante em que abre. Por isso só pulamos controles HTML reais (<button>/<a>);
-  // os elementos SVG com role="button" SÃO interceptados (sem ghost, sem flicker).
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const onTouchStart = (e: TouchEvent) => {
-      const target = e.target as Element | null;
-      // Só pula controles HTML reais — cujo clique nativo precisamos preservar.
-      // Não usar [role="button"] aqui: ele casa com os <polygon>/<g> do SVG e
-      // reintroduz o ghost click que fecha o card instantaneamente.
-      if (target?.closest?.('button, a, input, textarea, select')) return;
-      if (e.cancelable) e.preventDefault();
-    };
-    el.addEventListener('touchstart', onTouchStart, { passive: false });
-    return () => el.removeEventListener('touchstart', onTouchStart);
-  }, []);
+  // NOTA: não há mais listener de `touchstart` com preventDefault. Ele suprimia o
+  // `click` de toque e foi a causa da regressão em que o card não abria no celular
+  // (só funcionava em "modo desktop"). O `touch-action: none` no SVG/container já
+  // impede a rolagem/zoom da página a partir do mapa, sem bloquear o tap.
 
   // Wheel zoom centered on cursor — deltaY > 0 = zoom out (widen viewBox), < 0 = zoom in
   useEffect(() => {
@@ -2653,7 +2563,15 @@ export default function AltoBellevuePlanView({
       setSelectedLot(lot);
     }
   }, [multiSelectMode, toggleCompare]);
-  handleLotClickRef.current = handleLotClick;
+
+  // Toque/clique no FUNDO do mapa (terreno vazio) → fecha card/área aberta. Os
+  // elementos de lote/área/quadra chamam stopPropagation, então este só dispara em
+  // área vazia. Ignora se houve pan (didDrag), para um arraste não fechar o card.
+  const handleBackgroundClick = useCallback(() => {
+    if (didDrag.current) return;
+    setSelectedLot(null);
+    setSelectedAmenity(null);
+  }, []);
 
   // Área comum clicada → abre painel (com mídia do backoffice, se houver) e fecha lote.
   const handleAmenityClick = useCallback((a: Amenity) => {
@@ -2662,7 +2580,6 @@ export default function AltoBellevuePlanView({
     const ov = overrideMap.get(a.id) ?? overrideMap.get(a.id.replace(/-\d+$/, ''));
     setSelectedAmenity(ov ? { ...a, ...ov, id: a.id, x: a.x, y: a.y } : a);
   }, [overrideMap]);
-  handleAmenityClickRef.current = handleAmenityClick;
 
   // "Ver no mapa" → centraliza e aproxima na área comum
   const locateAmenity = useCallback((a: { x: number; y: number }) => {
@@ -2787,7 +2704,6 @@ export default function AltoBellevuePlanView({
     setSelectedLot(null);
     focusQuadra(quadra);
   }, [focusQuadra]);
-  handleQuadraBadgeClickRef.current = handleQuadraBadgeClick;
 
   // Busca "A-12", "A12", "a 12" ou só "12" (dentro da quadra ativa).
   const runSearch = useCallback(() => {
@@ -3049,6 +2965,7 @@ export default function AltoBellevuePlanView({
             onLotClick={handleLotClick}
             onAmenityClick={handleAmenityClick}
             onQuadraClick={handleQuadraBadgeClick}
+            onBackgroundClick={handleBackgroundClick}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
