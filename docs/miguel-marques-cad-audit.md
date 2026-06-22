@@ -11,10 +11,29 @@
 
 1. **A geometria já é fiel ao CAD — não é "olhômetro".** As áreas dos polígonos em produção batem com os **rótulos de área impressos pelo próprio agrimensor no DXF** com erro **médio de 0,12 m²** (máx. 5,47 m²) sobre 1.254 lotes. A regra absoluta do briefing ("NÃO DESENHAR NO OLHÔMETRO") **já está atendida para a geometria**.
 2. **O defeito real é de IDENTIDADE, não de forma.** Existem **78 chaves `(quadra,lote)` duplicadas** (ex.: `B-18` + `B-18_2`) e um **cluster de quadras mal rotuladas** (B, C, D, E, F, K, L) onde o lote certo recebeu a **quadra errada**. Isso fere "cada lote tenha identificação correta" e quebra deep-link (`?lot=`), carrinho e seleção.
-3. **As camadas de contexto estão vazias.** `streets`, `perimeter`, `amenities`, `greenAreas` estão `[]` no JSON de produção, embora o DXF contenha **23 ruas** ("RUA PROJETADA 01–23"), **vegetação** (35 blocos em `L-PLNT`), **hachuras** (18) e a **área institucional de 7.762,11 m²**. É a lacuna de **paridade visual** com o Alto Bellevue.
+3. **Parte das camadas de contexto JÁ É RENDERIZADA** (ver §0.1 — corrigido após leitura do código de render). O **arquivo de lotes** (`miguel-marques-cad-lots.json`) tem `streets/perimeter/amenities/greenAreas = []`, **mas** um arquivo separado — `miguel-marques-cad-context.json` — fornece **`roads` (158 paths) + `perimeter` (2)** nas mesmas coords, **já desenhados** com terreno/relevo no `MiguelMarquesPlanView`. O que **realmente falta** no visual: **vegetação** (35 blocos `L-PLNT` no DXF), o **lago/água da Quadra Z** (hoje só badge "Beira-lago"; o código diz "sem lago sintéticos") e a **área institucional de 7.762,11 m²**.
 4. **Há confusão de fontes/dados** que precisa de decisão do dono do produto antes de codar (preço/quadra/status: CAD baked vs planilha comercial vs Supabase). Ver §8.
 
-> **Conclusão que muda o plano:** o Miguel Marques **não** precisa ser "redesenhado do zero". Precisa de (a) **reconciliação de identidade** lote↔quadra contra a planilha comercial, (b) **extração das camadas de contexto** do DXF e (c) **paridade visual/funcional** com o AB. O trabalho geométrico pesado já existe e é preciso.
+> **Conclusão que muda o plano:** o Miguel Marques **não** precisa ser "redesenhado do zero" — nem sequer precisa de "construir o mapa vetorial" (já existe, roteado e com ruas/perímetro/terreno/carrinho). Precisa de (a) **reconciliação de identidade** lote↔quadra contra a planilha comercial (o defeito mais grave), (b) **completar o visual** (vegetação + lago + institucional) e (c) **paridade funcional** com o AB (busca, comparar, a11y) + features novas (carrinho no AB, deep-link, apresentação, exportação). O trabalho geométrico pesado já existe e é preciso.
+
+---
+
+## 0.1. Estado JÁ implementado (verificado no código — corrige premissas do briefing)
+
+O briefing e auditorias anteriores (2026-06-20) descrevem um estado que **já evoluiu**. Verificado em código nesta data:
+
+| Item | Estado | Evidência |
+|---|---|---|
+| Rota `/imoveis/loteamento-miguel-marques` usa o **mapa vetorial premium** (não o JPG) | ✅ **FEITO** | `SubdivisionLotMap.tsx:1235-1306` (early-return p/ `MM_DEV_ID` → `<MiguelMarquesPlanView>`); o JPG (`SubdivisionPlanView`) virou caminho morto p/ o MM |
+| Status vivo do Supabase sobreposto no mapa do MM | ✅ FEITO | `SubdivisionLotMap.tsx:1238-1244` (`MM_STATUS_MAP`) |
+| **Ruas + perímetro** desenhados | ✅ FEITO (derivados: "envelope − lotes") | `miguel-marques-cad-context.json` (`roads`=158, `perimeter`=2) + `MiguelMarquesPlanView.tsx:819-845` |
+| **Terreno / relevo / textura** | ✅ FEITO | `MiguelMarquesPlanView.tsx:796-817` |
+| **Carrinho de lotes** (multi-lote + condições + WhatsApp) | ✅ FEITO no MM | `MiguelMarquesPlanView.tsx:136-166` (`CartPanel`) |
+| **Vegetação / lago (Quadra Z) / institucional** desenhados | ❌ falta | comentário `:815` "sem lago sintéticos"; sem camada de árvores |
+| Busca por lote · Comparar · a11y nos polígonos (MM) | ❌ falta | (AB tem; MM não) |
+| Carrinho no **Alto Bellevue** · deep-link `?lot=` · modo apresentação · export PDF/link | ❌ falta | features novas do briefing |
+
+➡️ Ou seja: **ruas, perímetro, terreno, roteamento e carrinho do MM já existem.** Este documento, na §5.2/§7, foi corrigido para não superestimar a lacuna visual.
 
 ---
 
@@ -103,18 +122,19 @@ DXF `AC1018`, modelspace, **12 layers**: `0`, `A-ANNO-DIMS`, `A-ANNO-DIMS-1100`,
 - **0 lotes sem área** e **0 sem polígono**.
 - ✅ Nenhuma geometria inválida ou polígono incompleto pendente.
 
-### 5.2 Camadas de contexto VAZIAS (lacuna de paridade — origem do "parece planta")
-No `miguel-marques-cad-lots.json` de produção:
+### 5.2 Camadas de contexto — o que falta de fato (corrigido)
+Atenção: os arrays `streets/perimeter/amenities/greenAreas` estão `[]` **no arquivo de lotes** (`miguel-marques-cad-lots.json`), **porém** o render usa um arquivo **separado** (`miguel-marques-cad-context.json`) e já desenha ruas+perímetro+terreno (ver §0.1).
 
-| Camada | Estado | Existe no DXF? | Ação |
+| Camada | Render hoje | Existe no DXF? | Ação |
 |---|---|---|---|
-| `streets` | `[]` | **Sim** — 23 vias (linhas + rótulos) | extrair do DXF |
-| `perimeter` | `[]` | **Sim** — bordas externas (linhas) | extrair do DXF |
-| `amenities` | `[]` | **Sim** — institucional 7.762 m² + lago (Quadra Z) | extrair (HATCH/linhas) |
-| `greenAreas` | `[]` | **Sim** — hachuras + vegetação (`L-PLNT`, 35 inserts) | extrair |
-| `streetLabels` | **24** (presente) | Sim | ok |
+| Ruas (`roads`) | ✅ **desenhada** (158 paths, derivados "envelope − lotes") | Sim — 23 vias + linhas | opcional: rotular as 23 "RUA PROJETADA" sobre as vias |
+| Perímetro | ✅ **desenhado** (2 polígonos, dourado tracejado) | Sim | ok |
+| Terreno/relevo | ✅ **desenhado** (gradientes) | n/a | ok |
+| **Vegetação** | ❌ **falta** | Sim — `L-PLNT` (35 inserts) | extrair blocos → árvores estilizadas |
+| **Lago / água (Quadra Z)** | ❌ **falta** (só badge no card) | Sim — HATCH/linhas | extrair polígono de água → renderizar azul |
+| **Institucional (7.762 m²)** | ❌ **falta** | Sim — 1 hachura/rótulo | extrair → amenity institucional |
 
-➡️ Essa é a causa direta de o MM "parecer uma planta/PDF": **os lotes são vetoriais e corretos, mas sem ruas/perímetro/vegetação/lago desenhados** o mapa não transmite o acabamento premium do AB.
+➡️ O MM **já tem** lotes vetoriais, ruas, perímetro e terreno. O que ainda o deixa "menos premium" que o AB é a ausência de **vegetação, lago e institucional** — além das **features** de paridade (busca/comparar/a11y) e novas (carrinho no AB, deep-link, apresentação, export).
 
 ### 5.3 Área institucional órfã
 O polígono de **7.762,11 m²** (institucional, confirmado no PDF) aparece como **1 rótulo de área no DXF** mas **não** é capturado como `amenity`/`greenArea` no JSON — apenas corretamente **excluído** dos lotes vendáveis. Deve ser **preservado como amenity institucional**, não descartado.
@@ -162,12 +182,14 @@ Reconciliar **geometria CAD ↔ planilha comercial** usando a **planilha "DISPON
 |---|---|---|---|
 | Nº de lotes vendáveis | ~1.254 (rótulos) | 1.254 | ✅ converge |
 | Quadras | A–V, X, Z (24) | 24 | ✅ converge |
-| Ruas | RUA PROJETADA 01–23 | 23 no DXF / **0 no JSON** | ⚠️ extrair p/ o JSON |
-| Área institucional | **7.762,11 m²** | 1 rótulo no DXF / **ausente no JSON** | ⚠️ capturar como amenity |
+| Ruas | RUA PROJETADA 01–23 | 23 no DXF / **renderizadas** via `context.json` (derivadas) | ✅ desenhadas (falta só rotular nomes) |
+| Perímetro | borda externa | **renderizado** (context.json) | ✅ |
+| Área institucional | **7.762,11 m²** | 1 rótulo no DXF / **não desenhada** | ⚠️ capturar como amenity |
+| Lago / Quadra Z | beira-lago | **não desenhado** (só badge) | ⚠️ extrair água |
 | Área total da gleba | **40,7469 ha** | n/d no JSON | registrar como metadado |
 | Lote padrão | 8,00 m × ~20 m ≈ 160 m² | bucket dominante 150–174 m² | ✅ converge |
 
-Não há **conflito** PDF×CAD nas geometrias; há **subextração** (ruas/institucional/áreas verdes presentes no CAD mas não levados ao JSON).
+Não há **conflito** PDF×CAD nas geometrias. Ruas/perímetro/terreno já são desenhados; falta **subextração** de **vegetação, lago e institucional** (presentes no CAD, não levados ao render).
 
 ---
 
@@ -183,7 +205,7 @@ Há **três** artefatos de dados do MM, com papéis sobrepostos:
 
 Decisões necessárias **antes** de implementar (impactam carrinho, comparação, deep-link, contadores):
 
-1. **Fonte de verdade COMERCIAL (preço/status):** planilha "Mi Gestão" (XLSX) vs Supabase `subdivision_lots`? Hoje o JSON tem preço **baked** (15.511–46.716) que **diverge** da planilha (17.861–74.745) → preços do mapa possivelmente **desatualizados**.
+1. **Fonte de verdade COMERCIAL (preço/status): ✅ DECIDIDO (2026-06-22) — importar a planilha "Mi Gestão" (XLSX) para o Supabase**, que passa a ser a fonte única viva; o mapa lê status/preço de lá. Motivo da decisão: o JSON tem preço **baked** (15.511–46.716) que **diverge** da planilha (17.861–74.745) → preços do mapa estavam **desatualizados**.
 2. **Geometria canônica:** consolidar em **um** arquivo (recomendo o de **polígonos reais**, após reconciliar identidade) e aposentar/realinhar os outros dois caminhos.
 3. **Taxonomia de status** única AB+MM (o motor `engine.ts` já define o canônico EN; o JSON usa PT). 
 
@@ -199,10 +221,11 @@ Decisões necessárias **antes** de implementar (impactam carrinho, comparação
 [x] 0 polígonos inválidos / incompletos
 [ ] Identidade (quadra,lote) ÚNICA                                     — ✗ 78 duplicadas (_2)
 [ ] Quadra de cada lote = planilha comercial                           — ✗ cluster B,C,D,E,F,K,L
-[ ] Ruas extraídas do CAD                                              — ✗ 23 no DXF / 0 no JSON
-[ ] Perímetro extraído do CAD                                          — ✗
-[ ] Área institucional / lago / áreas verdes capturadas                — ✗
-[ ] Preço/status com fonte única definida                             — ✗ (decisão pendente, §8)
+[x] Ruas desenhadas (derivadas, alinhadas aos lotes)                   — ✓ 158 paths (context.json)
+[x] Perímetro desenhado                                                — ✓ 2 polígonos
+[x] Terreno/relevo                                                     — ✓
+[ ] Vegetação / lago (Quadra Z) / institucional desenhados             — ✗
+[ ] Preço/status com fonte única definida                             — ✗ (decisão: importar XLSX→Supabase, §8)
 ```
 
 ---
@@ -215,14 +238,17 @@ Decisões necessárias **antes** de implementar (impactam carrinho, comparação
 1. Reconciliar `(quadra,lote)` da geometria contra a planilha comercial (casar por quadra+ordem espacial+área); eliminar os 78 `_2`; marcar `pendente` o que não casar com segurança. *Pipeline:* `scripts/cad/build_miguel_marques.py` + nova etapa de match com o XLSX.
    - **Aceite:** 0 ids duplicados; contagem por quadra = planilha (±0); deep-link `?lot=` resolve 1 lote.
 
-**P1 — Camadas de contexto (corrige "parece planta"; paridade visual com AB)**
-2. Extrair `streets` (23), `perimeter`, `amenities` (institucional 7.762 m², lago Quadra Z) e `greenAreas`/vegetação (`L-PLNT`) do DXF para o JSON. *Pipeline:* estender `scripts/cad/mm/extract.mjs`.
-3. Renderizar essas camadas no motor (terreno/relevo/vegetação/ruas estilo AB).
-   - **Aceite:** mapa do MM com ruas, perímetro, lago e vegetação — leitura do empreendimento em < 10 s.
+**P1 — Completar o visual (ruas/perímetro/terreno JÁ feitos) + paridade funcional**
+2. Extrair do DXF e renderizar **vegetação** (`L-PLNT`, 35 inserts → árvores), **lago/água da Quadra Z** (HATCH/linhas → polígono azul) e **institucional 7.762 m²** (amenity). *Pipeline:* estender `scripts/cad/mm/extract.mjs`; alinhar via transformada afim empírica (lotes DXF↔JSON).
+3. Paridade funcional com o AB no MM: **busca por lote**, **comparar (até 3)**, **a11y** nos polígonos (role/aria/teclado), `role="dialog"`+Escape no card.
+   - **Aceite:** mapa do MM com vegetação + lago + institucional; busca/comparar/teclado funcionando.
+
+**P1b — Features novas do briefing (nos dois empreendimentos)**
+4. **Carrinho no Alto Bellevue** (espelhar o `CartPanel` do MM); **deep-link `?lot=`** (centraliza+destaca+abre card); **modo apresentação**; **export PDF + link compartilhável** (WhatsApp já existe no MM).
 
 **P2 — Fonte única e metadados**
-4. Definir e implementar a fonte comercial única (§8); consolidar num único JSON canônico; corrigir `engine.ts:205` (`mapJsonUrl` aponta p/ arquivo inexistente); registrar metadados oficiais (40,7469 ha, institucional 7.762 m²).
-   - **Aceite:** hero/SEO/contadores/mapa exibem o **mesmo** número; preço/status de uma só fonte.
+5. **Decisão tomada (§8): importar a planilha "Mi Gestão" (XLSX) → Supabase**, que vira a fonte única viva (status/preço); o mapa lê de lá. Consolidar num único JSON canônico de geometria; corrigir `engine.ts:205` (`mapJsonUrl` aponta p/ `/maps/miguel-marques-lots.json` inexistente); registrar metadados oficiais (40,7469 ha, institucional 7.762 m²).
+   - **Aceite:** hero/SEO/contadores/mapa exibem o **mesmo** número; preço/status de uma só fonte (Supabase).
 
 ---
 

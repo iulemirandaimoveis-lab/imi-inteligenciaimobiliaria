@@ -11,6 +11,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "validate:lots": "node scripts/validate-lots.mjs",
+    "validate:lots:mm": "node scripts/validate-mm-lots.mjs",
     "deploy": "bash deploy.sh",
     "deploy:prod": "bash deploy.sh",
     "ai:map": "npx sigmap",
