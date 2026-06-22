@@ -900,7 +900,10 @@ const MapInner = memo(function MapInner({
                   role="button"
                   tabIndex={0}
                   aria-label={`Área comum: ${g.label}`}
-                  onClick={(e) => { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: 'tree', color: '#66BB6A', x: g.x, y: g.y }); }}
+                  data-green-area-id={g.id}
+                  data-green-area-label={g.label}
+                  data-green-area-x={g.x}
+                  data-green-area-y={g.y}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onAmenityClick({ id: 'area-verde', label: g.label, icon: 'tree', color: '#66BB6A', x: g.x, y: g.y }); } }}
                 >
                   <circle cx={g.x} cy={g.y} r={hit} fill="transparent" />
@@ -1284,11 +1287,6 @@ function LotBottomSheet({
   const isCorner = lot.special_type === 'ESQUINA' || dbLot?.special_type === 'ESQUINA';
   const pricePerM2 = lot.price && lot.area_m2 ? (lot.price as number) / (lot.area_m2 as number) : null;
   const closeRef = useRef<HTMLButtonElement>(null);
-  // Guard against Android's compatibility mouse pointerup events (fired ~1-5 ms after
-  // the touch pointerup that opened this card). Those events land on the backdrop because
-  // React's microtask has already committed it to the DOM, causing the card to close
-  // immediately. Any real tap to dismiss takes > 350 ms after the card appears.
-  const mountedAtRef = useRef(Date.now());
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1331,7 +1329,7 @@ function LotBottomSheet({
         transition={{ duration: 0.18 }}
         className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }}
-        onPointerUp={(e) => { e.stopPropagation(); if (Date.now() - mountedAtRef.current >= 350) onClose(); }}
+        onClick={onClose}
       />
 
       <motion.div
@@ -1347,7 +1345,6 @@ function LotBottomSheet({
           paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))',
         }}
         onClick={(e) => e.stopPropagation()}
-        onPointerUp={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label={`Detalhes do lote ${lot.lot_number}, quadra ${lot.quadra}`}
@@ -1654,8 +1651,6 @@ function AmenityBottomSheet({
 }) {
   const rawInfo = getAmenityInfo(amenity);
   const info = fallbackTour360 && !rawInfo.tour360 ? { ...rawInfo, tour360: fallbackTour360 } : rawInfo;
-  // Same ghost-click / compatibility-event guard as LotBottomSheet — see comment there.
-  const mountedAtRef = useRef(Date.now());
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -1677,7 +1672,7 @@ function AmenityBottomSheet({
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        onPointerUp={(e) => { e.stopPropagation(); if (Date.now() - mountedAtRef.current >= 350) onClose(); }}
+        onClick={onClose}
         className="fixed inset-0 z-[9998] lg:pointer-events-none"
         style={{ background: 'rgba(8,21,36,0.55)', backdropFilter: 'blur(2px)' }}
       />
@@ -1693,7 +1688,6 @@ function AmenityBottomSheet({
           paddingBottom: 'env(safe-area-inset-bottom, 12px)',
         }}
         onClick={(e) => e.stopPropagation()}
-        onPointerUp={(e) => e.stopPropagation()}
         role="dialog"
         aria-label={`Detalhes da área ${info.title}`}
       >
@@ -2396,6 +2390,14 @@ export default function AltoBellevuePlanView({
         if (amenity) handleAmenityClickRef.current?.(amenity);
         return true;
       }
+      const greenAreaId = el.getAttribute?.('data-green-area-id');
+      if (greenAreaId) {
+        const label = el.getAttribute('data-green-area-label') ?? '';
+        const x = parseFloat(el.getAttribute('data-green-area-x') ?? '0');
+        const y = parseFloat(el.getAttribute('data-green-area-y') ?? '0');
+        handleAmenityClickRef.current?.({ id: 'area-verde', label, icon: 'tree', color: '#66BB6A', x, y });
+        return true;
+      }
       const quadraBadge = el.getAttribute?.('data-quadra-badge');
       if (quadraBadge) {
         handleQuadraBadgeClickRef.current?.(quadraBadge);
@@ -2566,7 +2568,13 @@ export default function AltoBellevuePlanView({
     const el = containerRef.current;
     if (!el) return;
     const onTouchStart = (e: TouchEvent) => {
-      if ((e.target as Element)?.closest?.('button, a, [role="button"]')) return;
+      // Only skip preventDefault for native HTML interactive elements (button, a).
+      // SVG elements with role="button" (lots, green areas) must NOT be excluded —
+      // their clicks are handled by our pointer event system (dispatchTapFromTarget),
+      // not by native click events. Calling preventDefault() here prevents the browser
+      // from synthesising a ghost "click" event after touch, which was causing the
+      // card to open and immediately close (ghost click hit the backdrop's onClick).
+      if ((e.target as Element)?.closest?.('button, a, input, select, textarea')) return;
       if (e.cancelable) e.preventDefault();
     };
     el.addEventListener('touchstart', onTouchStart, { passive: false });
