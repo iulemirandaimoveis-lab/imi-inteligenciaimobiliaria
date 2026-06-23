@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowLeft, Waves, Trees, Zap } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
-import { ALL_LOTS } from './data/lotsData'
+import { MIGUEL_MARQUES_STATS } from './data/cadStats'
 
 const MasterplanSection = dynamic(
   () => import('./components/MasterplanSection'),
@@ -12,8 +12,8 @@ const MasterplanSection = dynamic(
 
 const WHATSAPP = '5581986141487'
 
-const LOTS_DISPONIVEIS = ALL_LOTS.filter(l => l.status === 'disponivel').length
-const LOTS_TOTAL = ALL_LOTS.length
+// Fonte única de verdade: derivada da geometria CAD real (mesma do mapa).
+const { total: LOTS_TOTAL, disponivel: LOTS_DISPONIVEIS, quadras: QUADRAS_TOTAL } = MIGUEL_MARQUES_STATS
 
 export const metadata: Metadata = {
   title: 'Loteamento Miguel Marques | IMI — Inteligência Imobiliária',
@@ -128,8 +128,8 @@ export default async function MiguelMarquesPage({
           {/* Stats */}
           <div className="grid grid-cols-3 gap-0 max-w-md">
             {[
-              { n: '800+', label: 'Lotes' },
-              { n: '23', label: 'Quadras' },
+              { n: LOTS_TOTAL.toLocaleString('pt-BR'), label: 'Lotes' },
+              { n: String(QUADRAS_TOTAL), label: 'Quadras' },
               { n: 'Lago', label: 'Natural' },
             ].map((stat, i) => (
               <div
