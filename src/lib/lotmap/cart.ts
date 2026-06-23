@@ -53,13 +53,15 @@ export interface RawLotLike {
   lote?: string | number | null;
   area_m2?: number | null;
   metragem?: number | null;
+  area?: number | null;
   price?: number | null;
   valor?: number | null;
   status?: string;
 }
 
-/** Converte um lote do AB (`area_m2`/`lot_number`/`price`) ou do MM
- *  (`metragem`/`lote`/`valor`) para o modelo neutro do carrinho. */
+/** Converte um lote do AB (`area_m2`/`lot_number`/`price`), do MM
+ *  (`metragem`/`lote`/`valor`) ou dos JSONs de mapa (`area`) para o modelo
+ *  neutro do carrinho. */
 export function toCartLot(lot: RawLotLike, dev: { slug: string; name?: string }): CartLot {
   return {
     id: lot.id,
@@ -67,7 +69,7 @@ export function toCartLot(lot: RawLotLike, dev: { slug: string; name?: string })
     developmentName: dev.name,
     block: lot.quadra,
     lot: String(lot.lot_number ?? lot.lote ?? ''),
-    areaM2: lot.area_m2 ?? lot.metragem ?? 0,
+    areaM2: lot.area_m2 ?? lot.metragem ?? lot.area ?? 0,
     price: lot.price ?? lot.valor ?? 0,
     status: lot.status,
   };
