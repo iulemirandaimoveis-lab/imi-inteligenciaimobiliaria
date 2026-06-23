@@ -54,7 +54,7 @@ export interface Amenity {
   id: string; label: string; icon: string; color: string; x: number; y: number;
   // Conteúdo editorial/mídia opcional — editável pelo backoffice (sobrepõe os defaults da UI).
   title?: string; subtitle?: string; description?: string; fn?: string;
-  photos?: string[]; video?: string; tour360?: string;
+  photos?: string[]; video?: string; videos?: string[]; tour360?: string;
 }
 /** Área verde do CAD (posição oficial do rótulo "ÁREA VERDE NN"). */
 export interface GreenArea { id: string; label: string; x: number; y: number; }

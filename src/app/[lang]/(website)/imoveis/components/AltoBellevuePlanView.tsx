@@ -165,7 +165,7 @@ const AB_AMEN_IMG = '/images/empreendimentos/alto-bellevue/amenities';
 const AB_TOUR_360 = 'https://kuula.co/share/collection/7KKb9?logo=1&info=0&logosize=68&fs=1&vr=1&zoom=1&initload=0&thumbs=0&margin=20&alpha=0.86&inst=pt';
 interface AmenityInfo {
   title: string; subtitle: string; description: string; fn: string;
-  photos?: string[]; video?: string; tour360?: string;
+  photos?: string[]; video?: string; videos?: string[]; tour360?: string;
   /** Lista de equipamentos da área (ex.: piscina, academia, capela) — do PDF aprovado. */
   features?: string[];
 }
@@ -234,6 +234,7 @@ const getAmenityInfo = (a: AmenityOverride): AmenityInfo => {
     fn: a.fn ?? base.fn,
     photos: a.photos ?? base.photos,
     video: a.video ?? base.video,
+    videos: a.videos ?? base.videos,
     tour360: a.tour360 ?? base.tour360,
     features: a.features ?? base.features,
   };
@@ -1793,7 +1794,7 @@ function AmenityBottomSheet({
           </div>
         )}
 
-        {/* Vídeo da área (se houver) */}
+        {/* Vídeo embed da área (YouTube/Vimeo — se houver) */}
         {info.video && (
           <div className="px-5 pt-2">
             <div style={{ position: 'relative', paddingTop: '56.25%', borderRadius: 14, overflow: 'hidden', background: '#000' }}>
@@ -1805,6 +1806,22 @@ function AmenityBottomSheet({
                 style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
               />
             </div>
+          </div>
+        )}
+
+        {/* Vídeos enviados pelo backoffice (uploads MP4 — developments.lot_map_amenities.videos) */}
+        {info.videos && info.videos.length > 0 && (
+          <div className="px-5 pt-2" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {info.videos.map((src, i) => (
+              <video
+                key={i}
+                src={src}
+                controls
+                preload="metadata"
+                playsInline
+                style={{ width: '100%', borderRadius: 14, background: '#000', display: 'block' }}
+              />
+            ))}
           </div>
         )}
 
