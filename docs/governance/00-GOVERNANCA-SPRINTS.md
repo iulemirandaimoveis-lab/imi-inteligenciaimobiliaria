@@ -71,7 +71,7 @@ O DXF **não contém polígonos de lote fechados** — os lotes aparecem como **
 | Sprint | Nome | Objetivo | Toca produção? | Status |
 |---|---|---|---|---|
 | **0** | Auditoria | Entender exatamente o que existe hoje | ❌ Não | ✅ Concluída |
-| **1** | Precisão Cartográfica | Mapa = planta aprovada (DWG→DXF→PDF) | ⚠️ Sob flag | ⏳ Próxima |
+| **1** | Precisão Cartográfica | Mapa = planta aprovada (DWG→DXF→PDF) | ⚠️ Sob flag | 🟡 Em andamento ([04](./04-SPRINT-1-PRECISAO-CARTOGRAFICA.md)) |
 | **2** | Motor de Mapa | Zoom/pan/seleção/filtros/busca/foco | ⚠️ Sob flag | ⬜ |
 | **3** | Experiência GRAFF | Visual aéreo, sombras, profundidade, hierarquia | ⚠️ Sob flag | ⬜ |
 | **4** | MI Twin | Camadas técnica/comercial/render/satélite/drone | ⚠️ Sob flag | ⬜ |

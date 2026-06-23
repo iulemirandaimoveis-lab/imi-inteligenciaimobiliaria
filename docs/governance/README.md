@@ -32,6 +32,7 @@ dos superiores. Jamais o contrário.**
 | 01 | [`01-INVENTARIO-E-SNAPSHOT.md`](./01-INVENTARIO-E-SNAPSHOT.md) | Inventário de funcionalidades (existentes / aprovadas / críticas / produção) + snapshot técnico congelado |
 | 02 | [`02-CHECKLIST-REGRESSAO.md`](./02-CHECKLIST-REGRESSAO.md) | Checklist de regressão obrigatório antes de qualquer merge |
 | 03 | [`03-SPRINT-0-AUDITORIA.md`](./03-SPRINT-0-AUDITORIA.md) | Auditoria Sprint 0: arquitetura, AB × MM, pontos de regressão, oportunidades GRAFF |
+| 04 | [`04-SPRINT-1-PRECISAO-CARTOGRAFICA.md`](./04-SPRINT-1-PRECISAO-CARTOGRAFICA.md) | Sprint 1: verificação do DXF, fonte única de contagem, unificação de rotas, P0 dos IDs duplicados |
 
 ## Relação com a documentação existente
 
