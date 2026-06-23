@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { MapPin, ArrowRight, Building2, TrendingUp, Shield, Users } from 'lucide-react'
 
+import { MIGUEL_MARQUES_STATS } from './miguel-marques/data/cadStats'
+
 export const metadata: Metadata = {
     title: 'Projetos & Empreendimentos | IMI — Inteligência Imobiliária',
     description: 'Portfólio de empreendimentos imobiliários de alto padrão no Brasil. Reserva Imperial, Ocean Blue e outros desenvolvimentos para investidores institucionais.',
@@ -10,6 +12,12 @@ export const metadata: Metadata = {
         description: 'Desenvolvimentos imobiliários estruturados para investidores institucionais e famílias com visão de longo prazo.',
     },
 }
+
+// ── Fonte única de verdade (mesma geometria CAD que o mapa renderiza) ──────────
+// Evita a divergência histórica entre o texto institucional ("mais de 800 lotes")
+// e o mapa interativo (~1254). Ver projetos/miguel-marques/data/cadStats.ts.
+const MM_TOTAL = MIGUEL_MARQUES_STATS.total
+const MM_DISPONIVEIS_PCT = Math.round((MIGUEL_MARQUES_STATS.disponivel / MIGUEL_MARQUES_STATS.total) * 100)
 
 // ── Static data ────────────────────────────────────────────────
 const PROJETOS = [
@@ -72,14 +80,14 @@ const PROJETOS = [
         mercado: 'Brasil',
         destaque: false,
         vgv: 'R$ 35M',
-        unidades: '853 lotes',
+        unidades: `${MM_TOTAL.toLocaleString('pt-BR')} lotes`,
         area: '180.000 m²',
-        conceito: 'Loteamento residencial de alto padrão com mais de 800 lotes, lago natural, infraestrutura completa e mapa interativo de disponibilidade.',
+        conceito: `Loteamento residencial de alto padrão com ${MM_TOTAL.toLocaleString('pt-BR')} lotes, lago natural, infraestrutura completa e mapa interativo de disponibilidade.`,
         diferenciais: [
             'Mapa interativo com disponibilidade em tempo real',
             'Lotes frente ao lago — Quadra Z premium',
             'Infraestrutura completa: água, esgoto, energia',
-            '54% dos lotes ainda disponíveis para aquisição',
+            `${MM_DISPONIVEIS_PCT}% dos lotes ainda disponíveis para aquisição`,
         ],
         cor: 'from-[#1A2B1A] to-[#2A3D2A]',
         acento: '#7EA87A',
