@@ -86,11 +86,11 @@ export default function Footer() {
                     <div>
                         <div style={{ marginBottom: 20 }}>
                             <Image
-                                src="/iule-miranda-badge.png"
+                                src="/iule-miranda-badge-v2.png"
                                 alt="Brasão profissional Iule Miranda"
                                 width={180}
                                 height={180}
-                                style={{ width: 'clamp(88px, 12vw, 132px)', height: 'auto' }}
+                                style={{ width: 'clamp(88px, 12vw, 132px)', height: 'auto', mixBlendMode: 'lighten' }}
                             />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>

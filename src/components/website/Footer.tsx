@@ -78,11 +78,12 @@ export default function Footer({ lang, settings }: FooterProps) {
                     >
                         <div className="mb-6">
                             <Image
-                                src="/brasao-creci-iule1.png"
+                                src="/iule-miranda-badge-v2.png"
                                 alt="Brasão Iule Miranda"
                                 width={140}
                                 height={140}
-                                className="w-[88px] sm:w-[104px] lg:w-[120px] h-auto rounded-xl border border-[#C8A44A]/25 bg-white/5"
+                                className="w-[88px] sm:w-[104px] lg:w-[120px] h-auto"
+                                style={{ mixBlendMode: 'lighten' }}
                                 priority
                             />
                         </div>
