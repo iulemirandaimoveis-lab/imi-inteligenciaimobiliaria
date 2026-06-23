@@ -221,5 +221,4 @@ apontar a produção ao componente homologado, mantendo rollback imediato.
 > **Próximo passo sugerido (requer seu aval):** iniciar o **Sprint 0 (Isolamento)** — criar o
 > namespace de componentes de homologação para que toda a evolução do Digital Twin ocorra sem
 > qualquer risco para a página comercial de produção. Nada será implementado até sua aprovação.
-</content>
 </invoke>
