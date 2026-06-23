@@ -2,6 +2,15 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, Shield, Sparkles, CreditCard } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { isDigitalTwinEnabled } from '@/lib/digital-twin/feature-flag'
+
+// Experiência Digital Twin (namespace ISOLADO de homologação). Só renderiza quando
+// a feature flag NEXT_PUBLIC_ALTO_BELLEVUE_DIGITAL_TWIN === 'true'. Caso contrário,
+// a rota mantém EXATAMENTE o conteúdo legado abaixo (zero efeito colateral).
+const DigitalTwinExperience = dynamic(
+  () => import('@/components/digital-twin/DigitalTwinExperience'),
+  { ssr: false },
+)
 
 const SubdivisionLotMap = dynamic(
   () => import('../../imoveis/components/SubdivisionLotMap'),
@@ -49,6 +58,12 @@ export default async function AltoBellevuePage({
   params: Promise<{ lang: string }>
 }) {
   const { lang } = await params
+
+  // Sprint 0 — Isolamento: quando a flag está ativa, a homologação é servida
+  // EXCLUSIVAMENTE por componentes do namespace digital-twin.
+  if (isDigitalTwinEnabled()) {
+    return <DigitalTwinExperience lang={lang} />
+  }
 
   return (
     <main className="bg-[#F5F0EA]">
