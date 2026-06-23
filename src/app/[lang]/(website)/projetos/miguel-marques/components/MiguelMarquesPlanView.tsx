@@ -6,9 +6,11 @@ import React, {
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle,
-  ShoppingCart, Trash2, Maximize2, Minimize2,
+  ShoppingCart, Trash2, Maximize2, Minimize2, Link2, Check,
 } from 'lucide-react'
 import { type Lot } from '../data/lotsData'
+import { useLotCart } from '@/hooks/useLotCart'
+import { buildCartShareUrl } from '@/lib/lotmap/cart'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -143,6 +145,7 @@ interface CartPanelProps {
 
 const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanelProps) {
   const [payIdx, setPayIdx] = useState(0)
+  const [copied, setCopied] = useState(false)
   const totalArea = cart.reduce((s, l) => s + l.metragem, 0)
   const totalPrice = cart.reduce((s, l) => s + l.valor, 0)
 
@@ -239,7 +242,7 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
             </div>
           </div>
 
-          <div className="p-3 pt-0">
+          <div className="p-3 pt-0 space-y-2">
             <button
               onClick={sendWhatsApp}
               className="w-full active:scale-[0.98] text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-sm transition-all"
@@ -247,6 +250,25 @@ const CartPanel = memo(function CartPanel({ cart, onRemove, onClear }: CartPanel
             >
               <MessageCircle size={15} />
               Enviar Proposta via WhatsApp
+            </button>
+            <button
+              onClick={() => {
+                try {
+                  navigator.clipboard.writeText(
+                    buildCartShareUrl(typeof window !== 'undefined' ? window.location.origin : '', {
+                      d: 'miguel-marques',
+                      ids: cart.map(l => l.id),
+                    }),
+                  )
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 1800)
+                } catch { /* clipboard indisponível */ }
+              }}
+              className="w-full active:scale-[0.98] font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-sm transition-all"
+              style={{ background: '#fff', color: NAVY, border: '1.5px solid rgba(184,179,168,0.5)' }}
+            >
+              {copied ? <Check size={15} style={{ color: '#16A34A' }} /> : <Link2 size={15} />}
+              {copied ? 'Link copiado' : 'Copiar link da seleção'}
             </button>
           </div>
         </>
@@ -459,7 +481,8 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
   // UI state
   const [selectedLot, setSelectedLot] = useState<Lot | null>(null)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const [cart, setCart] = useState<Lot[]>([])
+  // Carrinho via hook compartilhado (persiste em localStorage por empreendimento).
+  const { items: cart, add: addLot, remove: removeLot, clear: clearCart } = useLotCart<Lot>('miguel-marques')
   const [showCart, setShowCart] = useState(false)
   const [activeStatus, setActiveStatus] = useState('ALL')
   const [activeQuadra, setActiveQuadra] = useState('ALL')
@@ -645,13 +668,13 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     }
   }, [lotsById])
 
-  // Cart helpers
+  // Cart helpers (estado/persistência no hook useLotCart)
   const cartIds = useMemo(() => new Set(cart.map(l => l.id)), [cart])
   const addToCart = useCallback((lot: Lot) => {
-    setCart(c => cartIds.has(lot.id) ? c : [...c, lot])
+    addLot(lot)
     setShowCart(true)
-  }, [cartIds])
-  const removeFromCart = useCallback((id: string) => setCart(c => c.filter(l => l.id !== id)), [])
+  }, [addLot])
+  const removeFromCart = useCallback((id: string) => removeLot(id), [removeLot])
 
   const showLotNumbers = transform.scale >= 3
 
@@ -1041,7 +1064,7 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                 </button>
               </div>
               <div style={{ height: 'calc(100% - 49px)', overflow: 'hidden' }}>
-                <CartPanel cart={cart} onRemove={removeFromCart} onClear={() => setCart([])} />
+                <CartPanel cart={cart} onRemove={removeFromCart} onClear={clearCart} />
               </div>
             </motion.div>
           )}
@@ -1132,7 +1155,7 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                 </button>
               </div>
               <div className="flex-1 overflow-y-auto min-h-0">
-                <CartPanel cart={cart} onRemove={removeFromCart} onClear={() => setCart([])} />
+                <CartPanel cart={cart} onRemove={removeFromCart} onClear={clearCart} />
               </div>
             </motion.div>
           </>

@@ -54,6 +54,14 @@ describe('toCartLot', () => {
     expect(c).toMatchObject({ id: 'Z-9', developmentSlug: 'miguel-marques', block: 'Z', lot: '9', areaM2: 312.5, price: 61210 });
   });
 
+  it('mapeia lote dos JSONs de mapa (campo `area`)', () => {
+    const c = toCartLot(
+      { id: 'A-01', quadra: 'A', lote: '01', area: 356, price: 233529, status: 'negociacao' },
+      { slug: 'alto-bellevue', name: 'Alto Bellevue' },
+    );
+    expect(c).toMatchObject({ id: 'A-01', block: 'A', lot: '01', areaM2: 356, price: 233529 });
+  });
+
   it('campos ausentes viram defaults seguros', () => {
     const c = toCartLot({ id: 'X-1', quadra: 'X' }, { slug: 'miguel-marques' });
     expect(c.lot).toBe('');
