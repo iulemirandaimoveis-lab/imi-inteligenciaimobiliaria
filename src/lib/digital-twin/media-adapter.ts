@@ -109,23 +109,31 @@ interface RawAmenity {
   id?: string;
   title?: string | null;
   photos?: unknown;
+  /** Contrato do backoffice: array `videos[]` (até 20). */
+  videos?: unknown;
+  /** Campo legado singular `video`. */
   video?: unknown;
   tour360?: unknown;
 }
 
 function adaptAmenity(raw: RawAmenity): DigitalTwinAmenityMedia {
+  // Mescla o array `videos[]` (contrato do backoffice) com o legado `video`, dedup.
+  const videos = dedupeVideos([
+    ...asStringArray(raw.videos),
+    ...(isRenderableUrl(raw.video) ? [raw.video] : []),
+  ]);
   return {
     id: raw.id ?? '',
     title: (raw.title ?? '').trim() || raw.id || 'Área comum',
     photos: asStringArray(raw.photos),
-    video: isRenderableUrl(raw.video) ? raw.video : undefined,
+    videos,
     tour360: isRenderableUrl(raw.tour360) ? raw.tour360 : undefined,
   };
 }
 
 /** `true` se a área tem qualquer mídia exibível. */
 export function hasAmenityMedia(a: DigitalTwinAmenityMedia): boolean {
-  return a.photos.length > 0 || Boolean(a.video) || Boolean(a.tour360);
+  return a.photos.length > 0 || a.videos.length > 0 || Boolean(a.tour360);
 }
 
 // ── Adapter principal ────────────────────────────────────────────────────────

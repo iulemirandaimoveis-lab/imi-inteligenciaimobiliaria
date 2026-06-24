@@ -10,7 +10,8 @@ export interface DigitalTwinAmenityMedia {
   id: string;
   title: string;
   photos: string[];
-  video?: string;
+  /** Vídeos da área (contrato do backoffice aceita `videos[]` e o legado `video`). */
+  videos: string[];
   tour360?: string;
 }
 

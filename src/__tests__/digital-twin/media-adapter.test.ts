@@ -71,9 +71,24 @@ describe('digital-twin media adapter (FASE 1)', () => {
     expect(m.amenities).toHaveLength(3);
     expect(m.amenities[0].title).toBe('portaria'); // fallback p/ id quando título nulo
     expect(m.amenities[1].title).toBe('Capela'); // trim
+    expect(m.amenities[1].videos).toEqual([`${SB}/v.mp4`]); // legado `video` vira array
     expect(hasAmenityMedia(m.amenities[0])).toBe(true);
     expect(hasAmenityMedia(m.amenities[1])).toBe(true);
     expect(hasAmenityMedia(m.amenities[2])).toBe(false); // "relativo" filtrado, video vazio
+  });
+
+  it('preserva o array `videos[]` das áreas comuns (contrato do backoffice) + mescla o legado', () => {
+    const m = adaptDevelopmentMedia({
+      lot_map_amenities: [
+        // Só `videos[]` (sem `video` singular) — não pode ser filtrada.
+        { id: 'salao', videos: ['https://youtu.be/abcdefghijk', `${SB}/extra.mp4`] },
+        // `videos[]` + `video` legado duplicado por ID do YouTube → dedup.
+        { id: 'gourmet', videos: ['https://youtu.be/abcdefghijk'], video: 'https://www.youtube.com/watch?v=abcdefghijk' },
+      ],
+    });
+    expect(m.amenities[0].videos).toEqual(['https://youtu.be/abcdefghijk', `${SB}/extra.mp4`]);
+    expect(hasAmenityMedia(m.amenities[0])).toBe(true); // antes era filtrada (bug do review)
+    expect(m.amenities[1].videos).toEqual(['https://youtu.be/abcdefghijk']); // dedup por ID
   });
 
   it('é seguro com registro vazio (sem mídia quebrada)', () => {

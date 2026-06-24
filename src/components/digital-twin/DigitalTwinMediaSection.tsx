@@ -65,11 +65,11 @@ export default function DigitalTwinMediaSection({ media, title }: Props) {
                     <h3 className="text-base font-bold text-[#0B1928]">{a.title}</h3>
                   </div>
                   {a.photos.length > 0 && <DigitalTwinGallery photos={a.photos} title={a.title} />}
-                  {a.video && (
-                    <div className="mt-4">
-                      <DigitalTwinVideo src={a.video} title={a.title} />
+                  {a.videos.map((v, i) => (
+                    <div key={v} className="mt-4">
+                      <DigitalTwinVideo src={v} title={a.videos.length > 1 ? `${a.title} — Vídeo ${i + 1}` : a.title} />
                     </div>
-                  )}
+                  ))}
                   {a.tour360 && (
                     <div className="mt-4">
                       <DigitalTwinTour url={a.tour360} />
