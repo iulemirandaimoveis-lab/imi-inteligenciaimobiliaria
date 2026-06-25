@@ -574,6 +574,29 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
     setTransform(clampTransform({ scale: S, x: CW / (2 * S) - lot.labelX, y: CH / (2 * S) - lot.labelY }))
   }, [CW, CH, clampTransform])
 
+  // Foco numa quadra: enquadra (zoom-fit) seus lotes para que os NÚMEROS apareçam
+  // (showLotNumbers ≥ 3) — drill-in igual ao Alto Bellevue. ALL → volta à planta toda.
+  const focusQuadra = useCallback((q: string) => {
+    setActiveQuadra(q); setSelectedLot(null)
+    if (q === 'ALL') { setTransform({ x: 0, y: 0, scale: 1 }); return }
+    const qlots = lots.filter(l => l.quadra === q)
+    if (!qlots.length) return
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    for (const l of qlots) {
+      for (const pair of l.points.split(/\s+/)) {
+        const [x, y] = pair.split(',').map(Number)
+        if (!Number.isFinite(x) || !Number.isFinite(y)) continue
+        if (x < minX) minX = x; if (x > maxX) maxX = x
+        if (y < minY) minY = y; if (y > maxY) maxY = y
+      }
+    }
+    const qw = Math.max(1, maxX - minX), qh = Math.max(1, maxY - minY)
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2
+    // 0.82 = respiro; mínimo 3.2 garante números legíveis; teto = MAX_SCALE
+    const S = Math.max(3.2, Math.min(MAX_SCALE, 0.82 * Math.min(CW / qw, CH / qh)))
+    setTransform(clampTransform({ scale: S, x: CW / (2 * S) - cx, y: CH / (2 * S) - cy }))
+  }, [lots, CW, CH, clampTransform])
+
   const runSearch = useCallback((raw: string) => {
     const q = raw.trim().toUpperCase().replace(/\s+/g, '')
     const m = q.match(/^([A-Z]+)-?0*(\d+)$/)
@@ -661,12 +684,14 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
           if (lot && lot.status !== 'vendido') {
             setSelectedLot(prev => prev?.id === lotId ? null : lot)
           }
-          break
+          return
         }
+        const q = el.getAttribute?.('data-quadra')
+        if (q) { focusQuadra(q); return }
         el = el.parentElement
       }
     }
-  }, [lotsById])
+  }, [lotsById, focusQuadra])
 
   // Cart helpers (estado/persistência no hook useLotCart)
   const cartIds = useMemo(() => new Set(cart.map(l => l.id)), [cart])
@@ -775,7 +800,7 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
             return (
               <button
                 key={q}
-                onClick={() => { setActiveQuadra(q); setSelectedLot(null) }}
+                onClick={() => focusQuadra(q)}
                 className="transition-all active:scale-95 flex-shrink-0 relative"
                 style={{
                   height: 28, paddingLeft: 10, paddingRight: 10, borderRadius: 14,
@@ -923,7 +948,9 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
               {/* Números dos lotes ao aproximar */}
               {showLotNumbers && lots.map(lot => {
                 if (!filteredIds.has(lot.id)) return null
-                const fontSize = Math.max(2, Math.min(6, 9 / transform.scale))
+                // tamanho de TELA ~constante (~22 u no viewBox ≈ 7px no mobile), como o AB
+                const fontSize = 22 / transform.scale
+                const isSel = selectedLot?.id === lot.id
                 return (
                   <text
                     key={`lbl-${lot.id}`}
@@ -932,22 +959,34 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontSize={fontSize}
-                    fill={selectedLot?.id === lot.id ? NAVY : 'rgba(11,25,40,0.8)'}
-                    style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 600 }}
+                    fill={isSel ? GOLD : NAVY}
+                    stroke="rgba(255,255,255,0.92)"
+                    strokeWidth={fontSize * 0.16}
+                    paintOrder="stroke"
+                    style={{ pointerEvents: 'none', fontFamily: 'monospace', fontWeight: 700 }}
                   >
                     {lot.lote}
                   </text>
                 )
               })}
 
-              {/* Selos de quadra ao afastar */}
+              {/* Selos de quadra ao afastar — clicáveis (drill-in p/ ver os lotes) */}
               {!showLotNumbers && (
-                <g style={{ pointerEvents: 'none' }}>
+                <g>
                   {Object.entries(quadraCentroids).map(([q, { x, y }]) => {
                     const r = Math.max(6, 26 / transform.scale)
                     const fontSize = Math.max(5, 18 / transform.scale)
                     return (
-                      <g key={q} transform={`translate(${x},${y})`}>
+                      <g
+                        key={q}
+                        data-quadra={q}
+                        transform={`translate(${x},${y})`}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Quadra ${q} — aproximar para ver os lotes`}
+                        style={{ cursor: 'pointer' }}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); focusQuadra(q) } }}
+                      >
                         <circle
                           r={r}
                           fill="rgba(255,255,255,0.9)"
@@ -961,6 +1000,7 @@ export default function MiguelMarquesPlanView({ lots: lotsProp }: MiguelMarquesP
                           fill={NAVY}
                           fontWeight="bold"
                           fontFamily="system-ui"
+                          style={{ pointerEvents: 'none' }}
                         >
                           {q}
                         </text>
