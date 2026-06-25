@@ -12,6 +12,8 @@
     "test:watch": "jest --watch",
     "validate:lots": "node scripts/validate-lots.mjs",
     "validate:lots:mm": "node scripts/validate-mm-lots.mjs",
+    "geo:solve": "node scripts/cad/geo/solve-geo-transform.mjs",
+    "geo:selftest": "node scripts/cad/geo/solve-geo-transform.mjs --selftest",
     "deploy": "bash deploy.sh",
     "deploy:prod": "bash deploy.sh",
     "ai:map": "npx sigmap",

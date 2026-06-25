@@ -1,0 +1,18 @@
+{
+  "status": "PENDING",
+  "crs": "EPSG:4326 (WGS84 — lng/lat em graus decimais)",
+  "site": "Alto Bellevue — Magano, Garanhuns/PE",
+  "instructions": [
+    "Preencha 'points' com 3 ou mais pontos de controle (recomendado 4) cujas",
+    "posições sejam inequívocas no mapa SVG e no Google Earth.",
+    "Para cada ponto: 'svg' = [x, y] lido no viewBox 0 0 1200 821.86 da fonte",
+    "canônica (public/maps/alto-bellevue-lots.json); 'lngLat' = [lng, lat] lido no",
+    "Google Earth (botão direito → 'O que há aqui?' / coordenadas).",
+    "Bons candidatos: cruzamentos de ruas, vértices marcantes do perímetro, a",
+    "guarita/portaria e o ponto de acesso na BR-423.",
+    "Depois rode: npm run geo:solve  (deriva e valida o transform SVG↔WGS84).",
+    "ENQUANTO 'points' estiver vazio, NÃO inventar coordenadas — o solver fica PENDING."
+  ],
+  "minPoints": 3,
+  "points": []
+}
