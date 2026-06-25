@@ -11,6 +11,11 @@ import {
   type ABMapData, type Amenity, type Point,
 } from '@/lib/lots/alto-bellevue';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
+import {
+  resolveAmenityInfo,
+  type AmenityInfo,
+  type AmenityOverride,
+} from '@/lib/lots/amenity-media';
 import { useAbAvailability } from '@/hooks/use-ab-availability';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -163,12 +168,7 @@ const getCfg = (k: string) => STATUS_CFG[k] ?? UNKNOWN_CFG;
 const AB_AMEN_IMG = '/images/empreendimentos/alto-bellevue/amenities';
 // Tour virtual 360° (Kuula). Coleção do empreendimento — configurável (backoffice/env).
 const AB_TOUR_360 = 'https://kuula.co/share/collection/7KKb9?logo=1&info=0&logosize=68&fs=1&vr=1&zoom=1&initload=0&thumbs=0&margin=20&alpha=0.86&inst=pt';
-interface AmenityInfo {
-  title: string; subtitle: string; description: string; fn: string;
-  photos?: string[]; video?: string; videos?: string[]; tour360?: string;
-  /** Lista de equipamentos da área (ex.: piscina, academia, capela) — do PDF aprovado. */
-  features?: string[];
-}
+// Tipos e regra de merge da mídia das áreas comuns: src/lib/lots/amenity-media.ts
 // Equipamentos do clube/lazer (lista oficial "Equipamentos" da planta aprovada).
 const CLUBE_EQUIPAMENTOS = [
   'Piscina coberta aquecida com borda infinita', 'Piscina descoberta com borda infinita',
@@ -218,27 +218,8 @@ const AMENITY_INFO: Record<string, AmenityInfo> = {
     photos: [`${AB_AMEN_IMG}/ab-amenity-06.jpg`, `${AB_AMEN_IMG}/ab-amenity-07.jpg`],
   },
 };
-// Overrides vindos do dado (JSON `amenities[]` — editável pelo backoffice).
-type AmenityOverride = Partial<AmenityInfo> & { id: string; label: string };
-const getAmenityInfo = (a: AmenityOverride): AmenityInfo => {
-  // id exato (ex.: "portaria") → prefixo (ex.: "recreativa-01" → "recreativa") → fallback.
-  const prefix = a.id.replace(/-\d+$/, '');
-  const base: AmenityInfo = AMENITY_INFO[a.id] ?? AMENITY_INFO[prefix] ?? {
-    title: a.label, subtitle: 'Área comum', description: 'Área de uso comum do empreendimento.', fn: 'Área comum',
-  };
-  // Campos vindos do backoffice/JSON têm prioridade; senão usa o default editorial.
-  return {
-    title: a.title ?? base.title,
-    subtitle: a.subtitle ?? base.subtitle,
-    description: a.description ?? base.description,
-    fn: a.fn ?? base.fn,
-    photos: a.photos ?? base.photos,
-    video: a.video ?? base.video,
-    videos: a.videos ?? base.videos,
-    tour360: a.tour360 ?? base.tour360,
-    features: a.features ?? base.features,
-  };
-};
+// Merge backoffice → defaults editoriais (regra pura e testada em amenity-media.ts).
+const getAmenityInfo = (a: AmenityOverride): AmenityInfo => resolveAmenityInfo(a, AMENITY_INFO);
 
 // ── Formatters ────────────────────────────────────────────────────────────────
 
