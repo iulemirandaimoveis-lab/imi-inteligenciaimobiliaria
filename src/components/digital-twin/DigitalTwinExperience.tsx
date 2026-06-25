@@ -13,16 +13,20 @@
 import { useEffect, useState } from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
 import type { DigitalTwinModel } from '@/types/digital-twin';
+import type { DigitalTwinMedia } from '@/types/digital-twin/media';
 import { loadDigitalTwinModel } from '@/lib/digital-twin/data-adapter';
 import DigitalTwinHero from './DigitalTwinHero';
 import DigitalTwinStatsPanel from './DigitalTwinStatsPanel';
+import DigitalTwinMediaSection from './DigitalTwinMediaSection';
 import DigitalTwinFoundationNotice from './DigitalTwinFoundationNotice';
 
 interface Props {
   lang: string;
+  /** Mídia carregada no servidor (somente leitura). Sprint 1 — FASE 1. */
+  media?: DigitalTwinMedia;
 }
 
-export default function DigitalTwinExperience({ lang }: Props) {
+export default function DigitalTwinExperience({ lang, media }: Props) {
   const [model, setModel] = useState<DigitalTwinModel | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,6 +65,8 @@ export default function DigitalTwinExperience({ lang }: Props) {
       ) : (
         <DigitalTwinStatsPanel model={model} />
       )}
+
+      {media && <DigitalTwinMediaSection media={media} title="Alto Bellevue" />}
 
       <DigitalTwinFoundationNotice />
     </main>

@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { ArrowLeft, Shield, Sparkles, CreditCard } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { isDigitalTwinEnabled } from '@/lib/digital-twin/feature-flag'
+import { loadDigitalTwinMedia } from '@/lib/digital-twin/media-adapter'
+import { ALTO_BELLEVUE_DT } from '@/data/digital-twin/alto-bellevue'
 
 // Experiência Digital Twin (namespace ISOLADO de homologação). Só renderiza quando
 // a feature flag NEXT_PUBLIC_ALTO_BELLEVUE_DIGITAL_TWIN === 'true'. Caso contrário,
@@ -61,8 +63,10 @@ export default async function AltoBellevuePage({
 
   // Sprint 0 — Isolamento: quando a flag está ativa, a homologação é servida
   // EXCLUSIVAMENTE por componentes do namespace digital-twin.
+  // Sprint 1 — FASE 1: mídia carregada no servidor (somente leitura), resiliente a falhas.
   if (isDigitalTwinEnabled()) {
-    return <DigitalTwinExperience lang={lang} />
+    const media = await loadDigitalTwinMedia(ALTO_BELLEVUE_DT.developmentId).catch(() => undefined)
+    return <DigitalTwinExperience lang={lang} media={media} />
   }
 
   return (
