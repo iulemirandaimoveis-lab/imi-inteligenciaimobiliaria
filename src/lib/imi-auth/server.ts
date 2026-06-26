@@ -29,7 +29,21 @@ export async function getImiSession(): Promise<ImiSession | null> {
     .eq('auth_user_id', authUser.id)
     .maybeSingle()
 
-  if (userErr || !userRow) return null
+  if (userErr || !userRow) {
+    // Surface *why* the session could not be resolved instead of failing
+    // silently. A PostgREST schema error here (e.g. the `imi` schema not being
+    // exposed to the Data API) returns null for every user and is the classic
+    // cause of the /users/login ↔ /users/dashboard redirect loop.
+    if (userErr) {
+      console.error(
+        '[imi-auth] failed to resolve imi.users for auth user',
+        authUser.id,
+        userErr.code ?? '',
+        userErr.message ?? userErr
+      )
+    }
+    return null
+  }
 
   const user: ImiUser = {
     id: userRow.id,
@@ -92,7 +106,7 @@ export function sessionHasPermission(session: ImiSession | null, permission: Per
  * Require an authenticated IMI session. Redirects to /users/login when absent.
  * Use at the top of protected server components / route handlers.
  */
-export async function requireImiSession(redirectTo = '/users/login'): Promise<ImiSession> {
+export async function requireImiSession(redirectTo = '/users/login?reauth=1'): Promise<ImiSession> {
   const session = await getImiSession()
   if (!session) {
     redirect(redirectTo)
