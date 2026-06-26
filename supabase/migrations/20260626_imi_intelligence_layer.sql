@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS imi.metric_snapshots (
   project_id  UUID REFERENCES imi.projects(id) ON DELETE CASCADE,
   metric_key  TEXT NOT NULL,           -- e.g. 'sales.count.7d', 'vgv.total'
   value       NUMERIC(18,4) NOT NULL,
-  window      TEXT,                    -- e.g. '7d', '30d', 'all'
+  "window"    TEXT,                    -- e.g. '7d', '30d', 'all' (quoted: reserved word)
   dims        JSONB NOT NULL DEFAULT '{}',  -- e.g. {"broker":"Lucas"}
   captured_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
