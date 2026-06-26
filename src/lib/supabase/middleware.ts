@@ -37,7 +37,7 @@ export async function updateSession(request: NextRequest) {
 
     // ── IMI Console (/users/*) — RBAC ecosystem ──────────────────────────
     // Public entry points within the console: login, forgot, OAuth callback.
-    const IMI_PUBLIC = ['/users/login', '/users/forgot', '/users/auth/callback']
+    const IMI_PUBLIC = ['/users/login', '/users/forgot', '/users/primeiro-acesso', '/users/auth/callback']
     if (pathname.startsWith('/users')) {
         const isPublic = IMI_PUBLIC.some((p) => pathname === p || pathname.startsWith(p + '/'))
         if (!user && !isPublic) {

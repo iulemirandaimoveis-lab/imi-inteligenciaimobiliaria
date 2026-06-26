@@ -208,6 +208,24 @@ export function LoginForm() {
           </Link>
         </div>
 
+        <Link
+          href="/users/primeiro-acesso"
+          style={{
+            display: 'block',
+            textAlign: 'center',
+            fontFamily: T.fSans,
+            fontSize: 12.5,
+            color: T.gold,
+            textDecoration: 'none',
+            padding: '11px 12px',
+            borderRadius: T.rMd,
+            background: T.goldSoft,
+            border: `1px solid ${T.goldBorder}`,
+          }}
+        >
+          Primeiro acesso? Definir senha
+        </Link>
+
         {error && (
           <div
             role="alert"

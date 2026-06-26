@@ -90,12 +90,14 @@ async function ensureAuthUser(email, fullName) {
   const existing = await getAuthUserByEmail(email)
   if (existing) return { id: existing.id, password: null }
 
+  // Provisional password — only to bootstrap FIRST ACCESS. The user sets their
+  // real password at /users/primeiro-acesso (mirrors the backoffice flow).
   const password = fixedPasswordArg || `Imi#${randomBytes(6).toString('hex')}`
   const { data, error } = await admin.auth.admin.createUser({
     email,
     password,
     email_confirm: true,
-    user_metadata: { full_name: fullName, imi_console: true },
+    user_metadata: { full_name: fullName, imi_console: true, needs_password_setup: true },
   })
   if (error) throw error
   return { id: data.user.id, password }
@@ -156,8 +158,11 @@ async function main() {
           auth_user_id: authId,
           email,
           full_name: person.name,
-          status: 'active',
+          // 'invited' until the user completes first access; flipped to 'active'
+          // by /api/users/auth/first-access.
+          status: 'invited',
           is_super: Boolean(person.isSuper),
+          metadata: { needs_password_setup: true },
         },
         { onConflict: 'email' }
       )
@@ -226,10 +231,11 @@ async function main() {
   console.log(`\n  Team: ${TEAM_NAME} · Manager: Mateus · Owner: Catel · ${summary.length} members`)
 
   if (credentials.length) {
-    console.log('\n  Temporary credentials (share securely; users reset via /users/forgot):')
+    console.log('\n  Senha provisória de PRIMEIRO ACESSO (compartilhe com segurança).')
+    console.log('  Cada usuário define a senha real em /users/primeiro-acesso:')
     for (const c of credentials) console.log(`    ${c.email}  →  ${c.password}`)
   } else {
-    console.log('  (All users already existed — no new passwords generated.)')
+    console.log('  (Todos os usuários já existiam — nenhuma senha provisória nova gerada.)')
   }
 }
 

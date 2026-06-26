@@ -115,7 +115,7 @@ Env required: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`.
 
 ### 5.1 Users created (explicit confirmation)
 
-Emails are deterministic: `firstname.lastname@iulemirandaimoveis.com.br` (accents stripped, spaces → `.`). Passwords are **random per-user** (printed by the script) unless `--password` is passed; users reset via `/users/forgot`.
+Emails are deterministic: `firstname.lastname@iulemirandaimoveis.com.br` (accents stripped, spaces → `.`). Users are created in **`invited`** status with a **provisional password** (printed by the script, or fixed via `--password`) used **only to bootstrap first access** — each user sets their real password at **`/users/primeiro-acesso`** (mirrors the backoffice flow). No permanent password is ever distributed.
 
 | Name | Email | Roles (RBAC) | Team role |
 |------|-------|--------------|-----------|
@@ -161,6 +161,30 @@ Migration `20260626_imi_team_and_commissions.sql` adds:
 - **Auto-calculation**: `imi.compute_commission(user, project, sale_amount, ref, status)` resolves the most specific active rule + per-broker profile, computes the split, and inserts an auditable ledger row. Call it on each `LotSold` event.
 - **Manager controls**: percentual base, percentual por corretor, percentual por empreendimento, split empresa/corretor, bonificações, metas.
 - **Dashboard**: the **Comissões** module (gated by `commissions.read`) shows comissão prevista, recebida, projeção mensal, split empresa/corretor, e ranking — with a "Gestão" vs "Visualização" badge based on `commissions.manage`.
+
+---
+
+## 5c. Access management — first access + hierarchical reset
+
+Passwords follow the **backoffice model**: nothing permanent is handed out; users
+create their password on **first access**.
+
+| Capability | Route / API | Who |
+|------------|-------------|-----|
+| First access (set own password) | `/users/primeiro-acesso` → `POST /api/users/auth/first-access` | any invited user (email + provisional senha) |
+| Reset a user's access | `POST /api/users/admin/reset-password` | per `imi.can_manage_user()` (below) |
+| Team & access panel | `/users/team` | `teams.read` (view); reset button only for managers |
+
+**Hierarchical reset authorization** — `imi.can_manage_user(target)` (SECURITY DEFINER, enforced server-side):
+- **Iule (master)** — `SUPER_ADMIN` / `users.manage` → reset **anyone**.
+- **Mateus (gestor)** — `TEAM_MANAGER` → reset **members of teams he manages** (`imi.teams.manager_id = ele`).
+- **Catel (PROJECT_OWNER)** — **no** user/team management: he holds `proposals.approve` + read/metrics only (aprova propostas e vê os números). Sees `/users/team` read-only, without the reset button.
+- **Brokers** — no `teams.read`, so no access to the panel.
+
+A reset re-arms first access: the target's status returns to `invited` with a new
+provisional password (returned to the authorized admin to share), and they set a
+new password again at `/users/primeiro-acesso`. Every reset is written to
+`imi.activity_logs` (`auth.password_reset`).
 
 ---
 
