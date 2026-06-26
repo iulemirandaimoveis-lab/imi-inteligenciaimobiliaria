@@ -74,6 +74,19 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
+    // 0c2. The IMI Console (/users/*) is locale-independent (like /backoffice).
+    // If a locale prefix sneaks in (stale PWA/service-worker cache, bookmark or
+    // shared link such as /pt/users/login), strip it and serve the console.
+    // Rewrite (not redirect) so it never loops with a cached client redirect.
+    const localeUsersPrefix = locales.find(
+        loc => pathname === `/${loc}/users` || pathname.startsWith(`/${loc}/users/`)
+    )
+    if (localeUsersPrefix) {
+        const url = request.nextUrl.clone()
+        url.pathname = pathname.slice(localeUsersPrefix.length + 1) // drop "/{locale}"
+        return NextResponse.rewrite(url)
+    }
+
     // 0b. Allow /set-password route (auth required but no locale)
     if (pathname === '/set-password') {
         return await updateSession(request)
