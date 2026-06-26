@@ -82,6 +82,7 @@ export async function middleware(request: NextRequest) {
     // 1. Handle API/Backoffice/Login with Supabase Auth (ignore locale)
     if (
         pathname.startsWith('/backoffice') ||
+        pathname.startsWith('/users') ||
         pathname.startsWith('/api') ||
         pathname.startsWith('/auth') ||
         pathname.startsWith('/login')

@@ -33,6 +33,26 @@ export async function updateSession(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
+    const pathname = request.nextUrl.pathname
+
+    // ── IMI Console (/users/*) — RBAC ecosystem ──────────────────────────
+    // Public entry points within the console: login, forgot, OAuth callback.
+    const IMI_PUBLIC = ['/users/login', '/users/forgot', '/users/auth/callback']
+    if (pathname.startsWith('/users')) {
+        const isPublic = IMI_PUBLIC.some((p) => pathname === p || pathname.startsWith(p + '/'))
+        if (!user && !isPublic) {
+            const redirectUrl = request.nextUrl.clone()
+            redirectUrl.pathname = '/users/login'
+            redirectUrl.searchParams.set('next', pathname)
+            return NextResponse.redirect(redirectUrl)
+        }
+        // Already authenticated and hitting the login screen → go to dashboard.
+        if (user && pathname === '/users/login') {
+            return NextResponse.redirect(new URL('/users/dashboard', request.url))
+        }
+        return response
+    }
+
     // Proteger rotas do backoffice
     if (request.nextUrl.pathname.startsWith('/backoffice')) {
         if (!user) {
