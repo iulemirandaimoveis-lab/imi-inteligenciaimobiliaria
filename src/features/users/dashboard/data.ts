@@ -43,6 +43,22 @@ export interface AvailabilityRow {
   price: string
 }
 
+export interface CommissionBroker {
+  name: string
+  forecast: string
+  received: string
+  rate: number
+}
+
+export interface CommissionSummary {
+  forecast: string
+  received: string
+  monthlyProjection: string
+  companyShare: string
+  brokerShare: string
+  ranking: CommissionBroker[]
+}
+
 export interface DashboardData {
   projectName: string
   projectCity: string
@@ -52,6 +68,7 @@ export interface DashboardData {
   pipeline: PipelineStage[]
   performance: PerformanceBar[]
   availability: AvailabilityRow[]
+  commissions: CommissionSummary
   live: boolean
 }
 
@@ -172,5 +189,21 @@ export async function getAltoBellevueDashboard(session: ImiSession): Promise<Das
       { unit: 'Casa 22', status: 'available', price: 'R$ 3,1M' },
       { unit: 'Casa 31', status: 'available', price: 'R$ 2,0M' },
     ],
+    // Commission Intelligence — derived from imi.broker_commissions /
+    // commission_profiles once seeded; representative here (5% rule, 60/40).
+    commissions: {
+      forecast: 'R$ 1,28M',
+      received: 'R$ 642K',
+      monthlyProjection: 'R$ 410K',
+      companyShare: 'R$ 512K',
+      brokerShare: 'R$ 768K',
+      ranking: [
+        { name: 'João', forecast: 'R$ 288K', received: 'R$ 144K', rate: 60 },
+        { name: 'Douglas', forecast: 'R$ 216K', received: 'R$ 108K', rate: 60 },
+        { name: 'Lucas', forecast: 'R$ 180K', received: 'R$ 96K', rate: 62 },
+        { name: 'Allysson', forecast: 'R$ 144K', received: 'R$ 72K', rate: 60 },
+        { name: 'Gustavo', forecast: 'R$ 132K', received: 'R$ 60K', rate: 60 },
+      ],
+    },
   }
 }

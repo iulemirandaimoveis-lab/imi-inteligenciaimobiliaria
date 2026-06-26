@@ -1,9 +1,11 @@
 import { tokens as T } from '../ui/tokens'
 import { GlassCard, Eyebrow, StatusDot } from '../ui/primitives'
 import { LiveBadge } from './DashboardChrome'
+import { CommissionGate } from './CommissionModule'
 import type {
   ActivityItem,
   AvailabilityRow,
+  CommissionSummary,
   DashboardData,
   PerformanceBar,
   PipelineStage,
@@ -85,6 +87,9 @@ export function DashboardView({ data }: { data: DashboardData }) {
         <PipelineCard stages={data.pipeline} />
         <AvailabilityCard rows={data.availability} />
       </div>
+
+      {/* Comissões — gated by commissions.read */}
+      <CommissionGate commissions={data.commissions} />
 
       <style>{`
         .imi-dash-grid {

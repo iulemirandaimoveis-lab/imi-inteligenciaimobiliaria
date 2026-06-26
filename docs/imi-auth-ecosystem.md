@@ -100,8 +100,10 @@ Middleware (`src/lib/supabase/middleware.ts`) protects `/users/*`, allowing only
 
 ## 5. Seeding
 
-1. Apply the migration (creates schema, tables, RLS, roles, permissions, role→permission map, and the Alto Bellevue project).
-2. Create the initial users (auth + RBAC) — **never hardcoded in the frontend**:
+1. Apply the migrations **in order**:
+   - `supabase/migrations/20260626_imi_auth_ecosystem.sql` (schema, RBAC, Alto Bellevue project)
+   - `supabase/migrations/20260626_imi_team_and_commissions.sql` (team_members, commission module, Premium Team, default rule)
+2. Create the initial users (auth + RBAC + team + commission profiles) — **never hardcoded in the frontend**:
 
 ```bash
 node scripts/seed/imi-auth-seed-users.mjs
@@ -109,9 +111,56 @@ node scripts/seed/imi-auth-seed-users.mjs
 node scripts/seed/imi-auth-seed-users.mjs --password 'Temp#2026'
 ```
 
-Initial roster seeded: **Mateus** (TEAM_MANAGER), **Catel** (PROJECT_OWNER), and brokers **Iule Miranda, João, Allysson, Anderson, Fernandes, Paulo, Lucas, Douglas, Gustavo** — all linked to Alto Bellevue. The script prints temporary credentials; users reset via `/users/forgot`.
-
 Env required: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`.
+
+### 5.1 Users created (explicit confirmation)
+
+Emails are deterministic: `firstname.lastname@iulemirandaimoveis.com.br` (accents stripped, spaces → `.`). Passwords are **random per-user** (printed by the script) unless `--password` is passed; users reset via `/users/forgot`.
+
+| Name | Email | Roles (RBAC) | Team role |
+|------|-------|--------------|-----------|
+| Mateus | mateus@iulemirandaimoveis.com.br | `TEAM_MANAGER` | **manager** |
+| Catel | catel@iulemirandaimoveis.com.br | `PROJECT_OWNER` | **owner** |
+| Iule Miranda | iule.miranda@iulemirandaimoveis.com.br | `BROKER` + `BACKOFFICE_ADMIN` + `SUPER_ADMIN` | member |
+| João | joao@iulemirandaimoveis.com.br | `BROKER` | member |
+| Allysson | allysson@iulemirandaimoveis.com.br | `BROKER` | member |
+| Anderson | anderson@iulemirandaimoveis.com.br | `BROKER` | member |
+| Fernandes | fernandes@iulemirandaimoveis.com.br | `BROKER` | member |
+| Paulo | paulo@iulemirandaimoveis.com.br | `BROKER` | member |
+| Lucas | lucas@iulemirandaimoveis.com.br | `BROKER` | member |
+| Douglas | douglas@iulemirandaimoveis.com.br | `BROKER` | member |
+| Gustavo | gustavo@iulemirandaimoveis.com.br | `BROKER` | member |
+
+> **Iule Miranda** is a super admin holding three roles → full backoffice access: create/edit users, create teams, view all projects, configure commissions, view reports, total permissions (the `*` wildcard via `is_super`).
+
+### 5.2 Team structure (real FK links)
+
+```
+Team: Alto Bellevue Premium Team   (imi.teams, project_id → Alto Bellevue, manager_id → Mateus)
+  ├── Manager: Mateus
+  ├── Owner:   Catel
+  └── Members: Iule Miranda, João, Allysson, Anderson, Fernandes, Paulo, Lucas, Douglas, Gustavo
+```
+
+Membership is materialized in **`imi.team_members`** (`team_id`, `user_id`, `team_role`), not just a roster. `imi.teams.manager_id` and `project_id` are real FKs; brokers also get an `imi.broker_profiles` row linked to the team.
+
+---
+
+## 5b. Commission module
+
+Migration `20260626_imi_team_and_commissions.sql` adds:
+
+| Table | Purpose |
+|-------|---------|
+| `imi.commission_rules` | Rule definitions: `base_rate` (% of sale), `company_share` / `broker_share`, scope per project, priority |
+| `imi.commission_profiles` | Per-broker effective `broker_rate`, `bonus_rate`, `target_amount` (manager-defined override) |
+| `imi.commission_splits` | Company ↔ broker ↔ co-broker split per rule |
+| `imi.broker_commissions` | Auditable ledger: one row per sale (forecast → pending → approved → paid), with company/broker/bonus amounts |
+
+- **Permissions**: `commissions.read` (BROKER, PROJECT_OWNER, managers) and `commissions.manage` (BACKOFFICE_ADMIN, TEAM_MANAGER). RLS lets a broker see only their own ledger; managers/admins see all.
+- **Auto-calculation**: `imi.compute_commission(user, project, sale_amount, ref, status)` resolves the most specific active rule + per-broker profile, computes the split, and inserts an auditable ledger row. Call it on each `LotSold` event.
+- **Manager controls**: percentual base, percentual por corretor, percentual por empreendimento, split empresa/corretor, bonificações, metas.
+- **Dashboard**: the **Comissões** module (gated by `commissions.read`) shows comissão prevista, recebida, projeção mensal, split empresa/corretor, e ranking — with a "Gestão" vs "Visualização" badge based on `commissions.manage`.
 
 ---
 

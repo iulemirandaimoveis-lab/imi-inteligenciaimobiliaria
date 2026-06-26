@@ -54,19 +54,30 @@ const emailFor = (name) =>
     .replace(/[^a-z]+/g, '.')
     .replace(/(^\.|\.$)/g, '')}@${EMAIL_DOMAIN}`
 
+const TEAM_NAME = 'Alto Bellevue Premium Team'
+
 // Initial roster (NOT hardcoded in the frontend — DB seed only).
+// `roles` is an array → a user can hold multiple RBAC roles.
+// `teamRole` drives imi.team_members; `relation` drives imi.project_users.
 const ROSTER = [
-  { name: 'Mateus', role: 'TEAM_MANAGER', relation: 'manager' },
-  { name: 'Catel', role: 'PROJECT_OWNER', relation: 'owner' },
-  { name: 'Iule Miranda', role: 'BROKER', relation: 'broker', isSuper: true },
-  { name: 'João', role: 'BROKER', relation: 'broker' },
-  { name: 'Allysson', role: 'BROKER', relation: 'broker' },
-  { name: 'Anderson', role: 'BROKER', relation: 'broker' },
-  { name: 'Fernandes', role: 'BROKER', relation: 'broker' },
-  { name: 'Paulo', role: 'BROKER', relation: 'broker' },
-  { name: 'Lucas', role: 'BROKER', relation: 'broker' },
-  { name: 'Douglas', role: 'BROKER', relation: 'broker' },
-  { name: 'Gustavo', role: 'BROKER', relation: 'broker' },
+  { name: 'Mateus', roles: ['TEAM_MANAGER'], relation: 'manager', teamRole: 'manager' },
+  { name: 'Catel', roles: ['PROJECT_OWNER'], relation: 'owner', teamRole: 'owner' },
+  // Iule Miranda holds three roles and is a super admin (full backoffice access).
+  {
+    name: 'Iule Miranda',
+    roles: ['BROKER', 'BACKOFFICE_ADMIN', 'SUPER_ADMIN'],
+    relation: 'broker',
+    teamRole: 'member',
+    isSuper: true,
+  },
+  { name: 'João', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Allysson', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Anderson', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Fernandes', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Paulo', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Lucas', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Douglas', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
+  { name: 'Gustavo', roles: ['BROKER'], relation: 'broker', teamRole: 'member' },
 ]
 
 async function getAuthUserByEmail(email) {
@@ -107,7 +118,31 @@ async function main() {
   const { data: roleRows } = await imi.from('roles').select('id, key')
   const roleId = Object.fromEntries((roleRows ?? []).map((r) => [r.key, r.id]))
 
+  // Resolve the Alto Bellevue Premium Team (created by the migration).
+  const { data: team } = await imi
+    .from('teams')
+    .select('id, name')
+    .eq('project_id', project.id)
+    .eq('name', TEAM_NAME)
+    .maybeSingle()
+  if (!team) {
+    console.error(`✗ Team "${TEAM_NAME}" not found. Run the team/commission migration first.`)
+    process.exit(1)
+  }
+
+  // Default commission rule for per-broker profiles.
+  const { data: rule } = await imi
+    .from('commission_rules')
+    .select('id')
+    .eq('project_id', project.id)
+    .order('priority', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
+  const GLOBAL_ROLES = new Set(['SUPER_ADMIN', 'BACKOFFICE_ADMIN'])
   const credentials = []
+  const summary = []
+  let managerUserId = null
 
   for (const person of ROSTER) {
     const email = emailFor(person.name)
@@ -134,11 +169,13 @@ async function main() {
     }
     const userId = userRow.id
 
-    // user_roles (scoped to project for non-global roles)
-    const scoped = person.role !== 'SUPER_ADMIN' && person.role !== 'BACKOFFICE_ADMIN'
-    if (roleId[person.role]) {
+    // user_roles — assign EACH role (multi-role supported). Global roles
+    // (SUPER_ADMIN, BACKOFFICE_ADMIN) are unscoped; others scope to the project.
+    for (const roleKey of person.roles) {
+      if (!roleId[roleKey]) continue
+      const scopedProject = GLOBAL_ROLES.has(roleKey) ? null : project.id
       await imi.from('user_roles').upsert(
-        { user_id: userId, role_id: roleId[person.role], project_id: scoped ? project.id : null },
+        { user_id: userId, role_id: roleId[roleKey], project_id: scopedProject },
         { onConflict: 'user_id,role_id,project_id' }
       )
     }
@@ -149,18 +186,47 @@ async function main() {
       { onConflict: 'project_id,user_id' }
     )
 
-    // broker_profiles for brokers
-    if (person.role === 'BROKER') {
-      await imi.from('broker_profiles').upsert({ user_id: userId }, { onConflict: 'user_id' })
+    // team_members — REAL membership link (team_id, user_id, team_role)
+    await imi.from('team_members').upsert(
+      { team_id: team.id, user_id: userId, team_role: person.teamRole },
+      { onConflict: 'team_id,user_id' }
+    )
+    if (person.teamRole === 'manager') managerUserId = userId
+
+    // broker_profiles + commission_profile for anyone acting as a broker
+    if (person.roles.includes('BROKER')) {
+      await imi.from('broker_profiles').upsert(
+        { user_id: userId, team_id: team.id },
+        { onConflict: 'user_id' }
+      )
+      await imi.from('commission_profiles').upsert(
+        { user_id: userId, project_id: project.id, rule_id: rule?.id ?? null, broker_rate: 60, bonus_rate: 0 },
+        { onConflict: 'user_id,project_id' }
+      )
     }
 
     if (password) credentials.push({ name: person.name, email, password })
-    console.log(`  ✓ ${person.name.padEnd(16)} ${person.role.padEnd(16)} ${email}`)
+    summary.push({ name: person.name, email, roles: person.roles.join('+'), team: person.teamRole })
   }
 
-  console.log('\n✓ Seed complete.')
+  // Link the team manager_id (Mateus).
+  if (managerUserId) {
+    await imi.from('teams').update({ manager_id: managerUserId }).eq('id', team.id)
+  }
+
+  // ── Confirmation report ──────────────────────────────────────────────────
+  console.log('✓ Seed complete — users created/linked:\n')
+  console.log('  NAME             ROLES                              TEAM      EMAIL')
+  console.log('  ' + '─'.repeat(86))
+  for (const s of summary) {
+    console.log(
+      `  ${s.name.padEnd(16)} ${s.roles.padEnd(34)} ${s.team.padEnd(9)} ${s.email}`
+    )
+  }
+  console.log(`\n  Team: ${TEAM_NAME} · Manager: Mateus · Owner: Catel · ${summary.length} members`)
+
   if (credentials.length) {
-    console.log('\n  Temporary credentials (share securely, users should reset via /users/forgot):')
+    console.log('\n  Temporary credentials (share securely; users reset via /users/forgot):')
     for (const c of credentials) console.log(`    ${c.email}  →  ${c.password}`)
   } else {
     console.log('  (All users already existed — no new passwords generated.)')
