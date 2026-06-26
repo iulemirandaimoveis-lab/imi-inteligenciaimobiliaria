@@ -47,7 +47,16 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.redirect(redirectUrl)
         }
         // Already authenticated and hitting the login screen → go to dashboard.
-        if (user && pathname === '/users/login') {
+        // Skip the bounce when `reauth=1` is present: that marker means a protected
+        // page just sent an authenticated-but-unresolved session back here (e.g. the
+        // Supabase auth cookie is valid but there is no usable imi.users session).
+        // Redirecting such a request to the dashboard would loop forever
+        // (ERR_TOO_MANY_REDIRECTS), so let the login screen render instead.
+        if (
+            user &&
+            pathname === '/users/login' &&
+            request.nextUrl.searchParams.get('reauth') !== '1'
+        ) {
             return NextResponse.redirect(new URL('/users/dashboard', request.url))
         }
         return response
