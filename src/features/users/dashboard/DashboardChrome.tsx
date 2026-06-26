@@ -1,19 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ChevronDown, LogOut, Building2, Bell } from 'lucide-react'
+import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
+import { ChevronDown, LogOut, Building2, Bell, BarChart3, LayoutDashboard } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { tokens as T } from '../ui/tokens'
 import { StatusDot } from '../ui/primitives'
-import { ROLE_LABELS } from '@/lib/imi-auth/rbac'
+import { ROLE_LABELS, PERMISSIONS } from '@/lib/imi-auth/rbac'
 import { useImiSession } from '../session-context'
 
 export function DashboardTopbar({ projectName }: { projectName: string }) {
   const router = useRouter()
+  const pathname = usePathname()
   const supabase = createClient()
-  const { session } = useImiSession()
+  const { session, can } = useImiSession()
   const [loggingOut, setLoggingOut] = useState(false)
+  const showIntelligence = can(PERMISSIONS.METRICS_READ)
 
   const primaryRole = session.roleKeys[0]
   const roleLabel = session.user.isSuper ? 'Super Administrador' : primaryRole ? ROLE_LABELS[primaryRole] : 'Membro'
@@ -96,6 +99,13 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
 
       {/* Right cluster */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        {/* Section nav: Dashboard ↔ Intelligence */}
+        {showIntelligence && (
+          <nav className="imi-section-nav" style={{ display: 'flex', alignItems: 'center', gap: 4, padding: 3, borderRadius: T.rSm, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.glassBorder}` }}>
+            <NavLink href="/users/dashboard" active={pathname === '/users/dashboard'} icon={<LayoutDashboard size={14} />} label="Dashboard" />
+            <NavLink href="/users/intelligence" active={pathname === '/users/intelligence'} icon={<BarChart3 size={14} />} label="Intelligence" />
+          </nav>
+        )}
         <button
           type="button"
           aria-label="Notificações"
@@ -176,8 +186,35 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
         </button>
       </div>
 
-      <style>{`@media (max-width: 640px){ .imi-user-meta{ display:none; } }`}</style>
+      <style>{`
+        @media (max-width: 640px){ .imi-user-meta{ display:none; } .imi-nav-label{ display:none; } }
+      `}</style>
     </header>
+  )
+}
+
+function NavLink({ href, active, icon, label }: { href: string; active: boolean; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 7,
+        padding: '6px 11px',
+        borderRadius: 8,
+        textDecoration: 'none',
+        fontFamily: T.fSans,
+        fontSize: 12.5,
+        fontWeight: 600,
+        color: active ? '#1A1206' : T.t2,
+        background: active ? T.gold : 'transparent',
+        transition: `background 200ms, color 200ms`,
+      }}
+    >
+      <span style={{ display: 'flex' }}>{icon}</span>
+      <span className="imi-nav-label">{label}</span>
+    </Link>
   )
 }
 
