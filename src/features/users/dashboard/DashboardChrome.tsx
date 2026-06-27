@@ -216,7 +216,8 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           .imi-section-nav { order: 3; width: 100%; flex: 1 1 100%; }
           .imi-right-cluster { width: 100%; justify-content: space-between; }
         }
-        @media (max-width: 420px){ .imi-user-meta{ display:none; } }
+        /* Paridade mobile: o celular renderiza tudo que o desktop renderiza —
+           nada é escondido (nem rótulos da nav, nem nome/role do usuário). */
       `}</style>
     </header>
   )
