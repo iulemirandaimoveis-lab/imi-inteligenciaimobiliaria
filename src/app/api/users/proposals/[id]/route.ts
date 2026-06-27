@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getImiSession, sessionHasPermission } from '@/lib/imi-auth/server'
 import { PERMISSIONS } from '@/lib/imi-auth/rbac'
 import { logActivity } from '@/lib/imi-auth/audit'
+import { notifyProposalDecision } from '@/lib/notifications/proposal-notifications'
 import {
   canTransition,
   nextStatus,
@@ -44,7 +45,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     const { data: proposal, error: getErr } = await imi
       .from('proposals')
-      .select('id, project_id, broker_id, status, template_id')
+      .select('id, project_id, broker_id, status, template_id, client_name, project:projects ( name )')
       .eq('id', params.id)
       .maybeSingle()
     if (getErr || !proposal) {
@@ -125,6 +126,17 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       entityId: params.id,
       metadata: { from: current, to, note },
     })
+
+    // Notifica o corretor via WhatsApp na decisão (best-effort).
+    if (action === 'approve' || action === 'reject') {
+      await notifyProposalDecision({
+        brokerId: proposal.broker_id,
+        clientName: (proposal as any).client_name ?? 'Cliente',
+        projectName: (proposal as any).project?.name ?? null,
+        decision: action === 'approve' ? 'approved' : 'rejected',
+        note,
+      })
+    }
 
     return NextResponse.json({ success: true, status: to })
   } catch (e) {
