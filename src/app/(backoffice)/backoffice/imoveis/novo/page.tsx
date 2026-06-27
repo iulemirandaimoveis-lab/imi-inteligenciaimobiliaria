@@ -76,7 +76,7 @@ export default function NovoImovelPage() {
 
   useEffect(() => {
     autoSaveRef.current = setInterval(() => {
-      const { images, floorPlans, brochure, ...serializable } = form
+      const { images, floorPlans, brochure, coverVideo, ...serializable } = form
       localStorage.setItem(DRAFT_KEY, JSON.stringify(serializable))
       setDraftSaved(true)
       if (draftIndicatorRef.current) clearTimeout(draftIndicatorRef.current)
@@ -154,7 +154,17 @@ export default function NovoImovelPage() {
         const result = await uploadFile(form.brochure, 'media', 'brochures')
         if (!result.error) brochureUrl = result.url
       }
+      let coverVideoUrl: string | null = null
+      if (form.coverVideo) {
+        const result = await uploadFile(form.coverVideo, 'media', 'videos')
+        if (!result.error) coverVideoUrl = result.url
+      }
       setUploadVisible(false); setUploadFiles([])
+
+      // Resolve price — used/commercial uses singlePrice; lancamento uses min/max range
+      const isRangeCategory = !form.propertyCategory || form.propertyCategory === 'lancamento'
+      const effectivePriceMin = isRangeCategory ? form.priceMin : form.singlePrice
+      const effectivePriceMax = isRangeCategory ? form.priceMax : form.singlePrice
 
       const payload = {
         name: form.name, type: form.type, condition: form.condition,
@@ -163,16 +173,29 @@ export default function NovoImovelPage() {
         state: form.state, city: form.city, location: form.neighborhood,
         address: [form.address, form.streetNumber, form.complement].filter(Boolean).join(', '),
         developer: form.developer, developer_id: form.developer_id || null,
-        area: form.area, bedrooms: form.bedrooms, bathrooms: form.bathrooms,
+        area: form.propertyCategory === 'fazenda_rural' ? form.landAreaHectares : form.area,
+        bedrooms: form.bedrooms, bathrooms: form.bathrooms,
         parking: form.parking, floor: form.floor, features: form.features,
-        priceMin: form.priceMin, priceMax: form.priceMax, pricePerSqm: form.pricePerSqm,
+        priceMin: effectivePriceMin, priceMax: effectivePriceMax, pricePerSqm: form.pricePerSqm,
         totalUnits: form.totalUnits, availableUnits: form.availableUnits,
         deliveryDate: form.deliveryDate, description: form.description,
         status_commercial: form.status_commercial, is_highlighted: form.is_highlighted,
         gallery_images: imageUrls, image: imageUrls[0] || null,
         floor_plans: floorPlanUrls, brochure_url: brochureUrl,
+        cover_video_url: coverVideoUrl,
         video_url: form.videoUrl, video_short_url: form.videoShort,
         virtual_tour_url: form.virtualTourUrl || null,
+        videos: [form.videoUrl, form.videoShort, ...form.extraVideos].filter(Boolean),
+        // Category-specific extras
+        ...(form.propertyCategory === 'comercial' ? { commercial_subtype: form.commercialSubtype } : {}),
+        ...(form.propertyCategory === 'terreno_lote' ? {
+          land_frontage: form.landFrontage,
+          land_depth: form.landDepth,
+        } : {}),
+        ...(form.propertyCategory === 'fazenda_rural' ? {
+          biome: form.biome,
+          water_resources: form.waterResources,
+        } : {}),
       }
 
       const res = await fetch('/api/developments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
