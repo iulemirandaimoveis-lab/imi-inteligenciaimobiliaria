@@ -3,23 +3,25 @@
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronDown, LogOut, Building2, Bell, BarChart3, LayoutDashboard, Users, FileText } from 'lucide-react'
+import { ChevronDown, LogOut, Building2, Bell, BarChart3, LayoutDashboard, Users, FileText, Target } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { tokens as T } from '../ui/tokens'
 import { StatusDot } from '../ui/primitives'
-import { ROLE_LABELS, PERMISSIONS } from '@/lib/imi-auth/rbac'
+import { ROLE_LABELS, PERMISSIONS, ROLES } from '@/lib/imi-auth/rbac'
 import { useImiSession } from '../session-context'
 
 export function DashboardTopbar({ projectName }: { projectName: string }) {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
-  const { session, can } = useImiSession()
+  const { session, can, hasRole } = useImiSession()
   const [loggingOut, setLoggingOut] = useState(false)
   const showIntelligence = can(PERMISSIONS.METRICS_READ)
   const showTeam = can(PERMISSIONS.TEAMS_READ)
   const showProposals = can(PERMISSIONS.PROPOSALS_READ)
-  const showNav = showIntelligence || showTeam || showProposals
+  // Metas: gestores/owners (metrics.read) e também o corretor (vê a própria meta).
+  const showGoals = can(PERMISSIONS.METRICS_READ) || hasRole(ROLES.BROKER)
+  const showNav = showIntelligence || showTeam || showProposals || showGoals
 
   const primaryRole = session.roleKeys[0]
   const roleLabel = session.user.isSuper ? 'Super Administrador' : primaryRole ? ROLE_LABELS[primaryRole] : 'Membro'
@@ -107,6 +109,7 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           <nav className="imi-section-nav" style={{ display: 'flex', alignItems: 'center', gap: 4, padding: 3, borderRadius: T.rSm, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.glassBorder}` }}>
             <NavLink href="/users/dashboard" active={pathname === '/users/dashboard'} icon={<LayoutDashboard size={14} />} label="Dashboard" />
             {showProposals && <NavLink href="/users/proposals" active={pathname.startsWith('/users/proposals')} icon={<FileText size={14} />} label="Propostas" />}
+            {showGoals && <NavLink href="/users/goals" active={pathname.startsWith('/users/goals')} icon={<Target size={14} />} label="Metas" />}
             {showIntelligence && <NavLink href="/users/intelligence" active={pathname === '/users/intelligence'} icon={<BarChart3 size={14} />} label="Intelligence" />}
             {showTeam && <NavLink href="/users/team" active={pathname === '/users/team'} icon={<Users size={14} />} label="Equipe" />}
           </nav>
