@@ -5,6 +5,7 @@ import { getImiSession, sessionHasPermission } from '@/lib/imi-auth/server'
 import { PERMISSIONS } from '@/lib/imi-auth/rbac'
 import { logActivity } from '@/lib/imi-auth/audit'
 import { deriveProposalSummary } from '@/lib/imi-proposals/template'
+import { notifyProposalSubmitted } from '@/lib/notifications/proposal-notifications'
 
 export const dynamic = 'force-dynamic'
 
@@ -101,6 +102,19 @@ export async function POST(req: NextRequest) {
       entityId: inserted.id,
       metadata: { client: summary.client_name, mock },
     })
+
+    // Notifica o responsável do produto via WhatsApp (best-effort, só se enviada).
+    if (submit) {
+      const projectName = session.projects.find((p) => p.id === project_id)?.name ?? null
+      await notifyProposalSubmitted({
+        projectId: project_id,
+        projectName,
+        clientName: summary.client_name,
+        brokerName: session.user.fullName,
+        unitLabel: summary.unit_label,
+        totalAmount: summary.total_amount,
+      })
+    }
 
     return NextResponse.json({ success: true, id: inserted.id, status: inserted.status })
   } catch (e) {
