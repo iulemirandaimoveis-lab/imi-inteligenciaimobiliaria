@@ -14,8 +14,10 @@ const DigitalTwinExperience = dynamic(
   { ssr: false },
 )
 
-const SubdivisionLotMap = dynamic(
-  () => import('../../imoveis/components/SubdivisionLotMap'),
+// Explorador com múltiplas vistas interativas (Plano de lotes + Satélite real).
+// Exclusivo de /projetos até aprovação para migrar para /imóveis.
+const AltoBellevueMapExplorer = dynamic(
+  () => import('./components/AltoBellevueMapExplorer'),
   { ssr: false },
 )
 
@@ -185,7 +187,7 @@ export default async function AltoBellevuePage({
         </div>
         {/* map flush with screen edges on mobile, max-width on desktop */}
         <div className="max-w-6xl mx-auto">
-          <SubdivisionLotMap
+          <AltoBellevueMapExplorer
             developmentId={DEVELOPMENT_ID}
             developmentName="Alto Bellevue"
             whatsappPhone={WHATSAPP}

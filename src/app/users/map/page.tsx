@@ -14,12 +14,13 @@ export default async function MapPage() {
 
   // Espelha os mapas EXISTENTES: resolve a config de cada empreendimento pelo
   // slug, reutilizando o mesmo registro/JSON e o status ao vivo (subdivision_lots).
-  const projects: MapProject[] = session.projects.map((p) => {
+  const lotProjects: MapProject[] = session.projects.map((p) => {
     const config = getDevelopmentBySlug(p.slug)
     return {
       projectId: p.id,
       slug: p.slug,
       name: p.name,
+      kind: 'lots',
       developmentId: config?.id ?? null,
       // Geometria é estática; o status é lido AO VIVO (subdivision_lots) pelo
       // InteractiveLotMap → o espelho atualiza sozinho, sem cache-busting.
@@ -29,6 +30,24 @@ export default async function MapPage() {
       geoAnchor: getGeoAnchor(p.slug),
     }
   })
+
+  // Empreendimentos VERTICAIS (prédios) — disponibilidade por torre/andar/unidade,
+  // não por lotes. Espelham o mesmo viewer do site público (fonte única de dados).
+  // O Jazz Boulevard ainda não tem âncora de satélite; entra com seu mapa próprio.
+  const verticalProjects: MapProject[] = [
+    {
+      projectId: 'jazz-boulevard',
+      slug: 'jazz-boulevard',
+      name: 'Jazz Boulevard',
+      kind: 'vertical',
+      developmentId: null,
+      mapJsonUrl: null,
+      whatsappContact: '5581986141487',
+      geoAnchor: null,
+    },
+  ]
+
+  const projects: MapProject[] = [...lotProjects, ...verticalProjects]
 
   return (
     <ImiSessionProvider session={session}>

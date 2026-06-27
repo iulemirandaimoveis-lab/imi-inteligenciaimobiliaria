@@ -75,14 +75,45 @@ export async function getImiSession(): Promise<ImiSession | null> {
     ? (['*'] as PermissionKey[])
     : effectivePermissions(roleKeys)
 
-  // 3. Projects the user belongs to.
-  const { data: projectRows } = await imi
-    .from('project_users')
-    .select('projects ( id, slug, name, status, city, state )')
-    .eq('user_id', user.id)
+  // 3. Projects the user can see.
+  //
+  // Resolved in TWO steps (ids first, then rows) instead of a single embedded
+  // PostgREST join. The embed (`project_users → projects`) silently returns
+  // `null` for the related row whenever the FK relationship is missing from the
+  // exposed schema cache or an RLS predicate trips on the joined table — which
+  // surfaced as an EMPTY map ("Mapa ainda não disponível para este
+  // empreendimento") even though the membership link existed. Two plain reads
+  // are immune to that class of failure.
+  const canSeeAllProjects =
+    permissions.includes('*') ||
+    permissions.includes('projects.manage') ||
+    user.isSuper
 
-  const projects: ImiProject[] = (projectRows ?? [])
-    .map((row: any) => row.projects)
+  const projectCols = 'id, slug, name, status, city, state'
+  let projectRows: any[] = []
+
+  if (canSeeAllProjects) {
+    // Super / backoffice admins see the full portfolio.
+    const { data } = await imi.from('projects').select(projectCols).order('name')
+    projectRows = data ?? []
+  } else {
+    // Everyone else is scoped to the projects they are assigned to.
+    const { data: links } = await imi
+      .from('project_users')
+      .select('project_id')
+      .eq('user_id', user.id)
+
+    const ids = Array.from(
+      new Set((links ?? []).map((l: any) => l.project_id).filter(Boolean))
+    )
+
+    if (ids.length > 0) {
+      const { data } = await imi.from('projects').select(projectCols).in('id', ids)
+      projectRows = data ?? []
+    }
+  }
+
+  const projects: ImiProject[] = projectRows
     .filter(Boolean)
     .map((p: any) => ({
       id: p.id,
@@ -92,6 +123,7 @@ export async function getImiSession(): Promise<ImiSession | null> {
       city: p.city,
       state: p.state,
     }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
 
   return { user, roles, roleKeys, permissions, projects }
 }

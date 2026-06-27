@@ -23,10 +23,23 @@ const SatelliteMap = dynamic(() => import('./SatelliteMap').then((m) => m.Satell
   loading: () => mapLoader,
 })
 
+// Viewer de empreendimento VERTICAL (prédio) — torres/andares/unidades.
+// Reusa o componente canônico do site público (mesma fonte de dados); aqui é
+// apenas espelhado dentro do console, sem recriar lógica.
+const JazzBoulevardViewer = dynamic(
+  () =>
+    import(
+      '@/app/[lang]/(website)/imoveis/jazz-boulevard-garanhuns/components/JazzBoulevardViewer'
+    ),
+  { ssr: false, loading: () => mapLoader },
+)
+
 export interface MapProject {
   projectId: string
   slug: string
   name: string
+  /** 'lots' = loteamento (polígonos); 'vertical' = prédio (torres/unidades). */
+  kind: 'lots' | 'vertical'
   developmentId: string | null
   mapJsonUrl: string | null
   whatsappContact: string | null
@@ -46,6 +59,7 @@ const LEGEND: { label: string; color: string }[] = [
 export function MapMirrorView({ projects }: { projects: MapProject[] }) {
   const [activeId, setActiveId] = useState(projects[0]?.projectId ?? '')
   const active = projects.find((p) => p.projectId === activeId) ?? projects[0]
+  const isVertical = active?.kind === 'vertical'
   const hasMap = !!(active && active.developmentId && active.mapJsonUrl)
   const anchor = active?.geoAnchor ?? null
   // Satélite é o destaque quando há âncora; senão cai no mapa de lotes.
@@ -63,7 +77,9 @@ export function MapMirrorView({ projects }: { projects: MapProject[] }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: T.t3 }}>
             <RefreshCw size={13} color={T.green} />
             <span style={{ fontFamily: T.fSans, fontSize: 12 }}>
-              {mode === 'satelite'
+              {isVertical
+                ? 'Disponibilidade por torre, andar e unidade — status ao vivo.'
+                : mode === 'satelite'
                 ? 'Vista de satélite real — Esri World Imagery.'
                 : 'Espelho do mapa oficial — status atualizado ao vivo a cada mudança.'}
             </span>
@@ -71,11 +87,13 @@ export function MapMirrorView({ projects }: { projects: MapProject[] }) {
         </div>
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          {/* View toggle: Lotes ↔ Satélite */}
-          <div style={{ display: 'flex', gap: 4, padding: 4, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.glassBorder}` }}>
-            <ViewTab active={mode === 'satelite'} disabled={!anchor} onClick={() => setView('satelite')} icon={<Satellite size={15} />} label="Satélite" />
-            <ViewTab active={mode === 'lotes'} onClick={() => setView('lotes')} icon={<LayoutGrid size={15} />} label="Lotes" />
-          </div>
+          {/* View toggle: Lotes ↔ Satélite (só para loteamentos) */}
+          {!isVertical && (
+            <div style={{ display: 'flex', gap: 4, padding: 4, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.glassBorder}` }}>
+              <ViewTab active={mode === 'satelite'} disabled={!anchor} onClick={() => setView('satelite')} icon={<Satellite size={15} />} label="Satélite" />
+              <ViewTab active={mode === 'lotes'} onClick={() => setView('lotes')} icon={<LayoutGrid size={15} />} label="Lotes" />
+            </div>
+          )}
         {/* Project switcher */}
         {projects.length > 1 && (
           <div style={{ display: 'flex', gap: 4, padding: 3, borderRadius: T.rSm, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.glassBorder}`, flexWrap: 'wrap' }}>
@@ -99,8 +117,8 @@ export function MapMirrorView({ projects }: { projects: MapProject[] }) {
         </div>
       </div>
 
-      {/* Legend (só no modo Lotes) */}
-      {mode === 'lotes' && (
+      {/* Legend (só no modo Lotes de loteamento) */}
+      {mode === 'lotes' && !isVertical && (
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 14 }}>
           {LEGEND.map((l) => (
             <span key={l.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -113,7 +131,14 @@ export function MapMirrorView({ projects }: { projects: MapProject[] }) {
 
       {/* Map */}
       <GlassCard padding={0} style={{ overflow: 'hidden' }}>
-        {mode === 'satelite' && anchor ? (
+        {isVertical ? (
+          <div style={{ background: '#F7F5F0' }}>
+            <JazzBoulevardViewer
+              key={active!.projectId}
+              whatsappPhone={active!.whatsappContact ?? undefined}
+            />
+          </div>
+        ) : mode === 'satelite' && anchor ? (
           <SatelliteMap
             key={`sat-${active!.projectId}`}
             lng={anchor.lng}
@@ -142,7 +167,7 @@ export function MapMirrorView({ projects }: { projects: MapProject[] }) {
         )}
       </GlassCard>
 
-      {mode === 'satelite' && (
+      {mode === 'satelite' && !isVertical && (
         <p style={{ fontFamily: T.fSans, fontSize: 11, color: T.t4, margin: '10px 2px 0' }}>
           Âncora: {anchor?.lat.toFixed(6)}, {anchor?.lng.toFixed(6)}. O overlay georreferenciado
           dos lotes sobre o satélite requer pontos de controle (≥3) — em andamento.
