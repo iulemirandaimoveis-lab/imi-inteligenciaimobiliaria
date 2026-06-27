@@ -4,10 +4,14 @@ import { useState, useRef } from 'react'
 import {
   Check, Loader2, Upload, X, MapPin, Star,
   Link, FileVideo, DollarSign, CalendarDays,
-  Image as ImageIcon,
+  Image as ImageIcon, Plus, Video, Globe,
 } from 'lucide-react'
 import type { FormData } from './types'
-import { TYPES, CONDITIONS, STATUSES, FEATURES } from './types'
+import {
+  TYPES, CONDITIONS, STATUSES, FEATURES,
+  PROPERTY_CATEGORIES, TYPES_BY_CATEGORY,
+  COMMERCIAL_SUBTYPES, BIOMES, LAND_UTILITIES, RURAL_FEATURES,
+} from './types'
 import { T, inputStyle, labelStyle, Field, PriceInput } from './form-ui'
 
 /* ─── Step 1: Identificacao ──────────────────────────────────────── */
@@ -15,23 +19,45 @@ export function StepIdentificacao({ form, errors, developers, set, isMobile }: {
   form: FormData; errors: Record<string, string>; developers: { id: string; name: string }[]
   set: (k: keyof FormData, v: unknown) => void; isMobile?: boolean
 }) {
+  function handleCategorySelect(catValue: string) {
+    set('propertyCategory', catValue)
+    if (catValue === 'terreno_lote') {
+      set('type', 'Terreno')
+      set('condition', 'pronto')
+    } else if (catValue === 'fazenda_rural') {
+      set('type', 'Fazenda')
+      set('condition', 'pronto')
+    } else if (catValue === 'comercial') {
+      set('type', 'Comercial')
+    } else if (catValue === 'usado') {
+      set('condition', 'usado')
+    }
+  }
+
+  const cat = form.propertyCategory
+  const hideTypeGrid = cat === 'terreno_lote' || cat === 'fazenda_rural' || cat === 'comercial'
+
+  // Filter types based on category
+  const visibleTypes = (() => {
+    if (!cat || cat === 'lancamento') return TYPES
+    const allowed = TYPES_BY_CATEGORY[cat] ?? []
+    return TYPES.filter(t => allowed.includes(t.value))
+  })()
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <Field label="Nome do empreendimento" error={errors.name} hint="Use o nome comercial oficial do empreendimento">
-        <input className="ni" style={{ ...inputStyle, borderColor: errors.name ? T.error : T.border, fontSize: 15 }} value={form.name} onChange={e => set('name', e.target.value)} placeholder="Ex: Residencial Parque das Flores" autoFocus />
-      </Field>
+      {/* Category selector */}
       <div>
-        <label style={labelStyle}>Tipo de imóvel</label>
-        {errors.type && <span style={{ fontSize: 11, color: T.error, display: 'block', marginBottom: 8 }}>! {errors.type}</span>}
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 10 }}>
-          {TYPES.map(({ value, icon: Icon, desc }) => {
-            const sel = form.type === value
+        <label style={labelStyle}>Categoria do imóvel</label>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 10 }}>
+          {PROPERTY_CATEGORIES.map(({ value, label, icon: Icon, desc }) => {
+            const sel = form.propertyCategory === value
             return (
-              <button key={`type-${value}`} type="button" onClick={() => set('type', value)} style={{ position: 'relative', background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '12px 8px' : '16px 10px', cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, transition: 'all var(--dur-2) var(--ease)', boxShadow: sel ? 'var(--shadow-gold)' : 'none' }}>
+              <button key={`cat-${value}`} type="button" onClick={() => handleCategorySelect(value)} style={{ position: 'relative', background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '12px 8px' : '16px 10px', cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, transition: 'all var(--dur-2) var(--ease)', boxShadow: sel ? 'var(--shadow-gold)' : 'none' }}>
                 <div style={{ width: 36, height: 36, borderRadius: 6, background: sel ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon size={18} color={sel ? T.gold : T.textSub} />
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text, fontFamily: 'var(--font-sans)' }}>{value}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text, fontFamily: 'var(--font-sans)' }}>{label}</span>
                 <span style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-sans)', lineHeight: 1.3 }}>{desc}</span>
                 {sel && <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: '50%', background: T.gold, marginTop: 2 }}><Check size={9} color={T.navy} /></div>}
               </button>
@@ -39,6 +65,35 @@ export function StepIdentificacao({ form, errors, developers, set, isMobile }: {
           })}
         </div>
       </div>
+
+      {/* Name input */}
+      <Field label="Nome do empreendimento" error={errors.name} hint="Use o nome comercial oficial do empreendimento">
+        <input className="ni" style={{ ...inputStyle, borderColor: errors.name ? T.error : T.border, fontSize: 15 }} value={form.name} onChange={e => set('name', e.target.value)} placeholder="Ex: Residencial Parque das Flores" autoFocus />
+      </Field>
+
+      {/* Type grid — hidden for categories with auto-set type */}
+      {!hideTypeGrid && (
+        <div>
+          <label style={labelStyle}>Tipo de imóvel</label>
+          {errors.type && <span style={{ fontSize: 11, color: T.error, display: 'block', marginBottom: 8 }}>! {errors.type}</span>}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 10 }}>
+            {visibleTypes.map(({ value, icon: Icon, desc }) => {
+              const sel = form.type === value
+              return (
+                <button key={`type-${value}`} type="button" onClick={() => set('type', value)} style={{ position: 'relative', background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: isMobile ? '12px 8px' : '16px 10px', cursor: 'pointer', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, transition: 'all var(--dur-2) var(--ease)', boxShadow: sel ? 'var(--shadow-gold)' : 'none' }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 6, background: sel ? 'rgba(184,148,58,0.15)' : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon size={18} color={sel ? T.gold : T.textSub} />
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: sel ? T.gold : T.text, fontFamily: 'var(--font-sans)' }}>{value}</span>
+                  <span style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-sans)', lineHeight: 1.3 }}>{desc}</span>
+                  {sel && <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 16, height: 16, borderRadius: '50%', background: T.gold, marginTop: 2 }}><Check size={9} color={T.navy} /></div>}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: 14 }}>
         <Field label="Condição">
           <select className="ni" style={inputStyle} value={form.condition} onChange={e => set('condition', e.target.value)}>
@@ -105,76 +160,241 @@ export function StepLocalizacao({ form, errors, cepLoading, set, handleCepChange
   )
 }
 
+/* ─── Shared spec input cell ─────────────────────────────────────── */
+function SpecCell({ k, label, placeholder, value, onChange }: {
+  k: string; label: string; placeholder: string
+  value: string; onChange: (v: string) => void
+}) {
+  return (
+    <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: '12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <span style={{ fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-sans)' }}>{label}</span>
+      <input className="ni" style={{ background: 'transparent', border: 'none', outline: 'none', color: T.text, fontSize: 20, fontWeight: 600, fontFamily: 'var(--font-mono)', padding: 0, width: '100%' }} type="number" min={0} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
+    </div>
+  )
+}
+
 /* ─── Step 3: Caracteristicas ────────────────────────────────────── */
 export function StepCaracteristicas({ form, errors, set, toggleFeature, isMobile }: {
   form: FormData; errors: Record<string, string>; set: (k: keyof FormData, v: unknown) => void
   toggleFeature: (f: string) => void; isMobile?: boolean
 }) {
-  const priceMin = parseInt(form.priceMin || '0', 10)
-  const area = parseInt(form.area || '0', 10)
-  const autoSqm = priceMin > 0 && area > 0 ? Math.round(priceMin / area).toLocaleString('pt-BR') : null
+  const cat = form.propertyCategory
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div>
-        <label style={{ ...labelStyle, marginBottom: 12 }}>Especificações</label>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)', gap: 12 }}>
-          {[
-            { k: 'area', label: 'Área (m²)', placeholder: '80' },
-            { k: 'bedrooms', label: 'Quartos', placeholder: '3' },
-            { k: 'bathrooms', label: 'Banheiros', placeholder: '2' },
-            { k: 'parking', label: 'Vagas', placeholder: '2' },
-            { k: 'floor', label: 'Andares', placeholder: '12' },
-          ].map(({ k, label, placeholder }) => (
-            <div key={k} style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: '12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-sans)' }}>{label}</span>
-              <input className="ni" style={{ background: 'transparent', border: 'none', outline: 'none', color: T.text, fontSize: 20, fontWeight: 600, fontFamily: 'var(--font-mono)', padding: 0, width: '100%' }} type="number" min={0} value={form[k as keyof FormData] as string} onChange={e => set(k as keyof FormData, e.target.value)} placeholder={placeholder} />
+  /* ── lancamento (default/empty) ── */
+  if (!cat || cat === 'lancamento') {
+    const priceMin = parseInt(form.priceMin || '0', 10)
+    const area = parseInt(form.area || '0', 10)
+    const autoSqm = priceMin > 0 && area > 0 ? Math.round(priceMin / area).toLocaleString('pt-BR') : null
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div>
+          <label style={{ ...labelStyle, marginBottom: 12 }}>Especificações</label>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)', gap: 12 }}>
+            <SpecCell k="area" label="Área (m²)" placeholder="80" value={form.area} onChange={v => set('area', v)} />
+            <SpecCell k="bedrooms" label="Quartos" placeholder="3" value={form.bedrooms} onChange={v => set('bedrooms', v)} />
+            <SpecCell k="bathrooms" label="Banheiros" placeholder="2" value={form.bathrooms} onChange={v => set('bathrooms', v)} />
+            <SpecCell k="parking" label="Vagas" placeholder="2" value={form.parking} onChange={v => set('parking', v)} />
+            <SpecCell k="floor" label="Andares" placeholder="12" value={form.floor} onChange={v => set('floor', v)} />
+          </div>
+        </div>
+        <FeaturesGrid form={form} toggleFeature={toggleFeature} />
+        <div>
+          <label style={{ ...labelStyle, marginBottom: 12 }}>Faixa de preço</label>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
+            <Field label="Preço mínimo" error={errors.priceMin}><PriceInput value={form.priceMin} onChange={v => set('priceMin', v)} placeholder="500.000" error={errors.priceMin} /></Field>
+            <Field label="Preço máximo"><PriceInput value={form.priceMax} onChange={v => set('priceMax', v)} placeholder="1.200.000" /></Field>
+          </div>
+          {autoSqm && (
+            <div style={{ marginTop: 12, padding: '8px 12px', background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12, color: T.gold, fontFamily: 'var(--font-sans)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <DollarSign size={13} />Estimativa: R$ {autoSqm} por m² (a partir do preço mínimo e área)
             </div>
-          ))}
+          )}
+          <div style={{ marginTop: 12 }}><Field label="Preço por m² (opcional)"><PriceInput value={form.pricePerSqm} onChange={v => set('pricePerSqm', v)} placeholder="8.500" /></Field></div>
         </div>
-      </div>
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <label style={labelStyle}>Diferenciais & Amenidades</label>
-          {form.features.length > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: T.gold, background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, padding: '2px 8px', fontFamily: 'var(--font-sans)' }}>{form.features.length} selecionado{form.features.length > 1 ? 's' : ''}</span>}
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr', gap: 14 }}>
+          <Field label="Total de unidades"><input className="ni" style={inputStyle} type="number" min={0} value={form.totalUnits} onChange={e => set('totalUnits', e.target.value)} placeholder="120" /></Field>
+          <Field label="Unidades disponíveis"><input className="ni" style={inputStyle} type="number" min={0} value={form.availableUnits} onChange={e => set('availableUnits', e.target.value)} placeholder="45" /></Field>
+          <Field label="Data de entrega">
+            <div style={{ position: 'relative' }}>
+              <input className="ni" style={{ ...inputStyle, paddingRight: 36 }} type="date" value={form.deliveryDate} onChange={e => set('deliveryDate', e.target.value)} />
+              <CalendarDays size={14} color={T.textDim} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+            </div>
+          </Field>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {FEATURES.map(({ label: f, icon: Icon }) => {
-            const sel = form.features.includes(f)
-            return (
-              <button key={f} type="button" onClick={() => toggleFeature(f)} style={{ background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: '7px 13px', fontSize: 12, color: sel ? T.gold : T.textSub, cursor: 'pointer', fontWeight: sel ? 700 : 400, transition: 'all var(--dur-2) var(--ease)', display: 'flex', alignItems: 'center', gap: 6, minHeight: 34, fontFamily: 'var(--font-sans)' }}>
-                <Icon size={12} />{f}
-              </button>
-            )
-          })}
-        </div>
-      </div>
-      <div>
-        <label style={{ ...labelStyle, marginBottom: 12 }}>Faixa de preço</label>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
-          <Field label="Preço mínimo" error={errors.priceMin}><PriceInput value={form.priceMin} onChange={v => set('priceMin', v)} placeholder="500.000" error={errors.priceMin} /></Field>
-          <Field label="Preço máximo"><PriceInput value={form.priceMax} onChange={v => set('priceMax', v)} placeholder="1.200.000" /></Field>
-        </div>
-        {autoSqm && (
-          <div style={{ marginTop: 12, padding: '8px 12px', background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12, color: T.gold, fontFamily: 'var(--font-sans)', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <DollarSign size={13} />Estimativa: R$ {autoSqm} por m² (a partir do preço mínimo e área)
-          </div>
-        )}
-        <div style={{ marginTop: 12 }}><Field label="Preço por m² (opcional)"><PriceInput value={form.pricePerSqm} onChange={v => set('pricePerSqm', v)} placeholder="8.500" /></Field></div>
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr', gap: 14 }}>
-        <Field label="Total de unidades"><input className="ni" style={inputStyle} type="number" min={0} value={form.totalUnits} onChange={e => set('totalUnits', e.target.value)} placeholder="120" /></Field>
-        <Field label="Unidades disponíveis"><input className="ni" style={inputStyle} type="number" min={0} value={form.availableUnits} onChange={e => set('availableUnits', e.target.value)} placeholder="45" /></Field>
-        <Field label="Data de entrega">
-          <div style={{ position: 'relative' }}>
-            <input className="ni" style={{ ...inputStyle, paddingRight: 36 }} type="date" value={form.deliveryDate} onChange={e => set('deliveryDate', e.target.value)} />
-            <CalendarDays size={14} color={T.textDim} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
-          </div>
+        <Field label="Descrição do empreendimento" hint={`${form.description.length} caracteres`}>
+          <textarea className="ni" style={{ ...inputStyle, minHeight: 120, resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descreva os pontos únicos do empreendimento: localização, arquitetura, conceito..." />
         </Field>
       </div>
-      <Field label="Descrição do empreendimento" hint={`${form.description.length} caracteres`}>
-        <textarea className="ni" style={{ ...inputStyle, minHeight: 120, resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descreva os pontos únicos do empreendimento: localização, arquitetura, conceito..." />
-      </Field>
+    )
+  }
+
+  /* ── usado ── */
+  if (cat === 'usado') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div>
+          <label style={{ ...labelStyle, marginBottom: 12 }}>Especificações</label>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)', gap: 12 }}>
+            <SpecCell k="area" label="Área (m²)" placeholder="80" value={form.area} onChange={v => set('area', v)} />
+            <SpecCell k="bedrooms" label="Quartos" placeholder="3" value={form.bedrooms} onChange={v => set('bedrooms', v)} />
+            <SpecCell k="bathrooms" label="Banheiros" placeholder="2" value={form.bathrooms} onChange={v => set('bathrooms', v)} />
+            <SpecCell k="parking" label="Vagas" placeholder="2" value={form.parking} onChange={v => set('parking', v)} />
+            <SpecCell k="floor" label="Andar" placeholder="5" value={form.floor} onChange={v => set('floor', v)} />
+          </div>
+        </div>
+        <FeaturesGrid form={form} toggleFeature={toggleFeature} />
+        <Field label="Preço" error={errors.singlePrice}>
+          <PriceInput value={form.singlePrice} onChange={v => set('singlePrice', v)} placeholder="850.000" error={errors.singlePrice} />
+        </Field>
+        <Field label="Descrição do imóvel" hint={`${form.description.length} caracteres`}>
+          <textarea className="ni" style={{ ...inputStyle, minHeight: 120, resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descreva os diferenciais do imóvel..." />
+        </Field>
+      </div>
+    )
+  }
+
+  /* ── terreno_lote ── */
+  if (cat === 'terreno_lote') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <Field label="Área total (m²)">
+          <input className="ni" style={inputStyle} type="number" min={0} value={form.area} onChange={e => set('area', e.target.value)} placeholder="500" />
+        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
+          <Field label="Testada (m)">
+            <input className="ni" style={inputStyle} type="number" min={0} value={form.landFrontage} onChange={e => set('landFrontage', e.target.value)} placeholder="12" />
+          </Field>
+          <Field label="Profundidade (m)">
+            <input className="ni" style={inputStyle} type="number" min={0} value={form.landDepth} onChange={e => set('landDepth', e.target.value)} placeholder="40" />
+          </Field>
+        </div>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <label style={labelStyle}>Infraestrutura disponível</label>
+            {form.landUtilities.length > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: T.gold, background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, padding: '2px 8px', fontFamily: 'var(--font-sans)' }}>{form.landUtilities.length} selecionado{form.landUtilities.length > 1 ? 's' : ''}</span>}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {LAND_UTILITIES.map(u => {
+              const sel = form.landUtilities.includes(u)
+              return (
+                <button key={u} type="button" onClick={() => {
+                  const newArr = sel ? form.landUtilities.filter(x => x !== u) : [...form.landUtilities, u]
+                  set('landUtilities', newArr)
+                }} style={{ background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: '7px 13px', fontSize: 12, color: sel ? T.gold : T.textSub, cursor: 'pointer', fontWeight: sel ? 700 : 400, transition: 'all var(--dur-2) var(--ease)', display: 'flex', alignItems: 'center', gap: 6, minHeight: 34, fontFamily: 'var(--font-sans)' }}>
+                  {u}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <Field label="Preço" error={errors.singlePrice}>
+          <PriceInput value={form.singlePrice} onChange={v => set('singlePrice', v)} placeholder="320.000" error={errors.singlePrice} />
+        </Field>
+        <Field label="Descrição" hint={`${form.description.length} caracteres`}>
+          <textarea className="ni" style={{ ...inputStyle, minHeight: 120, resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descreva a localização e características do terreno..." />
+        </Field>
+      </div>
+    )
+  }
+
+  /* ── fazenda_rural ── */
+  if (cat === 'fazenda_rural') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div>
+          <label style={{ ...labelStyle, marginBottom: 12 }}>Área total (ha)</label>
+          <div style={{ background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, padding: '12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-sans)' }}>HECTARES</span>
+            <input className="ni" style={{ background: 'transparent', border: 'none', outline: 'none', color: T.text, fontSize: 28, fontWeight: 600, fontFamily: 'var(--font-mono)', padding: 0, width: '100%' }} type="number" min={0} value={form.landAreaHectares} onChange={e => set('landAreaHectares', e.target.value)} placeholder="1.200" />
+          </div>
+        </div>
+        <Field label="Bioma">
+          <select className="ni" style={inputStyle} value={form.biome} onChange={e => set('biome', e.target.value)}>
+            <option value="">Selecionar bioma</option>
+            {BIOMES.map(b => <option key={b} value={b}>{b}</option>)}
+          </select>
+        </Field>
+        <Field label="Recursos hídricos" hint="Ex: 2 açudes, 1 rio perene">
+          <input className="ni" style={inputStyle} value={form.waterResources} onChange={e => set('waterResources', e.target.value)} placeholder="Ex: 2 açudes, 1 rio perene" />
+        </Field>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <label style={labelStyle}>Infraestrutura rural</label>
+            {form.features.length > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: T.gold, background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, padding: '2px 8px', fontFamily: 'var(--font-sans)' }}>{form.features.length} selecionado{form.features.length > 1 ? 's' : ''}</span>}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {RURAL_FEATURES.map(f => {
+              const sel = form.features.includes(f)
+              return (
+                <button key={f} type="button" onClick={() => toggleFeature(f)} style={{ background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: '7px 13px', fontSize: 12, color: sel ? T.gold : T.textSub, cursor: 'pointer', fontWeight: sel ? 700 : 400, transition: 'all var(--dur-2) var(--ease)', display: 'flex', alignItems: 'center', gap: 6, minHeight: 34, fontFamily: 'var(--font-sans)' }}>
+                  {f}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <Field label="Preço" error={errors.singlePrice}>
+          <PriceInput value={form.singlePrice} onChange={v => set('singlePrice', v)} placeholder="4.500.000" error={errors.singlePrice} />
+        </Field>
+        <Field label="Descrição" hint={`${form.description.length} caracteres`}>
+          <textarea className="ni" style={{ ...inputStyle, minHeight: 120, resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descreva a propriedade rural..." />
+        </Field>
+      </div>
+    )
+  }
+
+  /* ── comercial ── */
+  if (cat === 'comercial') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <Field label="Tipo de imóvel comercial">
+          <select className="ni" style={inputStyle} value={form.commercialSubtype} onChange={e => set('commercialSubtype', e.target.value)}>
+            <option value="">Selecionar tipo</option>
+            {COMMERCIAL_SUBTYPES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
+        <div>
+          <label style={{ ...labelStyle, marginBottom: 12 }}>Especificações</label>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 12 }}>
+            <SpecCell k="area" label="Área útil (m²)" placeholder="120" value={form.area} onChange={v => set('area', v)} />
+            <SpecCell k="parking" label="Vagas" placeholder="2" value={form.parking} onChange={v => set('parking', v)} />
+            <SpecCell k="floor" label="Andar" placeholder="3" value={form.floor} onChange={v => set('floor', v)} />
+          </div>
+        </div>
+        <FeaturesGrid form={form} toggleFeature={toggleFeature} />
+        <Field label="Preço" error={errors.singlePrice}>
+          <PriceInput value={form.singlePrice} onChange={v => set('singlePrice', v)} placeholder="1.200.000" error={errors.singlePrice} />
+        </Field>
+        <Field label="Descrição" hint={`${form.description.length} caracteres`}>
+          <textarea className="ni" style={{ ...inputStyle, minHeight: 120, resize: 'vertical', lineHeight: 1.6 }} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Descreva o imóvel comercial..." />
+        </Field>
+      </div>
+    )
+  }
+
+  // Fallback — shouldn't normally reach here
+  return null
+}
+
+/* ─── Shared features grid ───────────────────────────────────────── */
+function FeaturesGrid({ form, toggleFeature }: { form: FormData; toggleFeature: (f: string) => void }) {
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <label style={labelStyle}>Diferenciais & Amenidades</label>
+        {form.features.length > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: T.gold, background: T.goldBg, border: `1px solid ${T.border}`, borderRadius: 6, padding: '2px 8px', fontFamily: 'var(--font-sans)' }}>{form.features.length} selecionado{form.features.length > 1 ? 's' : ''}</span>}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {FEATURES.map(({ label: f, icon: Icon }) => {
+          const sel = form.features.includes(f)
+          return (
+            <button key={f} type="button" onClick={() => toggleFeature(f)} style={{ background: sel ? T.goldBgHi : T.elevated, border: `1.5px solid ${sel ? T.gold : T.border}`, borderRadius: 6, padding: '7px 13px', fontSize: 12, color: sel ? T.gold : T.textSub, cursor: 'pointer', fontWeight: sel ? 700 : 400, transition: 'all var(--dur-2) var(--ease)', display: 'flex', alignItems: 'center', gap: 6, minHeight: 34, fontFamily: 'var(--font-sans)' }}>
+              <Icon size={12} />{f}
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
@@ -187,6 +407,7 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
   removeImage: (i: number) => void; isMobile?: boolean
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const coverVideoRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
   const handleDragEnter = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true) }
@@ -195,6 +416,42 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+      {/* ── Cover video ── */}
+      <div>
+        <label style={labelStyle}>Vídeo de capa (loop silencioso)</label>
+        {!form.coverVideo ? (
+          <button
+            type="button"
+            onClick={() => coverVideoRef.current?.click()}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, cursor: 'pointer', width: '100%', textAlign: 'left' }}
+          >
+            <Video size={15} color={T.textDim} />
+            <span style={{ fontSize: 13, color: T.textSub, fontFamily: 'var(--font-sans)' }}>Selecionar vídeo de capa</span>
+            <input ref={coverVideoRef} type="file" accept="video/mp4,video/webm" hidden onChange={e => { const f = e.target.files?.[0]; if (f) set('coverVideo', f) }} />
+          </button>
+        ) : (
+          <div style={{ background: T.elevated, border: `1px solid ${T.gold}`, borderRadius: 6, padding: '12px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Video size={15} color={T.gold} />
+              <span style={{ fontSize: 13, color: T.gold, fontFamily: 'var(--font-sans)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {form.coverVideo.name}
+              </span>
+              <span style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
+                {(form.coverVideo.size / (1024 * 1024)).toFixed(1)} MB
+              </span>
+              <button type="button" onClick={() => set('coverVideo', null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: T.textDim, display: 'flex', alignItems: 'center', padding: 0 }}><X size={14} /></button>
+            </div>
+            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+            <video src={URL.createObjectURL(form.coverVideo)} autoPlay muted loop playsInline className="w-full max-h-40 rounded-lg object-cover mt-2" style={{ width: '100%', maxHeight: 160, borderRadius: 6, objectFit: 'cover', marginTop: 8, display: 'block' }} />
+          </div>
+        )}
+        <span style={{ fontSize: 11, color: T.textDim, fontFamily: 'var(--font-sans)', marginTop: 4, display: 'block' }}>
+          Loop silencioso como capa da página · MP4 ou WebM · Máx 200 MB · Recomendado: comprimir abaixo de 20 MB
+        </span>
+      </div>
+
+      {/* ── Image gallery ── */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <label style={labelStyle}>Galeria de imagens</label>
@@ -226,6 +483,8 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
           </div>
         )}
       </div>
+
+      {/* ── Floor plans ── */}
       <Field label="Plantas baixas" hint={form.floorPlans.length > 0 ? `${form.floorPlans.length} arquivo(s) selecionado(s)` : undefined}>
         <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: T.elevated, border: `1px solid ${T.border}`, borderRadius: 6, cursor: 'pointer' }}>
           <Upload size={15} color={T.textDim} />
@@ -233,6 +492,8 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
           <input type="file" accept="image/*,application/pdf" multiple style={{ display: 'none' }} onChange={e => { const files = Array.from(e.target.files || []); if (files.length) set('floorPlans', [...form.floorPlans, ...files]) }} />
         </label>
       </Field>
+
+      {/* ── Brochure ── */}
       <Field label="Brochure / Material de vendas" hint={form.brochure ? form.brochure.name : undefined}>
         <label style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', background: T.elevated, border: `1px solid ${form.brochure ? T.gold : T.border}`, borderRadius: 6, cursor: 'pointer' }}>
           <Upload size={15} color={form.brochure ? T.gold : T.textDim} />
@@ -241,6 +502,8 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
           <input type="file" accept="application/pdf,image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) set('brochure', f) }} />
         </label>
       </Field>
+
+      {/* ── Videos ── */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
         <Field label="URL do vídeo (YouTube / Vimeo)">
           <div style={{ position: 'relative' }}>
@@ -255,12 +518,42 @@ export function StepMidia({ form, set, handleDrop, handleImageInput, removeImage
           </div>
         </Field>
       </div>
-      <Field label="Tour virtual (link externo)">
+
+      {/* ── Virtual tour ── */}
+      <Field label="Tour Virtual 360°" hint="URL de tour virtual 360° (ex: Panoee, Matterport)">
         <div style={{ position: 'relative' }}>
           <input className="ni" style={{ ...inputStyle, paddingLeft: 38 }} value={form.virtualTourUrl} onChange={e => set('virtualTourUrl', e.target.value)} placeholder="https://tour.panoee.net/..." />
-          <Link size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+          <Globe size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
         </div>
       </Field>
+
+      {/* ── Extra videos ── */}
+      <div>
+        <label style={labelStyle}>Vídeos adicionais</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {form.extraVideos.map((v, idx) => (
+            <div key={idx} style={{ position: 'relative' }}>
+              <input
+                className="ni"
+                style={{ ...inputStyle, paddingLeft: 38, paddingRight: 36 }}
+                value={v}
+                onChange={e => set('extraVideos', form.extraVideos.map((ev, i) => i === idx ? e.target.value : ev))}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+              <Link size={14} color={T.textDim} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+              <button type="button" onClick={() => set('extraVideos', form.extraVideos.filter((_, i) => i !== idx))} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: T.textDim, display: 'flex', alignItems: 'center', padding: 0 }}><X size={14} /></button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => set('extraVideos', [...form.extraVideos, ''])}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 14px', background: 'transparent', border: `1.5px dashed ${T.border}`, borderRadius: 6, cursor: 'pointer', color: T.textSub, fontSize: 13, fontFamily: 'var(--font-sans)', width: '100%' }}
+          >
+            <Plus size={14} />
+            Adicionar vídeo
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
