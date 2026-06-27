@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { LayoutGrid, Satellite } from 'lucide-react'
+import { LayoutGrid, Satellite, Layers } from 'lucide-react'
 
 // Mapa de lotes vetorial interativo (zoom/drag/seleção/comparar) — fonte canônica.
 const SubdivisionLotMap = dynamic(
@@ -19,10 +19,21 @@ const AerialSatelliteMap = dynamic(() => import('@/components/maps/AerialSatelli
   loading: () => <MapSkeleton label="Carregando vista de satélite…" />,
 })
 
+// Plataforma geoespacial MapLibre GL (WebGL): lotes GEORREFERENCIADOS clicáveis
+// SOBRE a imagem de satélite real — a vista "render-like" com camadas, hover,
+// painel de lote e planos de pagamento.
+const AltoBellevueGeoMap = dynamic(
+  () => import('../../../imoveis/components/AltoBellevueGeoMap'),
+  {
+    ssr: false,
+    loading: () => <MapSkeleton label="Carregando mapa geoespacial…" />,
+  },
+)
+
 // Âncora geográfica confirmada do Alto Bellevue (Plus Code 4FFQ+RJ, Garanhuns/PE).
 const AB_ANCHOR = { lng: -36.510937, lat: -8.875437, zoom: 16.5 }
 
-type ViewMode = 'plano' | 'satelite'
+type ViewMode = 'plano' | 'satelite' | 'satlotes'
 
 interface Props {
   developmentId: string
@@ -61,6 +72,12 @@ export default function AltoBellevueMapExplorer({
             label="Plano de lotes"
           />
           <ViewTab
+            active={view === 'satlotes'}
+            onClick={() => setView('satlotes')}
+            icon={<Layers size={15} />}
+            label="Satélite + Lotes"
+          />
+          <ViewTab
             active={view === 'satelite'}
             onClick={() => setView('satelite')}
             icon={<Satellite size={15} />}
@@ -69,13 +86,36 @@ export default function AltoBellevueMapExplorer({
         </div>
       </div>
 
-      {view === 'plano' ? (
+      {view === 'plano' && (
         <SubdivisionLotMap
           developmentId={developmentId}
           developmentName={developmentName}
           whatsappPhone={whatsappPhone}
         />
-      ) : (
+      )}
+
+      {view === 'satlotes' && (
+        <div className="max-w-6xl mx-auto px-0 sm:px-6 lg:px-8">
+          <div
+            className="overflow-hidden sm:rounded-2xl"
+            style={{ border: '1px solid #E0D8CC' }}
+          >
+            <AltoBellevueGeoMap
+              developmentId={developmentId}
+              developmentName={developmentName}
+              whatsappPhone={whatsappPhone}
+              height="78vh"
+            />
+          </div>
+          <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
+            Lotes georreferenciados sobre satélite real, clicáveis (WebGL). Posicionamento
+            aproximado norte-acima — o ajuste fino (rotação/escala) será calibrado com os
+            pontos de controle do levantamento.
+          </p>
+        </div>
+      )}
+
+      {view === 'satelite' && (
         <div className="max-w-6xl mx-auto px-0 sm:px-6 lg:px-8">
           <div
             className="overflow-hidden sm:rounded-2xl"
@@ -91,7 +131,6 @@ export default function AltoBellevueMapExplorer({
           </div>
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
             Vista de satélite real (Esri World Imagery) centrada no terreno em Garanhuns/PE.
-            O overlay georreferenciado dos lotes sobre o satélite está em preparação.
           </p>
         </div>
       )}
