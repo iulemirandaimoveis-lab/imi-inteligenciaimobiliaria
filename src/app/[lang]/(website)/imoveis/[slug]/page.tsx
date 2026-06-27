@@ -11,6 +11,8 @@ import DevelopmentUnits from '../components/DevelopmentUnits'
 import dynamic from 'next/dynamic'
 import SubdivisionErrorBoundary from '../components/SubdivisionErrorBoundary'
 const SubdivisionLotMap = dynamic(() => import('../components/SubdivisionLotMap'), { ssr: false })
+// Alto Bellevue: explorador com múltiplas vistas (Plano · Satélite+Lotes · Satélite).
+const AltoBellevueMapExplorer = dynamic(() => import('../components/AltoBellevueMapExplorer'), { ssr: false })
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -377,7 +379,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                         </section>
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
                             {params.slug === 'alto-bellevue' ? (
-                                <SubdivisionLotMap
+                                <AltoBellevueMapExplorer
                                     developmentId={development.id}
                                     developmentName={development.name}
                                     whatsappPhone={whatsappContact}
