@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronDown, LogOut, Building2, Bell, BarChart3, LayoutDashboard, Users, FileText } from 'lucide-react'
+import { ChevronDown, LogOut, Building2, Bell, BarChart3, LayoutDashboard, Users, FileText, Coins } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { tokens as T } from '../ui/tokens'
 import { StatusDot } from '../ui/primitives'
@@ -19,7 +19,8 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
   const showIntelligence = can(PERMISSIONS.METRICS_READ)
   const showTeam = can(PERMISSIONS.TEAMS_READ)
   const showProposals = can(PERMISSIONS.PROPOSALS_READ)
-  const showNav = showIntelligence || showTeam || showProposals
+  const showCommissions = can(PERMISSIONS.COMMISSIONS_READ)
+  const showNav = showIntelligence || showTeam || showProposals || showCommissions
 
   const primaryRole = session.roleKeys[0]
   const roleLabel = session.user.isSuper ? 'Super Administrador' : primaryRole ? ROLE_LABELS[primaryRole] : 'Membro'
@@ -107,6 +108,7 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           <nav className="imi-section-nav" style={{ display: 'flex', alignItems: 'center', gap: 4, padding: 3, borderRadius: T.rSm, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.glassBorder}` }}>
             <NavLink href="/users/dashboard" active={pathname === '/users/dashboard'} icon={<LayoutDashboard size={14} />} label="Dashboard" />
             {showProposals && <NavLink href="/users/proposals" active={pathname.startsWith('/users/proposals')} icon={<FileText size={14} />} label="Propostas" />}
+            {showCommissions && <NavLink href="/users/commissions" active={pathname.startsWith('/users/commissions')} icon={<Coins size={14} />} label="Comissões" />}
             {showIntelligence && <NavLink href="/users/intelligence" active={pathname === '/users/intelligence'} icon={<BarChart3 size={14} />} label="Intelligence" />}
             {showTeam && <NavLink href="/users/team" active={pathname === '/users/team'} icon={<Users size={14} />} label="Equipe" />}
           </nav>
