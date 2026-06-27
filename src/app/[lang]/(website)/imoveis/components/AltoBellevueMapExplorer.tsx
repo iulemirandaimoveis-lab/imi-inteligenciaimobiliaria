@@ -6,7 +6,7 @@ import { LayoutGrid, Satellite, Layers } from 'lucide-react'
 
 // Mapa de lotes vetorial interativo (zoom/drag/seleção/comparar) — fonte canônica.
 const SubdivisionLotMap = dynamic(
-  () => import('../../../imoveis/components/SubdivisionLotMap'),
+  () => import('./SubdivisionLotMap'),
   {
     ssr: false,
     loading: () => <MapSkeleton label="Carregando mapa de lotes…" />,
@@ -23,7 +23,7 @@ const AerialSatelliteMap = dynamic(() => import('@/components/maps/AerialSatelli
 // SOBRE a imagem de satélite real — a vista "render-like" com camadas, hover,
 // painel de lote e planos de pagamento.
 const AltoBellevueGeoMap = dynamic(
-  () => import('../../../imoveis/components/AltoBellevueGeoMap'),
+  () => import('./AltoBellevueGeoMap'),
   {
     ssr: false,
     loading: () => <MapSkeleton label="Carregando mapa geoespacial…" />,
@@ -39,21 +39,26 @@ interface Props {
   developmentId: string
   developmentName: string
   whatsappPhone?: string
+  /** Repassados ao "Plano" (SubdivisionLotMap) — sem regressão vs. uso direto. */
+  mapAmenities?: Record<string, unknown>[]
+  virtualTourUrl?: string
 }
 
 /**
  * Explorador do empreendimento com MÚLTIPLAS vistas interativas:
- *  • Plano    — mapa de lotes vetorial (seleção, comparação, financiamento).
- *  • Satélite — imagem aérea real do terreno (render-like), navegável.
+ *  • Plano            — mapa de lotes vetorial (seleção, comparação, financiamento).
+ *  • Satélite + Lotes — lotes georreferenciados clicáveis sobre satélite (WebGL).
+ *  • Satélite         — imagem aérea real do terreno (render-like), navegável.
  *
- * Mantém o mapa de lotes como vista padrão (nenhuma regressão) e adiciona a
- * vista aérea realista como opção. Exclusivo de /projetos até aprovação para
- * migrar para /imóveis.
+ * Vista padrão = Plano (nenhuma regressão). Usado tanto em /projetos quanto em
+ * /imóveis e /empreendimentos para o Alto Bellevue.
  */
 export default function AltoBellevueMapExplorer({
   developmentId,
   developmentName,
   whatsappPhone,
+  mapAmenities,
+  virtualTourUrl,
 }: Props) {
   const [view, setView] = useState<ViewMode>('plano')
 
@@ -91,6 +96,8 @@ export default function AltoBellevueMapExplorer({
           developmentId={developmentId}
           developmentName={developmentName}
           whatsappPhone={whatsappPhone}
+          mapAmenities={mapAmenities}
+          virtualTourUrl={virtualTourUrl}
         />
       )}
 

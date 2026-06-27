@@ -17,7 +17,7 @@ const DigitalTwinExperience = dynamic(
 // Explorador com múltiplas vistas interativas (Plano de lotes + Satélite real).
 // Exclusivo de /projetos até aprovação para migrar para /imóveis.
 const AltoBellevueMapExplorer = dynamic(
-  () => import('./components/AltoBellevueMapExplorer'),
+  () => import('../../imoveis/components/AltoBellevueMapExplorer'),
   { ssr: false },
 )
 

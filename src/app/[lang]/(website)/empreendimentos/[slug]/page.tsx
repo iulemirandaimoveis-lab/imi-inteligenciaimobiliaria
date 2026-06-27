@@ -13,6 +13,11 @@ const SubdivisionLotMap = dynamic(
   () => import('../../imoveis/components/SubdivisionLotMap'),
   { ssr: false }
 )
+// Alto Bellevue: explorador com múltiplas vistas (Plano · Satélite+Lotes · Satélite).
+const AltoBellevueMapExplorer = dynamic(
+  () => import('../../imoveis/components/AltoBellevueMapExplorer'),
+  { ssr: false }
+)
 const GenericBuildingViewer = dynamic(
   () => import('./components/GenericBuildingViewer'),
   { ssr: false }
@@ -103,11 +108,19 @@ export default async function EmpreendimentoPage({ params }: PageProps) {
           <JazzBoulevardViewer whatsappPhone={dev.whatsapp_phone ?? '5581986141487'} />
         )}
         {isSubdivision && (
-          <SubdivisionLotMap
-            developmentId={dev.id}
-            developmentName={dev.name}
-            whatsappPhone={dev.whatsapp_phone ?? '5581986141487'}
-          />
+          slug === 'alto-bellevue' ? (
+            <AltoBellevueMapExplorer
+              developmentId={dev.id}
+              developmentName={dev.name}
+              whatsappPhone={dev.whatsapp_phone ?? '5581986141487'}
+            />
+          ) : (
+            <SubdivisionLotMap
+              developmentId={dev.id}
+              developmentName={dev.name}
+              whatsappPhone={dev.whatsapp_phone ?? '5581986141487'}
+            />
+          )
         )}
         {isBuilding && !isJazz && (
           <GenericBuildingViewer
