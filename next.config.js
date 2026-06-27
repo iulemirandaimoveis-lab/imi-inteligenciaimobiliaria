@@ -8,6 +8,22 @@ const withPWA = require('next-pwa')({
     customWorkerDir: 'worker',
     runtimeCaching: [
         {
+            // Console autenticado (/users/*): SEMPRE buscar da rede primeiro para
+            // nunca servir uma versão antiga em cache do PWA (causa-raiz do "mapa
+            // não aparece" — Service Worker servindo HTML/dados desatualizados).
+            // Cai no cache só como fallback offline (timeout de 5s). NetworkFirst
+            // online = sempre fresco; não pode deixar a página mais velha do que
+            // está hoje, só mais nova.
+            urlPattern: /\/users(\/|$|\?)/i,
+            handler: 'NetworkFirst',
+            options: {
+                cacheName: 'imi-users-console',
+                networkTimeoutSeconds: 5,
+                expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 },
+                cacheableResponse: { statuses: [200] },
+            },
+        },
+        {
             urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/public\/.*/i,
             handler: 'CacheFirst',
             options: { cacheName: 'imi-images', expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 } },
