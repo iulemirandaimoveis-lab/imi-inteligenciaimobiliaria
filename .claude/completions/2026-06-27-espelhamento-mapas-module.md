@@ -45,3 +45,18 @@ Disponível · Reservado · Negociação · Vendido · Bloqueado — exatamente 
 ## Validação
 
 - `tsc --noEmit`: 0 erros · `next lint`: limpo · `next build`: rota `/users/map` compila.
+
+---
+
+## Update — Vista de Satélite (âncora confirmada pelo cliente)
+
+Adicionada vista **satélite/aérea ultra realista** ao `/users/map`, com toggle
+**Lotes ↔ Satélite**:
+- `src/features/users/map/SatelliteMap.tsx` — MapLibre GL (já no projeto) + Esri
+  World Imagery (tiles raster gratuitos, sem token) + camada de rótulos, controles
+  (zoom/fullscreen/escala/atribuição) e marcador dourado na âncora.
+- `src/features/users/map/anchors.ts` — âncora por slug. Alto Bellevue:
+  **-8.875437, -36.510937** (Plus Code `4FFQ+RJ` → `69354FFQ+RJ`, Garanhuns/PE).
+- O overlay georreferenciado dos LOTES sobre o satélite continua dependendo de
+  ≥3 pontos de controle (`scripts/cad/geo/control-points.json` PENDING) — não
+  inventado, conforme a regra do solver.

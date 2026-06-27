@@ -4,6 +4,7 @@ import { getDevelopmentBySlug } from '@/lib/lotmap/engine'
 import { ImiSessionProvider } from '@/features/users/session-context'
 import { DashboardTopbar } from '@/features/users/dashboard/DashboardChrome'
 import { MapMirrorView, type MapProject } from '@/features/users/map/MapMirrorView'
+import { getGeoAnchor } from '@/features/users/map/anchors'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,8 @@ export default async function MapPage() {
       // InteractiveLotMap → o espelho atualiza sozinho, sem cache-busting.
       mapJsonUrl: config?.mapJsonUrl ?? null,
       whatsappContact: config?.whatsappContact ?? null,
+      // Âncora p/ a vista de satélite (coordenada confirmada pelo cliente).
+      geoAnchor: getGeoAnchor(p.slug),
     }
   })
 
