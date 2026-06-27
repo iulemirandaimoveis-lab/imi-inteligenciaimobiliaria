@@ -52,8 +52,9 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: 16,
-        padding: '14px 24px',
+        flexWrap: 'wrap',
+        gap: 12,
+        padding: '12px 20px',
         background: 'rgba(7,12,20,0.72)',
         borderBottom: `1px solid ${T.glassBorder}`,
         backdropFilter: 'blur(16px)',
@@ -103,10 +104,10 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
       </div>
 
       {/* Right cluster */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="imi-right-cluster" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 12 }}>
         {/* Section nav: Dashboard ↔ Intelligence ↔ Equipe */}
         {showNav && (
-          <nav className="imi-section-nav" style={{ display: 'flex', alignItems: 'center', gap: 4, padding: 3, borderRadius: T.rSm, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.glassBorder}` }}>
+          <nav className="imi-section-nav" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: 5, borderRadius: 16, background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.glassBorder}`, overflowX: 'auto', maxWidth: '100%' }}>
             <NavLink href="/users/dashboard" active={pathname === '/users/dashboard'} icon={<LayoutDashboard size={14} />} label="Dashboard" />
             {showProposals && <NavLink href="/users/proposals" active={pathname.startsWith('/users/proposals')} icon={<FileText size={14} />} label="Propostas" />}
             {showGoals && <NavLink href="/users/goals" active={pathname.startsWith('/users/goals')} icon={<Target size={14} />} label="Metas" />}
@@ -119,25 +120,26 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           aria-label="Notificações"
           style={{
             display: 'inline-flex',
-            width: 36,
-            height: 36,
+            width: 42,
+            height: 42,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: T.rSm,
-            background: 'rgba(255,255,255,0.03)',
+            borderRadius: 12,
+            background: 'rgba(255,255,255,0.04)',
             border: `1px solid ${T.glassBorder}`,
             color: T.t2,
             cursor: 'pointer',
+            flexShrink: 0,
           }}
         >
-          <Bell size={15} />
+          <Bell size={18} />
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
             style={{
-              width: 34,
-              height: 34,
+              width: 40,
+              height: 40,
               borderRadius: '50%',
               background: T.goldSoft,
               border: `1px solid ${T.goldBorder}`,
@@ -145,7 +147,7 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
               alignItems: 'center',
               justifyContent: 'center',
               fontFamily: T.fSans,
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: 700,
               color: T.gold,
               flexShrink: 0,
@@ -179,23 +181,34 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           disabled={loggingOut}
           style={{
             display: 'inline-flex',
-            width: 36,
-            height: 36,
+            width: 42,
+            height: 42,
             alignItems: 'center',
             justifyContent: 'center',
-            borderRadius: T.rSm,
-            background: 'rgba(255,255,255,0.03)',
+            borderRadius: 12,
+            background: 'rgba(255,255,255,0.04)',
             border: `1px solid ${T.glassBorder}`,
             color: T.t2,
             cursor: loggingOut ? 'wait' : 'pointer',
+            flexShrink: 0,
           }}
         >
-          <LogOut size={15} />
+          <LogOut size={18} />
         </button>
       </div>
 
       <style>{`
-        @media (max-width: 640px){ .imi-user-meta{ display:none; } .imi-nav-label{ display:none; } }
+        .imi-section-nav { scrollbar-width: none; -ms-overflow-style: none; }
+        .imi-section-nav::-webkit-scrollbar { display: none; }
+        .imi-navlink-icon svg { width: 18px; height: 18px; }
+        .imi-navlink:hover { background: rgba(255,255,255,0.06); }
+        .imi-navlink[aria-current="page"]:hover { background: ${T.gold}; }
+        @media (max-width: 760px){
+          /* Apple-style: nav becomes a full-width, scrollable strip on its own row */
+          .imi-section-nav { order: 3; width: 100%; flex: 1 1 100%; }
+          .imi-right-cluster { width: 100%; justify-content: space-between; }
+        }
+        @media (max-width: 420px){ .imi-user-meta{ display:none; } }
       `}</style>
     </header>
   )
@@ -204,23 +217,30 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
 function NavLink({ href, active, icon, label }: { href: string; active: boolean; icon: React.ReactNode; label: string }) {
   return (
     <Link
+      className="imi-navlink"
       href={href}
+      aria-current={active ? 'page' : undefined}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 7,
-        padding: '6px 11px',
-        borderRadius: 8,
+        justifyContent: 'center',
+        gap: 8,
+        minHeight: 40,
+        padding: '0 15px',
+        borderRadius: 12,
         textDecoration: 'none',
+        whiteSpace: 'nowrap',
         fontFamily: T.fSans,
-        fontSize: 12.5,
+        fontSize: 14,
         fontWeight: 600,
+        letterSpacing: '-0.01em',
         color: active ? '#1A1206' : T.t2,
         background: active ? T.gold : 'transparent',
-        transition: `background 200ms, color 200ms`,
+        boxShadow: active ? `0 4px 14px ${T.goldGlow}` : 'none',
+        transition: `background 220ms ${T.ease}, color 220ms ${T.ease}, transform 220ms ${T.ease}`,
       }}
     >
-      <span style={{ display: 'flex' }}>{icon}</span>
+      <span className="imi-navlink-icon" style={{ display: 'flex' }}>{icon}</span>
       <span className="imi-nav-label">{label}</span>
     </Link>
   )
