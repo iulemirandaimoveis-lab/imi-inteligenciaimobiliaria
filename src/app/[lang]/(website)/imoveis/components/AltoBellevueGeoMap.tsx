@@ -8,8 +8,12 @@ import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, Layers,
   Sun, Moon, Maximize2, Minimize2, Navigation,
   TreePine, Building2, Map as MapIcon, RefreshCw, AlertCircle,
-  Shield,
+  Shield, ShoppingCart, Trash2, Check, Link2, FileText,
+  SlidersHorizontal, Copy, RotateCw,
 } from 'lucide-react';
+import { useLotCart } from '@/hooks/useLotCart';
+import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
+import ProposalFormModal from './ProposalFormModal';
 import { loadAltoBellevueMap } from '@/lib/lots/alto-bellevue';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
@@ -17,6 +21,8 @@ import {
   lotsToGeoJSON, streetsToGeoJSON, perimeterToGeoJSON,
   brLineToGeoJSON, amenitiesToGeoJSON, greenAreasToGeoJSON,
   streetLabelsToGeoJSON, AB_GEO_CONFIG, STATUS_COLORS,
+  hydrateAbCalibration, setAbCalibration, getAbCalibration,
+  AB_CALIBRATION_KEY, type AbCalibration,
 } from '@/lib/lots/alto-bellevue-geojson';
 import type { ABLot, ABMapData, Amenity } from '@/lib/lots/alto-bellevue';
 import { createClient } from '@/lib/supabase/client';
@@ -468,13 +474,17 @@ const CtrlBtn = memo(function CtrlBtn({
     <button
       onClick={(e) => { e.stopPropagation(); onClick(); }}
       aria-label={label}
+      title={label}
       aria-pressed={active}
-      className="w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-90 select-none"
+      className="flex items-center justify-center transition-all active:scale-90 select-none"
       style={{
-        background: bg, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        // Tamanho via inline-style (não depende de purge do Tailwind) — evita
+        // os botões "gigantes/bugados" relatados no mobile.
+        width: 40, height: 40, flex: '0 0 40px', borderRadius: 12, padding: 0,
+        background: bg, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
         border: `1.5px solid ${border}`,
-        boxShadow: '0 2px 12px rgba(0,0,0,0.50)',
-        color,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.45)',
+        color, cursor: 'pointer',
       }}
     >
       {children}
@@ -516,13 +526,15 @@ function StatusLegend({ stats }: { stats: Record<string, number> }) {
 // ── Lot Detail Panel ──────────────────────────────────────────────────────────
 
 function LotDetailPanel({
-  lot, dbLot, whatsappPhone, developmentName, onClose,
+  lot, dbLot, whatsappPhone, developmentName, onClose, inCart, onToggleCart,
 }: {
   lot: ABLot;
   dbLot?: DBLot;
   whatsappPhone: string;
   developmentName: string;
   onClose: () => void;
+  inCart: boolean;
+  onToggleCart: () => void;
 }) {
   const status = dbLot?.status || lot.status;
   const price = dbLot?.price ?? lot.price;
@@ -666,6 +678,20 @@ function LotDetailPanel({
 
         {/* CTA */}
         <div className="p-5 pt-3 flex flex-col gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+          {isAvailable && (
+            <button
+              onClick={onToggleCart}
+              className="flex items-center justify-center gap-2 w-full h-11 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all active:scale-95"
+              style={{
+                background: inCart ? 'rgba(34,197,94,0.14)' : 'rgba(200,164,74,0.12)',
+                color: inCart ? '#34D399' : GOLD,
+                border: `1px solid ${inCart ? 'rgba(52,211,153,0.4)' : 'rgba(200,164,74,0.35)'}`,
+                cursor: 'pointer', fontFamily: "'Outfit', sans-serif",
+              }}
+            >
+              {inCart ? <><Check size={15} /> Na proposta</> : <><ShoppingCart size={14} /> Adicionar à proposta</>}
+            </button>
+          )}
           {(isAvailable || isNeg) ? (
             <a
               href={`https://wa.me/${whatsappPhone}?text=${waMsg}`}
@@ -759,7 +785,21 @@ function LotDetailPanel({
         </div>
 
         {/* CTA */}
-        <div className="px-5 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', flexShrink: 0 }}>
+        <div className="px-5 py-4 flex flex-col gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', flexShrink: 0 }}>
+          {isAvailable && (
+            <button
+              onClick={onToggleCart}
+              className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[13px] font-bold uppercase tracking-wider active:scale-95"
+              style={{
+                background: inCart ? 'rgba(34,197,94,0.14)' : 'rgba(200,164,74,0.12)',
+                color: inCart ? '#34D399' : GOLD,
+                border: `1px solid ${inCart ? 'rgba(52,211,153,0.4)' : 'rgba(200,164,74,0.35)'}`,
+                cursor: 'pointer', fontFamily: "'Outfit', sans-serif",
+              }}
+            >
+              {inCart ? <><Check size={16} /> Na proposta</> : <><ShoppingCart size={15} /> Adicionar à proposta</>}
+            </button>
+          )}
           <a
             href={`https://wa.me/${whatsappPhone}?text=${waMsg}`}
             target="_blank"
@@ -958,6 +998,210 @@ function LayerPanel({
   );
 }
 
+// ── Cart sheet (proposta multi-lote) ───────────────────────────────────────────
+
+function CartSheet({
+  items, totals, linkCopied, onRemove, onClear, onCopyLink, onProposal, onClose,
+}: {
+  items: CartLot[];
+  totals: ReturnType<typeof cartTotals>;
+  linkCopied: boolean;
+  onRemove: (id: string) => void;
+  onClear: () => void;
+  onCopyLink: () => void;
+  onProposal: () => void;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  return (
+    <>
+      {/* Scrim */}
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        className="absolute inset-0 z-30"
+        style={{ background: 'rgba(0,0,0,0.45)' }}
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ y: '100%', opacity: 0.6 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: '100%', opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 380, damping: 40 }}
+        className="absolute z-40 left-0 right-0 bottom-0 sm:left-auto sm:right-4 sm:bottom-4 sm:w-[380px] rounded-t-[24px] sm:rounded-[20px] flex flex-col overflow-hidden"
+        style={{
+          background: 'rgba(9,20,38,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(200,164,74,0.25)', boxShadow: '0 -8px 40px rgba(0,0,0,0.6)', maxHeight: '80svh',
+        }}
+      >
+        <div style={{ height: 3, background: GOLD, flexShrink: 0 }} />
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <ShoppingCart size={16} color={GOLD} />
+            <span style={{ fontSize: 15, fontWeight: 800, color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
+              Sua proposta
+            </span>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
+              {items.length} {items.length === 1 ? 'lote' : 'lotes'}
+            </span>
+          </div>
+          <button onClick={onClose} aria-label="Fechar"
+            className="flex items-center justify-center"
+            style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.5)', border: 'none', cursor: 'pointer' }}>
+            <X size={15} />
+          </button>
+        </div>
+
+        <div className="overflow-y-auto px-5 flex-1" style={{ scrollbarWidth: 'thin' }}>
+          {items.map((l) => (
+            <div key={l.id} className="flex items-center justify-between py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <div>
+                <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', margin: 0 }}>Quadra {l.block} · Lote {l.lot}</p>
+                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '2px 0 0', fontFamily: "'JetBrains Mono', monospace" }}>
+                  {fmtM2(l.areaM2)} · {fmtBRL(l.price)}
+                </p>
+              </div>
+              <button onClick={() => onRemove(l.id)} aria-label="Remover lote"
+                className="flex items-center justify-center flex-shrink-0"
+                style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(239,68,68,0.10)', color: '#F87171', border: 'none', cursor: 'pointer' }}>
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Totais + ações */}
+        <div className="px-5 py-4 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          <div className="flex items-center justify-between mb-1">
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Área total</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', fontFamily: "'JetBrains Mono', monospace" }}>{fmtM2(totals.totalArea)}</span>
+          </div>
+          <div className="flex items-center justify-between mb-3">
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>Valor total</span>
+            <span style={{ fontSize: 18, fontWeight: 800, color: GOLD, fontFamily: "'JetBrains Mono', monospace" }}>{fmtBRL(totals.totalPrice)}</span>
+          </div>
+          <button
+            onClick={onProposal}
+            className="flex items-center justify-center gap-2 w-full mb-2"
+            style={{ height: 48, borderRadius: 13, border: 'none', background: GOLD, color: NAVY, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
+          >
+            <FileText size={16} /> Preencher proposta
+          </button>
+          <div className="flex gap-2">
+            <button onClick={onCopyLink}
+              className="flex items-center justify-center gap-2 flex-1"
+              style={{ height: 40, borderRadius: 11, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.12)', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}>
+              {linkCopied ? <><Check size={14} color="#34D399" /> Copiado</> : <><Link2 size={14} /> Copiar link</>}
+            </button>
+            <button onClick={onClear}
+              className="flex items-center justify-center"
+              style={{ width: 40, height: 40, borderRadius: 11, background: 'rgba(239,68,68,0.10)', color: '#F87171', border: '1px solid rgba(239,68,68,0.2)', cursor: 'pointer' }}
+              aria-label="Limpar proposta">
+              <Trash2 size={15} />
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+// ── Calibration overlay (admin) ────────────────────────────────────────────────
+// Alinha os lotes à imagem de satélite real sem precisar de GPS: a equipe ajusta
+// rotação/escala/posição e copia o JSON para chumbar em AB_CALIBRATION_DEFAULT
+// (src/lib/lots/alto-bellevue-geojson.ts). Só aparece com ?calibrar=1.
+
+function CalibrationOverlay({
+  cal, onChange,
+}: {
+  cal: AbCalibration;
+  onChange: (next: Partial<AbCalibration>) => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const copyJson = () => {
+    try {
+      const json = JSON.stringify(
+        { rotationDeg: round(cal.rotationDeg, 2), scale: round(cal.scale, 4), dLng: round(cal.dLng, 6), dLat: round(cal.dLat, 6) },
+        null, 2,
+      );
+      navigator.clipboard?.writeText(json);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch { /* ignore */ }
+  };
+
+  return (
+    <div
+      className="absolute z-40 left-3 bottom-3 sm:bottom-3 w-[260px] rounded-2xl overflow-hidden"
+      style={{
+        background: 'rgba(9,20,38,0.97)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(200,164,74,0.35)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+      }}
+    >
+      <div className="flex items-center gap-2 px-4 py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <SlidersHorizontal size={14} color={GOLD} />
+        <span style={{ fontSize: 11, fontWeight: 800, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Calibração</span>
+        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)', marginLeft: 'auto' }}>admin</span>
+      </div>
+      <div className="p-4 flex flex-col gap-3">
+        <CalRow label="Rotação" value={`${round(cal.rotationDeg, 1)}°`}
+          onMinus={() => onChange({ rotationDeg: cal.rotationDeg - 0.5 })}
+          onPlus={() => onChange({ rotationDeg: cal.rotationDeg + 0.5 })} />
+        <CalRow label="Escala" value={round(cal.scale, 3).toString()}
+          onMinus={() => onChange({ scale: Math.max(0.2, cal.scale - 0.01) })}
+          onPlus={() => onChange({ scale: cal.scale + 0.01 })} />
+        <CalRow label="↔ Leste/Oeste" value={round(cal.dLng * 1000, 2).toString()}
+          onMinus={() => onChange({ dLng: cal.dLng - 0.00005 })}
+          onPlus={() => onChange({ dLng: cal.dLng + 0.00005 })} />
+        <CalRow label="↕ Norte/Sul" value={round(cal.dLat * 1000, 2).toString()}
+          onMinus={() => onChange({ dLat: cal.dLat - 0.00005 })}
+          onPlus={() => onChange({ dLat: cal.dLat + 0.00005 })} />
+
+        <div className="flex gap-2 mt-1">
+          <button onClick={copyJson}
+            className="flex items-center justify-center gap-1.5 flex-1"
+            style={{ height: 36, borderRadius: 10, background: GOLD, color: NAVY, border: 'none', cursor: 'pointer', fontSize: 11.5, fontWeight: 800 }}>
+            {copied ? <><Check size={13} /> Copiado</> : <><Copy size={13} /> Copiar JSON</>}
+          </button>
+          <button onClick={() => onChange({ rotationDeg: 0, scale: 1, dLng: 0, dLat: 0 })}
+            className="flex items-center justify-center"
+            style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.12)', cursor: 'pointer' }}
+            aria-label="Resetar calibração">
+            <RotateCw size={14} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CalRow({ label, value, onMinus, onPlus }: { label: string; value: string; onMinus: () => void; onPlus: () => void }) {
+  const btn: React.CSSProperties = {
+    width: 30, height: 30, borderRadius: 8, background: 'rgba(255,255,255,0.07)',
+    color: '#fff', border: '1px solid rgba(255,255,255,0.12)', cursor: 'pointer',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700, lineHeight: 1,
+  };
+  return (
+    <div className="flex items-center justify-between">
+      <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{label}</span>
+      <div className="flex items-center gap-1.5">
+        <button onClick={onMinus} style={btn} aria-label={`${label} menos`}>−</button>
+        <span style={{ minWidth: 46, textAlign: 'center', fontSize: 11, fontWeight: 700, color: '#fff', fontFamily: "'JetBrains Mono', monospace" }}>{value}</span>
+        <button onClick={onPlus} style={btn} aria-label={`${label} mais`}>+</button>
+      </div>
+    </div>
+  );
+}
+
+function round(n: number, d: number): number {
+  const f = 10 ** d;
+  return Math.round(n * f) / f;
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
@@ -1028,6 +1272,49 @@ export default function AltoBellevueGeoMap({
   const [activeLayers, setActiveLayers] = useState<Set<LayerGroupId>>(
     new Set(['lots', 'streets', 'perimeter', 'amenities', 'green', 'labels'])
   );
+
+  // ── Carrinho de lotes / proposta (compartilhado com a vista "Plano") ───────
+  const devSlug = 'alto-bellevue';
+  const cart = useLotCart<CartLot>(devSlug);
+  const [showCart, setShowCart] = useState(false);
+  const [showProposal, setShowProposal] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const cartT = useMemo(() => cartTotals(cart.items), [cart.items]);
+
+  // Hidrata a calibração de georreferenciamento persistida (best-effort).
+  useEffect(() => { hydrateAbCalibration(); }, []);
+
+  // Modo calibração (admin): ativado por ?calibrar=1 na URL.
+  const [calibrateMode, setCalibrateMode] = useState(false);
+  const [calibration, setCalibrationState] = useState<AbCalibration>(getAbCalibration);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const on = new URLSearchParams(window.location.search).get('calibrar') === '1';
+    setCalibrateMode(on);
+    setCalibrationState(getAbCalibration());
+  }, []);
+
+  const toCart = useCallback((lot: ABLot, dbLot?: DBLot): CartLot => ({
+    id: lot.id,
+    developmentSlug: devSlug,
+    developmentName,
+    block: lot.quadra,
+    lot: String(lot.lot_number),
+    areaM2: dbLot?.area_m2 ?? lot.area_m2 ?? 0,
+    price: dbLot?.price ?? lot.price ?? 0,
+    status: dbLot?.status ?? lot.status,
+  }), [developmentName]);
+
+  const copyShareLink = useCallback(() => {
+    try {
+      const url = buildCartShareUrl(typeof window !== 'undefined' ? window.location.origin : '', {
+        d: devSlug, ids: cart.items.map((l) => l.id),
+      });
+      navigator.clipboard?.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 1800);
+    } catch { /* clipboard indisponível */ }
+  }, [cart.items]);
 
   const stats = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1133,6 +1420,34 @@ export default function AltoBellevueGeoMap({
     src?.setData(lotsToGeoJSON(merged));
   }, [mergedDbLots, mapReady, mapData]);
 
+  // Recalcula TODAS as fontes GeoJSON (usado pelo modo calibração, que altera a
+  // transformação SVG→WGS84 em tempo real). Reusa os builders canônicos.
+  const refreshAllGeo = useCallback(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady || !mapData) return;
+    type GJ = import('maplibre-gl').GeoJSONSource;
+    const dbMap = new Map(mergedDbLots.map(l => [`${l.quadra}-${String(l.lot_number).padStart(2, '0')}`, l]));
+    const merged = mapData.lots.map(lot => {
+      const db = dbMap.get(lot.id);
+      return db ? { ...lot, status: db.status || lot.status, price: db.price ?? lot.price } : lot;
+    });
+    (map.getSource(SOURCE.lots) as GJ | undefined)?.setData(lotsToGeoJSON(merged));
+    (map.getSource(SOURCE.streets) as GJ | undefined)?.setData(streetsToGeoJSON(mapData.streets));
+    (map.getSource(SOURCE.perim) as GJ | undefined)?.setData(perimeterToGeoJSON(mapData.perimeter));
+    (map.getSource(SOURCE.brLine) as GJ | undefined)?.setData(brLineToGeoJSON(mapData.brLine));
+    (map.getSource(SOURCE.amenities) as GJ | undefined)?.setData(amenitiesToGeoJSON(mapData.amenities));
+    (map.getSource(SOURCE.green) as GJ | undefined)?.setData(greenAreasToGeoJSON(mapData.greenAreas ?? []));
+    (map.getSource(SOURCE.labels) as GJ | undefined)?.setData(streetLabelsToGeoJSON(mapData.streetLabels ?? []));
+  }, [mapReady, mapData, mergedDbLots]);
+
+  // Aplica a calibração ao vivo: atualiza o transform, persiste e redesenha.
+  const applyCalibration = useCallback((next: Partial<AbCalibration>) => {
+    const cal = setAbCalibration(next);
+    setCalibrationState({ ...cal });
+    try { window.localStorage.setItem(AB_CALIBRATION_KEY, JSON.stringify(cal)); } catch { /* ignore */ }
+    refreshAllGeo();
+  }, [refreshAllGeo]);
+
   // Toggle layer visibility
   const toggleLayer = useCallback((groupId: LayerGroupId) => {
     const map = mapRef.current;
@@ -1221,47 +1536,39 @@ export default function AltoBellevueGeoMap({
         </div>
       )}
 
-      {/* ── Top bar ─────────────────────────────────────────────────────── */}
-      <div className="absolute top-3 left-3 right-3 z-20 flex items-center gap-2 pointer-events-none">
-        {/* Brand */}
-        <div className="flex-1 flex items-center gap-3 min-w-0 pointer-events-none">
-          <div style={{
-            background: 'rgba(8,20,36,0.90)', backdropFilter: 'blur(16px)',
-            WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(200,164,74,0.30)',
-            borderRadius: 12, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 10,
-          }}>
-            <div style={{ width: 6, height: 6, borderRadius: 3, background: GOLD, flexShrink: 0, boxShadow: `0 0 8px ${GOLD}` }} />
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em', whiteSpace: 'nowrap', fontFamily: "'Outfit', sans-serif" }}>
-              Alto Bellevue
-            </span>
-            <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.12)', flexShrink: 0 }} />
-            <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(34,197,94,0.90)', whiteSpace: 'nowrap', fontFamily: "'JetBrains Mono', monospace" }}>
-              {availCount} disponíveis
-            </span>
-          </div>
-        </div>
-
-        {/* Mode toggle */}
-        <div className="pointer-events-auto">
-          <CtrlBtn onClick={() => setDarkMode(d => !d)} label={darkMode ? 'Modo claro' : 'Modo escuro'}>
-            {darkMode ? <Sun size={15} /> : <Moon size={15} />}
-          </CtrlBtn>
-        </div>
-
-        <div className="pointer-events-auto">
-          <CtrlBtn onClick={toggleFullscreen} label={isFullscreen ? 'Sair de tela cheia' : 'Tela cheia'}>
-            {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
-          </CtrlBtn>
+      {/* ── Top bar: marca à esquerda (largura própria, sem colidir) ──────── */}
+      <div className="absolute top-3 left-3 z-20 flex items-center pointer-events-none" style={{ maxWidth: 'calc(100% - 76px)' }}>
+        <div style={{
+          background: 'rgba(8,20,36,0.90)', backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)', border: '1px solid rgba(200,164,74,0.30)',
+          borderRadius: 12, padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 10,
+          minWidth: 0, maxWidth: '100%',
+        }}>
+          <div style={{ width: 6, height: 6, borderRadius: 3, background: GOLD, flexShrink: 0, boxShadow: `0 0 8px ${GOLD}` }} />
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontFamily: "'Outfit', sans-serif" }}>
+            Alto Bellevue
+          </span>
+          <span style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.12)', flexShrink: 0 }} />
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'rgba(34,197,94,0.90)', whiteSpace: 'nowrap', flexShrink: 0, fontFamily: "'JetBrains Mono', monospace" }}>
+            {availCount} <span className="hidden sm:inline">disponíveis</span>
+          </span>
         </div>
       </div>
 
-      {/* ── Right control column ─────────────────────────────────────────── */}
-      <div className="absolute right-3 top-20 z-20 flex flex-col gap-2">
+      {/* ── Toolbar única (canto superior direito) — visual de app ────────── */}
+      <div className="absolute right-3 top-3 z-20 flex flex-col gap-2 items-end">
+        <CtrlBtn onClick={() => setDarkMode(d => !d)} label={darkMode ? 'Modo claro' : 'Modo escuro'}>
+          {darkMode ? <Sun size={15} /> : <Moon size={15} />}
+        </CtrlBtn>
+        <CtrlBtn onClick={toggleFullscreen} label={isFullscreen ? 'Sair de tela cheia' : 'Tela cheia'}>
+          {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+        </CtrlBtn>
+
+        <div style={{ width: 28, height: 1, background: 'rgba(200,164,74,0.25)', margin: '1px 6px' }} />
+
         {!isMobile && <CtrlBtn onClick={zoomIn}  label="Aproximar"><ZoomIn  size={15} /></CtrlBtn>}
         {!isMobile && <CtrlBtn onClick={zoomOut} label="Afastar">  <ZoomOut size={15} /></CtrlBtn>}
         <CtrlBtn onClick={resetView} label="Resetar visão"><RotateCcw size={14} /></CtrlBtn>
-
-        {!isMobile && <div style={{ height: 1, background: 'rgba(200,164,74,0.20)', margin: '2px 4px' }} />}
 
         <div className="relative">
           <CtrlBtn onClick={() => setShowLayerPanel(p => !p)} label="Camadas" active={showLayerPanel}>
@@ -1295,6 +1602,8 @@ export default function AltoBellevueGeoMap({
             whatsappPhone={whatsappPhone}
             developmentName={developmentName}
             onClose={() => setSelectedLot(null)}
+            inCart={cart.has(selectedLot.id)}
+            onToggleCart={() => cart.toggle(toCart(selectedLot, selectedDbLot))}
           />
         )}
       </AnimatePresence>
@@ -1310,6 +1619,65 @@ export default function AltoBellevueGeoMap({
           />
         )}
       </AnimatePresence>
+
+      {/* ── Botão flutuante "Proposta" (carrinho) ─────────────────────────── */}
+      {cart.items.length > 0 && !showCart && !showProposal && !selectedLot && !selectedAmenity && (
+        <motion.button
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          onClick={() => setShowCart(true)}
+          className="absolute z-30 flex items-center gap-2 right-3 bottom-16 sm:bottom-6"
+          style={{
+            height: 48, padding: '0 16px 0 14px', borderRadius: 24, border: 'none',
+            background: GOLD, color: NAVY, boxShadow: '0 8px 28px rgba(200,164,74,0.45)',
+            cursor: 'pointer', fontFamily: "'Outfit', sans-serif", fontWeight: 800, fontSize: 13.5,
+          }}
+          aria-label="Abrir proposta"
+        >
+          <ShoppingCart size={18} />
+          <span>Proposta</span>
+          <span style={{ minWidth: 22, height: 22, borderRadius: 11, background: NAVY, color: GOLD, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, padding: '0 6px' }}>
+            {cart.items.length}
+          </span>
+        </motion.button>
+      )}
+
+      {/* ── Painel do carrinho / proposta ─────────────────────────────────── */}
+      <AnimatePresence>
+        {showCart && (
+          <CartSheet
+            items={cart.items}
+            totals={cartT}
+            linkCopied={linkCopied}
+            onRemove={cart.remove}
+            onClear={cart.clear}
+            onCopyLink={copyShareLink}
+            onProposal={() => { setShowCart(false); setShowProposal(true); }}
+            onClose={() => setShowCart(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal de proposta (cliente preenche) ──────────────────────────── */}
+      <AnimatePresence>
+        {showProposal && cart.items.length > 0 && (
+          <ProposalFormModal
+            developmentId={developmentId}
+            developmentName={developmentName}
+            developmentSlug={devSlug}
+            whatsappPhone={whatsappPhone}
+            items={cart.items}
+            onClose={() => setShowProposal(false)}
+            onSubmitted={() => { cart.clear(); setShowProposal(false); }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Overlay de calibração (admin · ?calibrar=1) ───────────────────── */}
+      {calibrateMode && (
+        <CalibrationOverlay cal={calibration} onChange={applyCalibration} />
+      )}
 
       {/* Mobile legend (compact) */}
       <div className="absolute bottom-0 left-0 right-0 z-20 sm:hidden flex gap-2 overflow-x-auto px-3 pb-3 pt-1"
