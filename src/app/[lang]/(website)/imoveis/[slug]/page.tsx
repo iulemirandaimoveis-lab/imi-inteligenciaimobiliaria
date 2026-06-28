@@ -14,6 +14,8 @@ const SubdivisionLotMap = dynamic(() => import('../components/SubdivisionLotMap'
 import DevelopmentCTA from '../components/DevelopmentCTA'
 import AnchorNav from '../components/AnchorNav'
 import Breadcrumbs from '../components/Breadcrumbs'
+import ScrollytellingIntro from '../components/ScrollytellingIntro'
+import FloorPlanTypesSection from '../components/FloorPlanTypesSection'
 import SimilarProperties from '../components/SimilarProperties'
 import RealtorCard from '../components/RealtorCard'
 import MobileStickyBar from '../components/MobileStickyBar'
@@ -110,6 +112,16 @@ const ANCHOR_SECTIONS_LOTEAMENTO = [
     { id: 'galeria', label: 'Galeria' },
     { id: 'detalhes', label: 'Sobre' },
     { id: 'mapa', label: 'Disponibilidade' },
+    { id: 'localizacao', label: 'Localização' },
+    { id: 'inteligencia', label: 'IMI Score' },
+]
+
+const ANCHOR_SECTIONS_SCROLLYTELLING = [
+    { id: 'galeria', label: 'Galeria' },
+    { id: 'conceito', label: 'Conceito' },
+    { id: 'plantas', label: 'Plantas' },
+    { id: 'detalhes', label: 'Sobre' },
+    { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
     { id: 'inteligencia', label: 'IMI Score' },
 ]
@@ -312,7 +324,11 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
     // tornando o mapa visível de forma atômica no deploy (sem depender de flag no DB).
     const KNOWN_LOT_MAP_SLUGS = new Set(['loteamento-miguel-marques'])
     const lotMapEnabled = isLoteamento && (data.lot_map_enabled === true || KNOWN_LOT_MAP_SLUGS.has(params.slug))
-    const anchorSections = isLoteamento ? ANCHOR_SECTIONS_LOTEAMENTO : ANCHOR_SECTIONS
+    const anchorSections = isLoteamento
+        ? ANCHOR_SECTIONS_LOTEAMENTO
+        : development.scrollytellingEnabled
+            ? ANCHOR_SECTIONS_SCROLLYTELLING
+            : ANCHOR_SECTIONS
 
     return (
         <main className="pb-40 lg:pb-0" style={{ background: '#F7F5F2' }}>
@@ -375,6 +391,32 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 lotMapAmenities={Array.isArray(data.lot_map_amenities) ? data.lot_map_amenities : undefined}
                             />
                         </section>
+
+                        {/* Cinematic scrollytelling intro — only for enabled developments */}
+                        {development.scrollytellingEnabled && (
+                            development.conceptDescription || (development.towers && development.towers.length > 0)
+                        ) && (
+                            <section id="conceito">
+                                <ScrollytellingIntro
+                                    developmentName={development.name}
+                                    conceptDescription={development.conceptDescription ?? ''}
+                                    towers={development.towers}
+                                    heroImages={development.images.gallery}
+                                />
+                            </section>
+                        )}
+
+                        {/* Floor plan typologies — shown when floorPlanTypes exist */}
+                        {development.floorPlanTypes && development.floorPlanTypes.length > 0 && (
+                            <section id="plantas">
+                                <FloorPlanTypesSection
+                                    floorPlanTypes={development.floorPlanTypes}
+                                    towers={development.towers}
+                                    developmentName={development.name}
+                                />
+                            </section>
+                        )}
+
                         <section id={isLoteamento ? 'mapa' : 'unidades'}>
                             {params.slug === 'alto-bellevue' ? (
                                 <SubdivisionLotMap
