@@ -264,13 +264,16 @@ export function greenAreasToGeoJSON(greenAreas: GreenArea[]): GeoJSONFC {
 
 /** Build GeoJSON Point FeatureCollection for street label positions. */
 export function streetLabelsToGeoJSON(labels: StreetLabel[]): GeoJSONFC {
+  // Soma a rotação da calibração para que os nomes acompanhem o traçado das
+  // ruas quando o overlay é rotacionado (identidade → sem mudança).
+  const calRot = _calibration.rotationDeg;
   return {
     type: 'FeatureCollection',
     features: labels.map((s, i) => ({
       type: 'Feature',
       id: i,
       geometry: { type: 'Point', coordinates: svgToGeo(s.x, s.y) },
-      properties: { name: s.name, rotation: -(s.rot ?? 0) },
+      properties: { name: s.name, rotation: -(s.rot ?? 0) + calRot },
     })),
   };
 }
