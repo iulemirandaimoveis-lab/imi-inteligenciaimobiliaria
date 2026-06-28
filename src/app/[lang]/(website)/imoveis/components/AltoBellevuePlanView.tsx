@@ -1791,9 +1791,9 @@ function AmenityBottomSheet({
         )}
 
         {/* Vídeos enviados pelo backoffice (uploads MP4 — developments.lot_map_amenities.videos) */}
-        {info.videos && info.videos.length > 0 && (
+        {info.videos && info.videos.filter(Boolean).length > 0 && (
           <div className="px-5 pt-2" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {info.videos.map((src, i) => (
+            {info.videos.filter(Boolean).map((src, i) => (
               <video
                 key={i}
                 src={src}
@@ -1801,6 +1801,7 @@ function AmenityBottomSheet({
                 preload="metadata"
                 playsInline
                 style={{ width: '100%', borderRadius: 14, background: '#000', display: 'block' }}
+                onError={(e) => { (e.currentTarget as HTMLVideoElement).style.display = 'none'; }}
               />
             ))}
           </div>

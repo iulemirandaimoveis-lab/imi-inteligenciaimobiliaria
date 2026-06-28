@@ -64,10 +64,10 @@ export default function AltoBellevueMapExplorer({
 
   return (
     <div>
-      {/* View switcher */}
+      {/* View switcher — full-width segmented control on mobile, inline on desktop */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
         <div
-          className="inline-flex gap-1 p-1 rounded-xl"
+          className="flex sm:inline-flex w-full sm:w-auto gap-1 p-1 rounded-xl"
           style={{ background: '#ECE5DA', border: '1px solid #E0D8CC' }}
         >
           <ViewTab
@@ -112,6 +112,7 @@ export default function AltoBellevueMapExplorer({
               developmentName={developmentName}
               whatsappPhone={whatsappPhone}
               height="78vh"
+              mapAmenities={mapAmenities}
             />
           </div>
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
@@ -160,7 +161,7 @@ function ViewTab({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors"
+      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 min-h-[44px] rounded-lg text-[12px] sm:text-[13px] font-semibold transition-all active:scale-[0.97]"
       style={{
         color: active ? '#0B1928' : '#6B6B6B',
         background: active ? '#C8A44A' : 'transparent',
