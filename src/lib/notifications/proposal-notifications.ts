@@ -27,6 +27,121 @@ async function projectApprovers(projectId: string): Promise<Recipient[]> {
   }
 }
 
+/** Usuários por papel (BROKER, TEAM_MANAGER, …), opcionalmente escopados a um projeto. */
+async function usersByRoles(roleKeys: string[], projectId?: string): Promise<Recipient[]> {
+  try {
+    let q = supabaseAdmin
+      .schema('imi')
+      .from('user_roles')
+      .select('project_id, roles!inner ( key ), users!inner ( full_name, phone )')
+      .in('roles.key', roleKeys)
+    if (projectId) q = q.or(`project_id.eq.${projectId},project_id.is.null`)
+    const { data } = await q
+    const seen = new Set<string>()
+    return (data ?? [])
+      .map((r: any) => ({ name: r.users?.full_name ?? null, phone: r.users?.phone ?? null }))
+      .filter((r: Recipient) => {
+        if (!r.phone || seen.has(r.phone)) return false
+        seen.add(r.phone)
+        return true
+      })
+  } catch {
+    return []
+  }
+}
+
+/** Lista padrão de documentação / contrato / entrada enviada ao cliente ao reservar. */
+export function negotiationChecklistText(input: {
+  clientName: string
+  projectName?: string | null
+  unitLabel?: string | null
+  downPayment?: number | null
+}): string {
+  const linha = [input.unitLabel, input.projectName].filter(Boolean).join(' · ')
+  return (
+    `Olá, ${input.clientName}! ✅ Recebemos a sua proposta` +
+    (linha ? ` para *${linha}*` : '') +
+    `.\n\n` +
+    `Seu(s) lote(s) entra(m) agora em *NEGOCIAÇÃO*. Para concluir a reserva, precisamos de:\n\n` +
+    `📄 *Documentação*\n` +
+    `• RG e CPF (comprador e cônjuge)\n` +
+    `• Comprovante de residência atualizado\n` +
+    `• Comprovante de renda\n` +
+    `• Certidão de estado civil\n\n` +
+    `📝 *Contrato*\n` +
+    `• Contrato de Promessa de Compra e Venda (enviaremos para assinatura digital)\n\n` +
+    `💳 *Entrada / Sinal*\n` +
+    `• Valor: ${money(input.downPayment)}\n` +
+    `• Pagamento via PIX ou transferência (dados no contrato)\n\n` +
+    `Assim que recebermos a documentação, o contrato assinado e o pagamento da entrada, ` +
+    `o(s) lote(s) é(são) confirmado(s) como *VENDIDO(S)*. Um corretor entrará em contato. 🤝`
+  )
+}
+
+/**
+ * Fluxo público: cliente preencheu a proposta a partir do mapa.
+ *  • Confirmação ao CLIENTE (OpenWA) com a relação de documentação/contrato/entrada.
+ *  • Notifica o responsável do empreendimento + gestor(es) da equipe + corretores.
+ * Best-effort: nunca lança no caminho da request.
+ */
+export async function notifyLotProposal(input: {
+  projectId?: string | null
+  projectName?: string | null
+  clientName: string
+  clientPhone?: string | null
+  unitLabel?: string | null
+  totalAmount?: number | null
+  downPayment?: number | null
+  lotCount?: number | null
+}): Promise<{ clientNotified: boolean; teamNotified: number }> {
+  let clientNotified = false
+  let teamNotified = 0
+  try {
+    // 1) Confirmação ao cliente (relação de documentos / contrato / entrada).
+    if (input.clientPhone) {
+      const res = await sendWhatsAppText(
+        input.clientPhone,
+        negotiationChecklistText({
+          clientName: input.clientName,
+          projectName: input.projectName,
+          unitLabel: input.unitLabel,
+          downPayment: input.downPayment,
+        })
+      )
+      clientNotified = res.ok
+    }
+
+    // 2) Time interno: responsável do produto + gestor(es) + corretores.
+    const [approvers, managers, brokers] = await Promise.all([
+      input.projectId ? projectApprovers(input.projectId) : Promise.resolve([]),
+      usersByRoles(['TEAM_MANAGER'], input.projectId ?? undefined),
+      usersByRoles(['BROKER'], input.projectId ?? undefined),
+    ])
+
+    const unidade = [input.unitLabel, input.projectName].filter(Boolean).join(' · ')
+    const teamText =
+      `🟡 *Novo lote em NEGOCIAÇÃO*\n` +
+      `Cliente: ${input.clientName}\n` +
+      (input.clientPhone ? `Contato: ${input.clientPhone}\n` : '') +
+      (unidade ? `Unidade: ${unidade}\n` : '') +
+      (input.lotCount ? `Lotes: ${input.lotCount}\n` : '') +
+      `Valor: ${money(input.totalAmount)}\n` +
+      `\nProposta preenchida pelo cliente no site. Acesse o IMI Console.`
+
+    const recipients = new Map<string, string>()
+    for (const r of [...approvers, ...managers, ...brokers]) {
+      if (r.phone) recipients.set(r.phone, teamText)
+    }
+    if (recipients.size > 0) {
+      await sendWhatsAppBatch(Array.from(recipients, ([phone, text]) => ({ phone, text })))
+      teamNotified = recipients.size
+    }
+  } catch {
+    // swallow — best-effort
+  }
+  return { clientNotified, teamNotified }
+}
+
 async function userContact(userId: string): Promise<Recipient | null> {
   try {
     const { data } = await supabaseAdmin

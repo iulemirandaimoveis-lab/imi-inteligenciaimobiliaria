@@ -33,10 +33,85 @@ export const AB_GEO_CONFIG = {
 const SVG_W = 1200;
 const SVG_H = 821.86;
 
-/** Convert a single SVG coordinate pair to [lng, lat]. */
+// ── Georreferenciamento fino (calibração) ───────────────────────────────────
+// A caixa AB_GEO_CONFIG é norte-acima e aproximada — na prática o loteamento
+// está ROTACIONADO e levemente deslocado em relação à imagem de satélite real.
+// Em vez de chumbar números que só podem ser validados no olho, expomos uma
+// transformação de SIMILARIDADE (rotação + escala + translação) aplicada por
+// cima da caixa. O default é identidade → ZERO regressão visual. A equipe
+// calibra ao vivo (overlay com ?calibrar=1) e o resultado é persistido em
+// localStorage e pode ser chumbado aqui em `AB_CALIBRATION_DEFAULT`.
+export interface AbCalibration {
+  /** Rotação horária em graus, em torno do centro do loteamento. */
+  rotationDeg: number;
+  /** Escala uniforme (1 = tamanho atual). */
+  scale: number;
+  /** Deslocamento fino em graus (leste+/oeste-, norte+/sul-). */
+  dLng: number;
+  dLat: number;
+}
+
+export const AB_CALIBRATION_DEFAULT: AbCalibration = {
+  rotationDeg: 0,
+  scale: 1,
+  dLng: 0,
+  dLat: 0,
+};
+
+let _calibration: AbCalibration = { ...AB_CALIBRATION_DEFAULT };
+
+/** Calibração atual (default + persistida/ao-vivo). */
+export function getAbCalibration(): AbCalibration {
+  return _calibration;
+}
+
+/** Define a calibração ao vivo (overlay). Os builders de GeoJSON passam a usá-la. */
+export function setAbCalibration(cal: Partial<AbCalibration>): AbCalibration {
+  _calibration = { ..._calibration, ...cal };
+  return _calibration;
+}
+
+/** Hidrata a calibração a partir do localStorage (client-only, best-effort). */
+export function hydrateAbCalibration(): AbCalibration {
+  try {
+    const raw = typeof window !== 'undefined' ? window.localStorage.getItem(AB_CALIBRATION_KEY) : null;
+    if (raw) {
+      const obj = JSON.parse(raw);
+      if (obj && typeof obj === 'object') _calibration = { ...AB_CALIBRATION_DEFAULT, ...obj };
+    }
+  } catch { /* storage indisponível — mantém default */ }
+  return _calibration;
+}
+
+export const AB_CALIBRATION_KEY = 'imi:ab-geo-cal:v1';
+
+// Cosseno da latitude central — converte graus de longitude em metros corretos
+// para que a rotação não distorça o formato (lng "encolhe" longe do equador).
+const COS_LAT = Math.cos((AB_GEO_CONFIG.centerLat * Math.PI) / 180);
+
+/** Convert a single SVG coordinate pair to [lng, lat] (com calibração aplicada). */
 export function svgToGeo(x: number, y: number): [number, number] {
-  const lng = AB_GEO_CONFIG.west + (x / SVG_W) * (AB_GEO_CONFIG.east - AB_GEO_CONFIG.west);
-  const lat = AB_GEO_CONFIG.north + (y / SVG_H) * (AB_GEO_CONFIG.south - AB_GEO_CONFIG.north);
+  // 1) Caixa base (norte-acima, aproximada).
+  let lng = AB_GEO_CONFIG.west + (x / SVG_W) * (AB_GEO_CONFIG.east - AB_GEO_CONFIG.west);
+  let lat = AB_GEO_CONFIG.north + (y / SVG_H) * (AB_GEO_CONFIG.south - AB_GEO_CONFIG.north);
+
+  const cal = _calibration;
+  const isIdentity = cal.rotationDeg === 0 && cal.scale === 1 && cal.dLng === 0 && cal.dLat === 0;
+  if (isIdentity) return [lng, lat];
+
+  // 2) Rotação + escala em torno do centro, em espaço métrico-equivalente
+  //    (corrige o aspecto via COS_LAT para não "esmagar" o desenho).
+  const cx = AB_GEO_CONFIG.centerLng;
+  const cy = AB_GEO_CONFIG.centerLat;
+  let ex = (lng - cx) * COS_LAT; // east (graus equivalentes)
+  let ny = lat - cy;             // north
+  const rad = (-cal.rotationDeg * Math.PI) / 180; // horário (y cresce p/ sul)
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  const rx = (ex * cos - ny * sin) * cal.scale;
+  const ry = (ex * sin + ny * cos) * cal.scale;
+  lng = cx + rx / COS_LAT + cal.dLng;
+  lat = cy + ry + cal.dLat;
   return [lng, lat];
 }
 
