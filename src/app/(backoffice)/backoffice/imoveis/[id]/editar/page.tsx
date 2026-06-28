@@ -9,7 +9,8 @@ import {
   Image as ImageIcon, Upload, Check, Calendar, Save,
   Loader2, AlertCircle, BedDouble, Bath, Car, Sparkles, Star,
   Play, FileText, X, CheckCircle, Globe, Eye, Zap, GripVertical,
-  Maximize, User, Phone, MessageCircle, CreditCard,
+  Maximize, User, Phone, MessageCircle, CreditCard, Plus, Trash2,
+  Layers, Video,
 } from 'lucide-react'
 import Image from 'next/image'
 import { uploadFile, uploadMultipleImages } from '@/lib/supabase-storage'
@@ -334,6 +335,7 @@ const TABS = [
   { id: 'detalhes',      label: 'Características',  icon: Home,       desc: 'Área, quartos, amenities' },
   { id: 'valores',       label: 'Valores',           icon: DollarSign, desc: 'Preço, disponibilidade' },
   { id: 'midia',         label: 'Mídia',             icon: ImageIcon,  desc: 'Fotos, vídeos, planta' },
+  { id: 'tipologias',    label: 'Tipologias',        icon: Layers,     desc: 'Torres, tipologias, conceito' },
   { id: 'responsavel',   label: 'Responsável',       icon: User,       desc: 'Corretor, contato' },
 ] as const
 type TabId = typeof TABS[number]['id']
@@ -363,6 +365,30 @@ interface GalleryItem {
   file?: File      // only for new items
 }
 
+interface FloorPlanType {
+  id: string
+  name: string
+  tower: string
+  tower_id: string
+  category: 'residencial' | 'comercial'
+  area_from: number
+  area_to: number
+  bedrooms: number
+  bathrooms: number
+  parking: number
+  price_from: number | null
+  price_to: number | null
+  images: string[]
+  description: string
+}
+
+interface Tower {
+  id: string
+  name: string
+  tagline: string
+  floor_count: number
+}
+
 interface FormData {
   name: string; type: string; location: string; address: string
   cep: string; street: string; streetNumber: string; complement: string
@@ -377,9 +403,14 @@ interface FormData {
   status: string; status_commercial: string; is_highlighted: boolean
   videoUrl: string; videoShort: string; tourUrl: string
   videoFile: File | null; videoShortFile: File | null
+  coverVideoFile: File | null; coverVideoUrl: string
   brokerId: string; brokerName: string; brokerPhone: string
   brokerCreci: string; brokerAvatarUrl: string
   financingEnabled: boolean
+  floorPlanTypes: FloorPlanType[]
+  towers: Tower[]
+  scrollytelling_enabled: boolean
+  concept_description: string
 }
 
 const INITIAL: FormData = {
@@ -393,8 +424,13 @@ const INITIAL: FormData = {
   logo: null, existingLogo: '', status: 'disponivel', status_commercial: 'draft',
   is_highlighted: false, videoUrl: '', videoShort: '', tourUrl: '',
   videoFile: null, videoShortFile: null,
+  coverVideoFile: null, coverVideoUrl: '',
   brokerId: '', brokerName: '', brokerPhone: '', brokerCreci: '', brokerAvatarUrl: '',
   financingEnabled: true,
+  floorPlanTypes: [],
+  towers: [],
+  scrollytelling_enabled: false,
+  concept_description: '',
 }
 
 /* ── Gallery Tab with Drag-and-Drop (Fotos + Vídeos + Plantas + Brochure) ── */
@@ -621,6 +657,61 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
               </>
             )}
           </div>
+
+          {/* Vídeo de Capa */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: T.textMuted }}>
+              <Video size={11} className="inline mr-1" />Vídeo de Capa
+            </label>
+            <p className="text-[11px] mb-2" style={{ color: T.textDim }}>Vídeo exibido como fundo hero na página pública (MP4 ou WebM)</p>
+            {!formData.coverVideoUrl && !formData.coverVideoFile && (
+              <label className="cursor-pointer flex items-center gap-3 h-11 px-4 rounded-[6px] mb-2 transition-all hover:opacity-80"
+                style={{ border: `2px dashed ${T.border}`, background: T.elevated, color: T.textMuted }}>
+                <Upload size={14} />
+                <span className="text-sm">Enviar vídeo de capa (MP4/WebM)</span>
+                <input type="file" accept="video/mp4,video/webm" className="hidden" onChange={e => {
+                  if (e.target.files?.[0]) { set('coverVideoFile', e.target.files[0]); set('coverVideoUrl', '') }
+                  e.target.value = ''
+                }} />
+              </label>
+            )}
+            {formData.coverVideoFile && (
+              <div className="flex items-center gap-3 p-3 rounded-[6px] mb-2" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <Video size={16} style={{ color: T.accent }} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm truncate" style={{ color: T.text }}>{formData.coverVideoFile.name}</p>
+                  <p className="text-xs" style={{ color: T.textDim }}>{(formData.coverVideoFile.size / (1024 * 1024)).toFixed(1)} MB</p>
+                </div>
+                <button type="button" onClick={() => set('coverVideoFile', null)}
+                  className="w-8 h-8 rounded flex items-center justify-center" style={{ background: '#EF444420' }}>
+                  <X size={12} color="#EF4444" />
+                </button>
+              </div>
+            )}
+            {formData.coverVideoUrl && !formData.coverVideoFile && (
+              <div className="flex items-center gap-3 p-3 rounded-[6px]" style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <Video size={16} style={{ color: T.accent }} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium mb-0.5" style={{ color: T.textMuted }}>URL atual</p>
+                  <a href={formData.coverVideoUrl} target="_blank" rel="noopener"
+                    className="text-xs truncate block underline" style={{ color: T.accent }}>
+                    {formData.coverVideoUrl}
+                  </a>
+                </div>
+                <button type="button" onClick={() => set('coverVideoUrl', '')}
+                  className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0" style={{ background: '#EF444420' }}>
+                  <X size={12} color="#EF4444" />
+                </button>
+              </div>
+            )}
+            {!formData.coverVideoFile && !formData.coverVideoUrl && (
+              <>
+                <p className="text-center text-xs mb-2" style={{ color: T.textDim }}>— ou cole a URL direta —</p>
+                <input value={formData.coverVideoUrl} onChange={e => set('coverVideoUrl', e.target.value)}
+                  placeholder="https://..." className={inp} style={inpStyle} />
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -727,6 +818,335 @@ function GalleryTabContent({ formData, set, params }: { formData: FormData; set:
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+/* ── Tipologias Tab ── */
+function TipologiasTabContent({ formData, set, setFormData }: {
+  formData: FormData
+  set: (k: keyof FormData, v: FormData[keyof FormData]) => void
+  setFormData: (value: FormData | ((prev: FormData) => FormData)) => void
+}) {
+  const inp = `w-full h-10 px-3 rounded-[6px] text-sm outline-none transition-all`
+  const inpStyle = { background: T.elevated, border: `1px solid ${T.border}`, color: T.text }
+  const labelStyle = { color: T.textMuted, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.05em', display: 'block', marginBottom: 4 }
+
+  const updateTypology = (index: number, patch: Partial<FloorPlanType>) => {
+    const updated = formData.floorPlanTypes.map((t, i) => i === index ? { ...t, ...patch } : t)
+    set('floorPlanTypes', updated)
+  }
+
+  const deleteTypology = (index: number) => {
+    set('floorPlanTypes', formData.floorPlanTypes.filter((_, i) => i !== index))
+  }
+
+  const addTypology = () => {
+    const blank: FloorPlanType = {
+      id: `tipo-${Date.now()}`,
+      name: '', tower: '', tower_id: '',
+      category: 'residencial',
+      area_from: 0, area_to: 0,
+      bedrooms: 0, bathrooms: 0, parking: 0,
+      price_from: null, price_to: null,
+      images: [], description: '',
+    }
+    set('floorPlanTypes', [...formData.floorPlanTypes, blank])
+  }
+
+  const updateTower = (index: number, patch: Partial<Tower>) => {
+    const updated = formData.towers.map((t, i) => i === index ? { ...t, ...patch } : t)
+    set('towers', updated)
+  }
+
+  const deleteTower = (index: number) => {
+    set('towers', formData.towers.filter((_, i) => i !== index))
+  }
+
+  const addTower = () => {
+    const blank: Tower = { id: `torre-${Date.now()}`, name: '', tagline: '', floor_count: 0 }
+    set('towers', [...formData.towers, blank])
+  }
+
+  return (
+    <div className="space-y-10">
+
+      {/* ── Conceito ── */}
+      <div>
+        <h3 className="text-sm font-bold mb-1" style={{ color: T.text }}>Conceito do Empreendimento</h3>
+        <p className="text-xs mb-5" style={{ color: T.textDim }}>Texto de conceito exibido na seção scrollytelling da página pública.</p>
+
+        <div className="space-y-4">
+          {/* Scrollytelling toggle */}
+          <label className="flex items-center gap-3 cursor-pointer">
+            <div onClick={() => set('scrollytelling_enabled', !formData.scrollytelling_enabled)}
+              className="w-5 h-5 rounded flex items-center justify-center transition-all flex-shrink-0"
+              style={{ background: formData.scrollytelling_enabled ? T.accent : T.elevated, border: `2px solid ${formData.scrollytelling_enabled ? T.accent : T.border}` }}>
+              {formData.scrollytelling_enabled && <Check size={12} color="white" />}
+            </div>
+            <div>
+              <p className="text-sm font-medium" style={{ color: T.text }}>Ativar Scrollytelling</p>
+              <p className="text-xs" style={{ color: T.textDim }}>Exibe seção de narrativa visual animada na página pública</p>
+            </div>
+          </label>
+
+          {/* Concept description */}
+          <div>
+            <label style={labelStyle}>Descrição de Conceito</label>
+            <textarea
+              value={formData.concept_description}
+              onChange={e => set('concept_description', e.target.value)}
+              rows={4}
+              placeholder="Descreva o conceito e a proposta do empreendimento..."
+              className="w-full px-4 py-3 rounded-[6px] text-sm outline-none resize-none"
+              style={inpStyle}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Torres ── */}
+      <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <h3 className="text-sm font-bold" style={{ color: T.text }}>Torres</h3>
+            <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{formData.towers.length} torre(s) cadastrada(s)</p>
+          </div>
+          <button type="button" onClick={addTower}
+            className="h-9 px-4 rounded flex items-center gap-2 text-sm font-medium transition-all"
+            style={{ background: `${T.accent}15`, color: T.accent, border: `1px solid ${T.accent}30` }}>
+            <Plus size={14} /> Adicionar torre
+          </button>
+        </div>
+
+        {formData.towers.length === 0 ? (
+          <div className="text-center py-8 rounded-lg" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+            <Building2 size={28} className="mx-auto mb-2" style={{ color: T.textDim }} />
+            <p className="text-sm" style={{ color: T.textDim }}>Nenhuma torre cadastrada</p>
+            <p className="text-xs mt-1" style={{ color: T.textDim }}>Clique em &quot;Adicionar torre&quot; para começar</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {formData.towers.map((tower, idx) => (
+              <div key={tower.id || idx} className="rounded-lg p-5 relative"
+                style={{ background: T.elevated, border: `1px solid ${T.border}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>
+                    Torre {idx + 1}
+                  </span>
+                  <button type="button" onClick={() => deleteTower(idx)}
+                    className="w-8 h-8 rounded flex items-center justify-center transition-all"
+                    style={{ background: '#EF444415', border: '1px solid #EF444430' }}>
+                    <Trash2 size={13} color="#EF4444" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label style={labelStyle}>Nome</label>
+                    <input value={tower.name} onChange={e => updateTower(idx, { name: e.target.value })}
+                      placeholder="Ex: Fusion Center" className={inp} style={inpStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Tagline</label>
+                    <input value={tower.tagline} onChange={e => updateTower(idx, { tagline: e.target.value })}
+                      placeholder="Ex: O coração do empreendimento" className={inp} style={inpStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Andares</label>
+                    <input type="number" min="0" value={tower.floor_count || ''}
+                      onChange={e => updateTower(idx, { floor_count: Number(e.target.value) || 0 })}
+                      placeholder="Ex: 32" className={inp} style={inpStyle} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Tipologias ── */}
+      <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div>
+            <h3 className="text-sm font-bold" style={{ color: T.text }}>Tipologias</h3>
+            <p className="text-xs mt-0.5" style={{ color: T.textDim }}>{formData.floorPlanTypes.length} tipologia(s) cadastrada(s)</p>
+          </div>
+          <button type="button" onClick={addTypology}
+            className="h-9 px-4 rounded flex items-center gap-2 text-sm font-medium transition-all"
+            style={{ background: `${T.accent}15`, color: T.accent, border: `1px solid ${T.accent}30` }}>
+            <Plus size={14} /> Adicionar tipologia
+          </button>
+        </div>
+
+        {formData.floorPlanTypes.length === 0 ? (
+          <div className="text-center py-10 rounded-lg" style={{ border: `2px dashed ${T.border}`, background: T.elevated }}>
+            <Layers size={32} className="mx-auto mb-2" style={{ color: T.textDim }} />
+            <p className="text-sm" style={{ color: T.textDim }}>Nenhuma tipologia cadastrada</p>
+            <p className="text-xs mt-1 mb-4" style={{ color: T.textDim }}>Adicione tipos de planta para este empreendimento</p>
+            <button type="button" onClick={addTypology}
+              className="h-9 px-5 rounded text-sm font-semibold inline-flex items-center gap-2"
+              style={{ background: `${T.accent}15`, color: T.accent, border: `1px solid ${T.accent}30` }}>
+              <Plus size={14} /> Adicionar tipologia
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-5">
+            {formData.floorPlanTypes.map((tipo, idx) => (
+              <div key={tipo.id || idx} className="rounded-lg overflow-hidden"
+                style={{ border: `1px solid ${T.border}`, background: T.elevated }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: `${T.accent}08`, borderBottom: `1px solid ${T.border}` }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span className="text-xs font-bold uppercase tracking-wider" style={{ color: T.textMuted }}>
+                      Tipologia {idx + 1}
+                    </span>
+                    {tipo.name && (
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                        style={{ background: `${T.accent}20`, color: T.accent }}>
+                        {tipo.name}
+                      </span>
+                    )}
+                    {tipo.category && (
+                      <span className="text-xs px-2 py-0.5 rounded-full"
+                        style={{ background: tipo.category === 'residencial' ? 'rgba(99,179,237,0.15)' : 'rgba(154,117,255,0.15)', color: tipo.category === 'residencial' ? '#63B3ED' : '#9A75FF' }}>
+                        {tipo.category}
+                      </span>
+                    )}
+                  </div>
+                  <button type="button" onClick={() => deleteTypology(idx)}
+                    className="w-8 h-8 rounded flex items-center justify-center transition-all"
+                    style={{ background: '#EF444415', border: '1px solid #EF444430' }}>
+                    <Trash2 size={13} color="#EF4444" />
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div style={{ padding: 20 }} className="space-y-4">
+                  {/* Row 1: Name, Tower, Category */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label style={labelStyle}>Nome</label>
+                      <input value={tipo.name}
+                        onChange={e => updateTypology(idx, {
+                          name: e.target.value,
+                          id: e.target.value.toLowerCase().replace(/\s+/g, '-'),
+                        })}
+                        placeholder="Ex: Studio, 2 Quartos..." className={inp} style={inpStyle} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Torre</label>
+                      <input value={tipo.tower}
+                        onChange={e => updateTypology(idx, {
+                          tower: e.target.value,
+                          tower_id: e.target.value.toLowerCase().replace(/\s+/g, '-'),
+                        })}
+                        placeholder="Ex: Fusion Center" className={inp} style={inpStyle} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Categoria</label>
+                      <select value={tipo.category}
+                        onChange={e => updateTypology(idx, { category: e.target.value as 'residencial' | 'comercial' })}
+                        className={inp} style={inpStyle}>
+                        <option value="residencial">Residencial</option>
+                        <option value="comercial">Comercial</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Area from/to */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div>
+                      <label style={labelStyle}>Área de (m²)</label>
+                      <div className="relative">
+                        <Ruler size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.area_from || ''}
+                          onChange={e => updateTypology(idx, { area_from: Number(e.target.value) || 0 })}
+                          placeholder="30" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Área até (m²)</label>
+                      <div className="relative">
+                        <Ruler size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.area_to || ''}
+                          onChange={e => updateTypology(idx, { area_to: Number(e.target.value) || 0 })}
+                          placeholder="60" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Preço de (R$)</label>
+                      <div className="relative">
+                        <DollarSign size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.price_from ?? ''}
+                          onChange={e => updateTypology(idx, { price_from: e.target.value ? Number(e.target.value) : null })}
+                          placeholder="500000" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Preço até (R$)</label>
+                      <div className="relative">
+                        <DollarSign size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.price_to ?? ''}
+                          onChange={e => updateTypology(idx, { price_to: e.target.value ? Number(e.target.value) : null })}
+                          placeholder="800000" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 3: Bedrooms, Bathrooms, Parking */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label style={labelStyle}>Quartos</label>
+                      <div className="relative">
+                        <BedDouble size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.bedrooms ?? ''}
+                          onChange={e => updateTypology(idx, { bedrooms: Number(e.target.value) || 0 })}
+                          placeholder="1" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Banheiros</label>
+                      <div className="relative">
+                        <Bath size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.bathrooms ?? ''}
+                          onChange={e => updateTypology(idx, { bathrooms: Number(e.target.value) || 0 })}
+                          placeholder="1" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Vagas</label>
+                      <div className="relative">
+                        <Car size={13} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: T.textDim }} />
+                        <input type="number" min="0" value={tipo.parking ?? ''}
+                          onChange={e => updateTypology(idx, { parking: Number(e.target.value) || 0 })}
+                          placeholder="1" className={inp} style={{ ...inpStyle, paddingLeft: '2rem' }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 4: Description */}
+                  <div>
+                    <label style={labelStyle}>Descrição</label>
+                    <textarea value={tipo.description}
+                      onChange={e => updateTypology(idx, { description: e.target.value })}
+                      rows={2}
+                      placeholder="Descreva esta tipologia..."
+                      className="w-full px-3 py-2 rounded-[6px] text-sm outline-none resize-y"
+                      style={{ ...inpStyle, minHeight: 60 }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Bottom add button */}
+            <button type="button" onClick={addTypology}
+              className="w-full h-11 rounded-[6px] flex items-center justify-center gap-2 text-sm font-medium transition-all"
+              style={{ border: `2px dashed ${T.border}`, background: 'transparent', color: T.textMuted }}>
+              <Plus size={16} /> Adicionar tipologia
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -839,8 +1259,13 @@ export default function EditarImovelPage() {
           status: knownStatuses.includes(d.status) ? d.status : 'disponivel', status_commercial: d.status_commercial || d.status_comercial || 'draft',
           is_highlighted: !!d.is_highlighted, videoUrl: d.video_url || '', videoShort: d.video_short_url || '', tourUrl: d.virtual_tour_url || '',
           videoFile: null, videoShortFile: null,
+          coverVideoFile: null, coverVideoUrl: d.images?.coverVideo || d.cover_video_url || '',
           brokerId, brokerName, brokerPhone, brokerCreci, brokerAvatarUrl,
           financingEnabled: d.financing_enabled !== false,
+          floorPlanTypes: Array.isArray(d.floor_plan_types) ? d.floor_plan_types : [],
+          towers: Array.isArray(d.towers) ? d.towers : [],
+          scrollytelling_enabled: !!d.scrollytelling_enabled,
+          concept_description: d.concept_description || '',
         })
       } catch (_err: unknown) {
         toast.error('Erro ao carregar dados do empreendimento')
@@ -935,6 +1360,13 @@ export default function EditarImovelPage() {
         if (!r.error) finalVideoShortUrl = r.url
         else toast.warning(`Falha no upload do vídeo curto: ${r.error}`)
       }
+      let finalCoverVideoUrl: string | null = formData.coverVideoUrl || null
+      if (formData.coverVideoFile) {
+        toast.info('Enviando vídeo de capa...')
+        const r = await uploadFile(formData.coverVideoFile, 'media', `developments/${params.id}/videos`)
+        if (!r.error) finalCoverVideoUrl = r.url
+        else toast.warning(`Falha no upload do vídeo de capa: ${r.error}`)
+      }
 
       const res = await fetch('/api/developments', {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
@@ -962,7 +1394,12 @@ export default function EditarImovelPage() {
           floor_plans: [...formData.existingFloorPlans, ...newFpUrls],
           brochure_url: brochureUrl, video_url: finalVideoUrl, video_short_url: finalVideoShortUrl,
           virtual_tour_url: formData.tourUrl || null,
+          cover_video_url: finalCoverVideoUrl,
           broker_id: formData.brokerId || null,
+          floor_plan_types: formData.floorPlanTypes,
+          towers: formData.towers,
+          scrollytelling_enabled: formData.scrollytelling_enabled,
+          concept_description: formData.concept_description || null,
         }),
       })
       if (!res.ok) { let e; try { e = await res.json() } catch { e = {} }; throw new Error(e.error || 'Erro ao atualizar') }
@@ -974,8 +1411,10 @@ export default function EditarImovelPage() {
         galleryItems: allImages.map(url => ({ type: 'existing' as const, url })),
         floorPlans: [], brochure: null,
         videoFile: null, videoShortFile: null,
+        coverVideoFile: null,
         videoUrl: finalVideoUrl || p.videoUrl,
         videoShort: finalVideoShortUrl || p.videoShort,
+        coverVideoUrl: finalCoverVideoUrl || p.coverVideoUrl,
       }))
     } catch (err: unknown) {
       toast.error('Erro ao salvar: ' + (err instanceof Error ? err.message : String(err)))
@@ -1405,6 +1844,11 @@ export default function EditarImovelPage() {
           {/* ── MÍDIA ── */}
           {activeTab === 'midia' && (
             <GalleryTabContent formData={formData} set={set} params={{ id: String(params.id) }} />
+          )}
+
+          {/* ── TIPOLOGIAS ── */}
+          {activeTab === 'tipologias' && (
+            <TipologiasTabContent formData={formData} set={set} setFormData={setFormData} />
           )}
 
           {/* ── RESPONSÁVEL ── */}

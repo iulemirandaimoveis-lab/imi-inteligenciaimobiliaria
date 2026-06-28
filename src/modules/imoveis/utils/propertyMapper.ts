@@ -121,7 +121,7 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
             floorPlans: floorPlans,
             virtualTour: dbProp.virtual_tour_url,
             brochure: dbProp.brochure_url,
-            heroVideo: imagesJson.hero_video || undefined,
+            heroVideo: imagesJson.coverVideo || dbProp.cover_video_url || imagesJson.hero_video || undefined,
         },
         propertyType: dbProp.type || undefined,
         units: [], // Units are loaded separately on detail view if needed
@@ -131,6 +131,10 @@ export function mapDbPropertyToDevelopment(dbProp: Record<string, any>): Develop
         createdAt: dbProp.created_at || new Date().toISOString(),
         updatedAt: dbProp.updated_at || new Date().toISOString(),
         listingCategory: 'comprar',
+        scrollytellingEnabled: dbProp.scrollytelling_enabled || false,
+        conceptDescription: dbProp.concept_description || undefined,
+        towers: Array.isArray(dbProp.towers) ? dbProp.towers : [],
+        floorPlanTypes: Array.isArray(dbProp.floor_plan_types) ? dbProp.floor_plan_types : [],
     };
 }
 
