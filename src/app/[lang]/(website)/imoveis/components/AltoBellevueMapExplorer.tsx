@@ -67,7 +67,7 @@ export default function AltoBellevueMapExplorer({
       {/* View switcher — full-width segmented control on mobile, inline on desktop */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
         <div
-          className="flex sm:inline-flex w-full sm:w-auto gap-1 p-1 rounded-xl"
+          className="grid grid-cols-3 sm:inline-flex w-full sm:w-auto gap-1 p-1 rounded-xl"
           style={{ background: '#ECE5DA', border: '1px solid #E0D8CC' }}
         >
           <ViewTab
@@ -75,18 +75,21 @@ export default function AltoBellevueMapExplorer({
             onClick={() => setView('plano')}
             icon={<LayoutGrid size={15} />}
             label="Plano de lotes"
+            shortLabel="Plano"
           />
           <ViewTab
             active={view === 'satlotes'}
             onClick={() => setView('satlotes')}
             icon={<Layers size={15} />}
             label="Satélite + Lotes"
+            shortLabel="Sat. + Lotes"
           />
           <ViewTab
             active={view === 'satelite'}
             onClick={() => setView('satelite')}
             icon={<Satellite size={15} />}
             label="Satélite"
+            shortLabel="Satélite"
           />
         </div>
       </div>
@@ -151,24 +154,29 @@ function ViewTab({
   onClick,
   icon,
   label,
+  shortLabel,
 }: {
   active: boolean
   onClick: () => void
   icon: React.ReactNode
   label: string
+  /** Rótulo curto exibido no mobile (evita quebra de linha nos botões). */
+  shortLabel?: string
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 min-h-[44px] rounded-lg text-[12px] sm:text-[13px] font-semibold transition-all active:scale-[0.97]"
+      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 min-h-[44px] rounded-lg text-[12px] sm:text-[13px] font-semibold leading-none whitespace-nowrap transition-all active:scale-[0.97]"
       style={{
         color: active ? '#0B1928' : '#6B6B6B',
         background: active ? '#C8A44A' : 'transparent',
       }}
     >
-      {icon}
-      {label}
+      <span className="flex-shrink-0">{icon}</span>
+      {/* Rótulo curto no mobile, completo a partir de sm — sem quebra de linha */}
+      <span className="sm:hidden">{shortLabel ?? label}</span>
+      <span className="hidden sm:inline">{label}</span>
     </button>
   )
 }

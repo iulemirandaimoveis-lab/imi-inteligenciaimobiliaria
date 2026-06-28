@@ -3,7 +3,7 @@
 import React, {
   useRef, useState, useCallback, useEffect, useMemo, memo,
 } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls } from 'framer-motion';
 import {
   X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, Layers,
   Sun, Moon, Maximize2, Minimize2, Navigation,
@@ -20,7 +20,7 @@ import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
 import {
   lotsToGeoJSON, streetsToGeoJSON, perimeterToGeoJSON,
   brLineToGeoJSON, amenitiesToGeoJSON, greenAreasToGeoJSON,
-  streetLabelsToGeoJSON, AB_GEO_CONFIG, STATUS_COLORS,
+  streetLabelsToGeoJSON, svgToGeo, AB_GEO_CONFIG, STATUS_COLORS,
   hydrateAbCalibration, setAbCalibration, getAbCalibration,
   AB_CALIBRATION_KEY, type AbCalibration,
 } from '@/lib/lots/alto-bellevue-geojson';
@@ -179,6 +179,45 @@ async function initMap(
 
   map.on('load', () => onLoad(map, ml));
   return map;
+}
+
+// ── Enquadramento responsivo ────────────────────────────────────────────────
+// Calcula a caixa geográfica do empreendimento (perímetro → fallback: lotes) já
+// com a calibração aplicada, e enquadra o mapa nela com padding por dispositivo.
+// É o que faz "cada tela abrir e renderizar TUDO" — mobile, tablet e desktop.
+
+function computeDevBounds(data: ABMapData): [[number, number], [number, number]] | null {
+  const pts: [number, number][] = [];
+  for (const ring of data.perimeter ?? []) for (const [x, y] of ring) pts.push(svgToGeo(x, y));
+  if (!pts.length) {
+    for (const lot of data.lots) {
+      if (!lot.has_polygon || !lot.polygon?.length) continue;
+      for (const [x, y] of lot.polygon) pts.push(svgToGeo(x, y));
+    }
+  }
+  let minLng = Infinity, minLat = Infinity, maxLng = -Infinity, maxLat = -Infinity;
+  for (const [lng, lat] of pts) {
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) continue;
+    if (lng < minLng) minLng = lng; if (lng > maxLng) maxLng = lng;
+    if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
+  }
+  if (!Number.isFinite(minLng)) return null;
+  return [[minLng, minLat], [maxLng, maxLat]];
+}
+
+function fitMapToDev(map: MapLibreMap, data: ABMapData, duration = 0) {
+  const bounds = computeDevBounds(data);
+  if (!bounds) return;
+  const w = typeof window !== 'undefined' ? window.innerWidth : 1024;
+  const mobile = w < 640;
+  map.fitBounds(bounds, {
+    // Mais respiro embaixo no mobile (legenda/sheet) e nas laterais no desktop.
+    padding: mobile
+      ? { top: 70, right: 14, bottom: 96, left: 14 }
+      : { top: 84, right: 76, bottom: 84, left: 76 },
+    duration,
+    maxZoom: 18,
+  });
 }
 
 // ── Add all Alto Bellevue layers ──────────────────────────────────────────────
@@ -367,10 +406,9 @@ function addABLayers(map: MapLibreMap, data: ABMapData, dbLots: DBLot[], darkMod
     type: 'symbol',
     source: SOURCE.labels,
     minzoom: 15.5,
-    maxzoom: 18.5,
     layout: {
       'text-field': ['get', 'name'],
-      'text-size': ['interpolate', ['linear'], ['zoom'], 15.5, 8, 17, 11],
+      'text-size': ['interpolate', ['linear'], ['zoom'], 15.5, 8, 17, 11, 20, 14],
       'text-font': ['Noto Sans Bold', 'Arial Unicode MS Bold'],
       'text-rotate': ['get', 'rotation'],
       'text-rotation-alignment': 'map',
@@ -452,24 +490,15 @@ function addABLayers(map: MapLibreMap, data: ABMapData, dbLots: DBLot[], darkMod
 
 // ── Control button ────────────────────────────────────────────────────────────
 
+// Botão de controle. `bare` = sem fundo/borda/sombra próprios, pois fica DENTRO
+// de um cluster de vidro único (visual iOS). Tamanho fixo via inline-style para
+// não depender do purge do Tailwind — evita os botões "gigantes/bugados".
 const CtrlBtn = memo(function CtrlBtn({
-  onClick, label, active, children, variant = 'default',
+  onClick, label, active, children, bare = true,
 }: {
   onClick: () => void; label: string; active?: boolean;
-  children: React.ReactNode; variant?: 'default' | 'gold' | 'danger';
+  children: React.ReactNode; bare?: boolean;
 }) {
-  const bg = active
-    ? 'rgba(200,164,74,0.20)'
-    : variant === 'gold'
-    ? 'rgba(200,164,74,0.90)'
-    : 'rgba(12,22,40,0.88)';
-  const border = active
-    ? 'rgba(200,164,74,0.90)'
-    : variant === 'gold'
-    ? 'transparent'
-    : 'rgba(200,164,74,0.30)';
-  const color = active ? GOLD : variant === 'gold' ? NAVY : 'rgba(255,255,255,0.85)';
-
   return (
     <button
       onClick={(e) => { e.stopPropagation(); onClick(); }}
@@ -478,19 +507,27 @@ const CtrlBtn = memo(function CtrlBtn({
       aria-pressed={active}
       className="flex items-center justify-center transition-all active:scale-90 select-none"
       style={{
-        // Tamanho via inline-style (não depende de purge do Tailwind) — evita
-        // os botões "gigantes/bugados" relatados no mobile.
-        width: 40, height: 40, flex: '0 0 40px', borderRadius: 12, padding: 0,
-        background: bg, backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)',
-        border: `1.5px solid ${border}`,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.45)',
-        color, cursor: 'pointer',
+        width: 38, height: 38, flex: '0 0 38px', borderRadius: 10, padding: 0,
+        background: active
+          ? 'rgba(200,164,74,0.18)'
+          : bare ? 'transparent' : 'rgba(12,22,40,0.88)',
+        backdropFilter: bare ? undefined : 'blur(14px)',
+        WebkitBackdropFilter: bare ? undefined : 'blur(14px)',
+        border: bare ? 'none' : `1.5px solid rgba(200,164,74,0.30)`,
+        boxShadow: bare ? 'none' : '0 2px 10px rgba(0,0,0,0.45)',
+        color: active ? GOLD : 'rgba(255,255,255,0.88)',
+        cursor: 'pointer',
       }}
     >
       {children}
     </button>
   );
 });
+
+// Divisória fina entre grupos de botões dentro do cluster.
+const CtrlDivider = () => (
+  <div style={{ width: 22, height: 1, background: 'rgba(200,164,74,0.22)', margin: '1px auto' }} />
+);
 
 // ── Status legend pill ────────────────────────────────────────────────────────
 
@@ -544,6 +581,7 @@ function LotDetailPanel({
   const isNeg = status === 'NEGOCIACAO';
 
   const pricePerM2 = price && area ? price / area : null;
+  const dragControls = useDragControls();
 
   const waMsg = encodeURIComponent(
     `Olá! Tenho interesse no ${developmentName} — Quadra ${lot.quadra}, Lote ${lot.lot_number}${area ? `, área ${Math.round(area)} m²` : ''}${price ? `, valor ${fmtBRL(price)}` : ''}. Gostaria de mais informações.`
@@ -718,14 +756,22 @@ function LotDetailPanel({
         </div>
       </motion.div>
 
-      {/* Mobile: bottom sheet */}
+      {/* Mobile: bottom sheet — arrastável p/ fechar (iOS-like) */}
       <motion.div
         key="panel-mobile"
         initial={{ y: '100%', opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', stiffness: 380, damping: 40 }}
-        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 max-h-[70svh] flex flex-col rounded-t-[24px] overflow-hidden"
+        drag="y"
+        dragListener={false}
+        dragControls={dragControls}
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.5 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 110 || info.velocity.y > 700) onClose();
+        }}
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 max-h-[78svh] flex flex-col rounded-t-[24px] overflow-hidden"
         style={{
           background: 'rgba(8,20,36,0.97)',
           backdropFilter: 'blur(24px)',
@@ -734,9 +780,13 @@ function LotDetailPanel({
           borderTop: `3px solid ${cfg.fill}`,
         }}
       >
-        {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.15)' }} />
+        {/* Drag handle — inicia o arrasto p/ fechar (resto da folha rola normal) */}
+        <div
+          className="flex justify-center pt-3 pb-2 flex-shrink-0 cursor-grab active:cursor-grabbing"
+          style={{ touchAction: 'none' }}
+          onPointerDown={(e) => dragControls.start(e)}
+        >
+          <div style={{ width: 40, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.18)' }} />
         </div>
         {/* Close */}
         <div className="absolute top-3 right-4">
@@ -785,7 +835,14 @@ function LotDetailPanel({
         </div>
 
         {/* CTA */}
-        <div className="px-5 py-4 flex flex-col gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)', flexShrink: 0 }}>
+        <div
+          className="px-5 pt-4 flex flex-col gap-2"
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.07)',
+            flexShrink: 0,
+            paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
+          }}
+        >
           {isAvailable && (
             <button
               onClick={onToggleCart}
@@ -963,7 +1020,7 @@ function LayerPanel({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: -8 }}
       transition={{ duration: 0.15 }}
-      className="absolute top-16 right-3 z-30 w-44 rounded-xl overflow-hidden"
+      className="absolute right-full mr-2 -top-1 z-30 w-44 rounded-xl overflow-hidden"
       style={{
         background: 'rgba(8,20,36,0.96)',
         backdropFilter: 'blur(20px)',
@@ -1255,14 +1312,6 @@ export default function AltoBellevueGeoMap({
   }, [dbLots, isAB, canonStatus, liveAvail]);
 
   // UI state
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
   const [darkMode, setDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedLot, setSelectedLot] = useState<ABLot | null>(null);
@@ -1347,6 +1396,9 @@ export default function AltoBellevueGeoMap({
       mapInst = map;
 
       addABLayers(map, mapData, mergedDbLots, darkMode);
+
+      // Abre já enquadrado no empreendimento inteiro (todas as telas).
+      fitMapToDev(map, mapData, 0);
 
       // Hover interaction
       map.on('mousemove', LAYER.lotFill, (e) => {
@@ -1468,14 +1520,29 @@ export default function AltoBellevueGeoMap({
   const zoomIn  = useCallback(() => mapRef.current?.zoomIn({ duration: 300 }), []);
   const zoomOut = useCallback(() => mapRef.current?.zoomOut({ duration: 300 }), []);
   const resetView = useCallback(() => {
-    mapRef.current?.flyTo({
-      center: [AB_GEO_CONFIG.centerLng, AB_GEO_CONFIG.centerLat],
-      zoom: AB_GEO_CONFIG.initialZoom,
-      bearing: 0,
-      pitch: 0,
-      duration: 800,
-    });
-  }, []);
+    const map = mapRef.current;
+    if (!map) return;
+    map.resetNorthPitch({ duration: 0 });
+    if (mapData) fitMapToDev(map, mapData, 700);
+    else map.flyTo({ center: [AB_GEO_CONFIG.centerLng, AB_GEO_CONFIG.centerLat], zoom: AB_GEO_CONFIG.initialZoom, duration: 700 });
+  }, [mapData]);
+
+  // Reenquadra ao girar/redimensionar a tela quando nada está selecionado —
+  // mantém o empreendimento inteiro visível (comportamento app/iOS).
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const onResize = () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const map = mapRef.current;
+        if (map && mapReady && mapData && !selectedLot && !selectedAmenity) {
+          fitMapToDev(map, mapData, 250);
+        }
+      }, 200);
+    };
+    window.addEventListener('resize', onResize);
+    return () => { clearTimeout(t); window.removeEventListener('resize', onResize); };
+  }, [mapReady, mapData, selectedLot, selectedAmenity]);
 
   const toggleFullscreen = useCallback(() => {
     const el = document.documentElement;
@@ -1555,35 +1622,49 @@ export default function AltoBellevueGeoMap({
         </div>
       </div>
 
-      {/* ── Toolbar única (canto superior direito) — visual de app ────────── */}
-      <div className="absolute right-3 top-3 z-20 flex flex-col gap-2 items-end">
-        <CtrlBtn onClick={() => setDarkMode(d => !d)} label={darkMode ? 'Modo claro' : 'Modo escuro'}>
-          {darkMode ? <Sun size={15} /> : <Moon size={15} />}
-        </CtrlBtn>
-        <CtrlBtn onClick={toggleFullscreen} label={isFullscreen ? 'Sair de tela cheia' : 'Tela cheia'}>
-          {isFullscreen ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
-        </CtrlBtn>
-
-        <div style={{ width: 28, height: 1, background: 'rgba(200,164,74,0.25)', margin: '1px 6px' }} />
-
-        {!isMobile && <CtrlBtn onClick={zoomIn}  label="Aproximar"><ZoomIn  size={15} /></CtrlBtn>}
-        {!isMobile && <CtrlBtn onClick={zoomOut} label="Afastar">  <ZoomOut size={15} /></CtrlBtn>}
-        <CtrlBtn onClick={resetView} label="Resetar visão"><RotateCcw size={14} /></CtrlBtn>
-
-        <div className="relative">
-          <CtrlBtn onClick={() => setShowLayerPanel(p => !p)} label="Camadas" active={showLayerPanel}>
-            <Layers size={15} />
+      {/* ── Toolbar única (canto superior direito) — cluster de vidro iOS ──── */}
+      <div className="absolute right-3 top-3 z-20 flex flex-col items-end">
+        <div
+          className="flex flex-col items-center gap-1"
+          style={{
+            background: 'rgba(8,20,36,0.82)',
+            backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+            border: '1px solid rgba(200,164,74,0.28)',
+            borderRadius: 14, padding: 4,
+            boxShadow: '0 6px 22px rgba(0,0,0,0.42)',
+          }}
+        >
+          <CtrlBtn onClick={() => setDarkMode(d => !d)} label={darkMode ? 'Modo claro' : 'Modo escuro'}>
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
           </CtrlBtn>
-          <AnimatePresence>
-            {showLayerPanel && (
-              <LayerPanel
-                visible={showLayerPanel}
-                active={activeLayers}
-                onToggle={toggleLayer}
-                onClose={() => setShowLayerPanel(false)}
-              />
-            )}
-          </AnimatePresence>
+          <CtrlBtn onClick={toggleFullscreen} label={isFullscreen ? 'Sair de tela cheia' : 'Tela cheia'}>
+            {isFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+          </CtrlBtn>
+
+          <CtrlDivider />
+
+          {/* Zoom disponível em todas as telas (toque + desktop) */}
+          <CtrlBtn onClick={zoomIn}  label="Aproximar"><ZoomIn  size={16} /></CtrlBtn>
+          <CtrlBtn onClick={zoomOut} label="Afastar"><ZoomOut size={16} /></CtrlBtn>
+          <CtrlBtn onClick={resetView} label="Enquadrar empreendimento"><RotateCcw size={15} /></CtrlBtn>
+
+          <CtrlDivider />
+
+          <div className="relative">
+            <CtrlBtn onClick={() => setShowLayerPanel(p => !p)} label="Camadas" active={showLayerPanel}>
+              <Layers size={16} />
+            </CtrlBtn>
+            <AnimatePresence>
+              {showLayerPanel && (
+                <LayerPanel
+                  visible={showLayerPanel}
+                  active={activeLayers}
+                  onToggle={toggleLayer}
+                  onClose={() => setShowLayerPanel(false)}
+                />
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
