@@ -14,7 +14,7 @@
 
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, ShoppingCart, Loader2, CheckCircle2, ShieldCheck, MessageCircle } from 'lucide-react';
+import { X, ShoppingCart, Loader2, CheckCircle2, ShieldCheck, MessageCircle, FileText } from 'lucide-react';
 import { cartTotals, buildCartWhatsAppMessage, type CartLot } from '@/lib/lotmap/cart';
 
 const GOLD = '#C8A44A';
@@ -45,10 +45,34 @@ export default function ProposalFormModal({
   const [cpf, setCpf] = useState('');
   const [email, setEmail] = useState('');
   const [fone, setFone] = useState('');
+  const [estadoCivil, setEstadoCivil] = useState<'solteiro' | 'casado'>('solteiro');
   const [conjuge, setConjuge] = useState('');
+  const [conjugeEmail, setConjugeEmail] = useState('');
+  const [conjugeFone, setConjugeFone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [obs, setObs] = useState('');
   const [showMore, setShowMore] = useState(false);
+
+  const isCasado = estadoCivil === 'casado';
+
+  // Lista de documentos necessários — adapta-se ao estado civil informado.
+  const documentos = useMemo(() => {
+    const base = [
+      'Cópia do CPF ou CNH (caso já possua)',
+      'Comprovante de residência',
+      isCasado
+        ? 'Certidão de casamento'
+        : 'Certidão de nascimento',
+    ];
+    if (isCasado) {
+      base.push(
+        'Certidão de casamento do cônjuge',
+        'E-mail do cônjuge',
+        'Número de telefone do cônjuge',
+      );
+    }
+    return base;
+  }, [isCasado]);
 
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -65,8 +89,10 @@ export default function ProposalFormModal({
     const quadrasStr = Array.from(new Set(items.map((l) => l.block))).join(', ');
 
     const formData = {
-      comprador: { nome: nome.trim(), cpf: cpf.trim() },
-      conjuge: { nome: conjuge.trim() },
+      comprador: { nome: nome.trim(), cpf: cpf.trim(), est_civil: isCasado ? 'Casado(a)' : 'Solteiro(a)' },
+      conjuge: isCasado
+        ? { nome: conjuge.trim(), email: conjugeEmail.trim(), fone: conjugeFone.trim() }
+        : {},
       contato: { email: email.trim(), fone: fone.trim(), end_residencial: endereco.trim() },
       imovel: {
         loteamento: developmentName,
@@ -118,6 +144,10 @@ export default function ProposalFormModal({
         `Proposta de ${nome || 'cliente'}` +
         (fone ? ` · ${fone}` : '') +
         (cpf ? ` · CPF ${cpf}` : '') +
+        `\nEstado civil: ${isCasado ? 'Casado(a)' : 'Solteiro(a)'}` +
+        (isCasado && conjuge ? `\nCônjuge: ${conjuge}` : '') +
+        (isCasado && conjugeFone ? ` · ${conjugeFone}` : '') +
+        (isCasado && conjugeEmail ? ` · ${conjugeEmail}` : '') +
         `\nEntrada sugerida: ${fmtBRL(suggestedDown)}` +
         (obs ? `\nObs.: ${obs}` : ''),
     });
@@ -206,6 +236,66 @@ export default function ProposalFormModal({
                 <Field label="E-mail" value={email} onChange={setEmail} placeholder="voce@email.com" type="email" />
               </div>
 
+              {/* Estado civil — define quais documentos serão exigidos */}
+              <div className="mb-3">
+                <span style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+                  Estado civil
+                </span>
+                <div className="grid grid-cols-2 gap-2">
+                  {([['solteiro', 'Solteiro(a)'], ['casado', 'Casado(a)']] as const).map(([val, lbl]) => {
+                    const active = estadoCivil === val;
+                    return (
+                      <button
+                        key={val}
+                        type="button"
+                        onClick={() => setEstadoCivil(val)}
+                        style={{
+                          height: 42, borderRadius: 11, cursor: 'pointer',
+                          background: active ? 'rgba(200,164,74,0.16)' : 'rgba(255,255,255,0.05)',
+                          border: active ? `1px solid ${GOLD}` : '1px solid rgba(255,255,255,0.10)',
+                          color: active ? GOLD : 'rgba(255,255,255,0.6)',
+                          fontSize: 13, fontWeight: 700, fontFamily: "'Outfit', sans-serif", transition: 'all 0.15s',
+                        }}
+                      >
+                        {lbl}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Dados do cônjuge — obrigatórios quando casado(a) */}
+              {isCasado && (
+                <div className="mb-1">
+                  <Field label="Nome do cônjuge" value={conjuge} onChange={setConjuge} placeholder="Como no documento" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Field label="E-mail do cônjuge" value={conjugeEmail} onChange={setConjugeEmail} placeholder="conjuge@email.com" type="email" />
+                    <Field label="Telefone do cônjuge" value={conjugeFone} onChange={setConjugeFone} placeholder="(00) 00000-0000" type="tel" />
+                  </div>
+                </div>
+              )}
+
+              {/* Documentos necessários — checklist que se adapta ao estado civil */}
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)', borderRadius: 14, padding: '12px 14px', marginTop: 4, marginBottom: 4 }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText size={13} color={GOLD} />
+                  <span style={{ fontSize: 11, fontWeight: 800, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                    Documentos necessários
+                  </span>
+                </div>
+                <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {documentos.map((doc) => (
+                    <li key={doc} className="flex items-start gap-2" style={{ fontSize: 12, color: 'rgba(255,255,255,0.78)', lineHeight: 1.45 }}>
+                      <span style={{ color: GOLD, flexShrink: 0, marginTop: 1 }}>•</span>
+                      <span>{doc}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', margin: '8px 0 0', lineHeight: 1.45 }}>
+                  Você poderá enviar os documentos ao corretor após a confirmação da reserva.
+                </p>
+              </div>
+
               {/* Progressive disclosure */}
               <button
                 type="button"
@@ -216,7 +306,6 @@ export default function ProposalFormModal({
               </button>
               {showMore && (
                 <div className="mt-1">
-                  <Field label="Cônjuge" value={conjuge} onChange={setConjuge} placeholder="Nome do cônjuge" />
                   <Field label="Endereço residencial" value={endereco} onChange={setEndereco} placeholder="Rua, nº, bairro, cidade" />
                   <Field label="Observações" value={obs} onChange={setObs} placeholder="Forma de pagamento desejada, dúvidas…" textarea />
                 </div>
