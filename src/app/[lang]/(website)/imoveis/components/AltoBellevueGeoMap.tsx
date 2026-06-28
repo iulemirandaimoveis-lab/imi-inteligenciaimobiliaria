@@ -35,6 +35,8 @@ interface Props {
   whatsappPhone?: string;
   /** Altura do container do mapa. Default '100svh' (hero); embutido use ex. '72vh'. */
   height?: string;
+  /** Mídias das áreas comuns vindas do backoffice (developments.lot_map_amenities). */
+  mapAmenities?: Record<string, unknown>[];
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -467,7 +469,6 @@ const CtrlBtn = memo(function CtrlBtn({
       onClick={(e) => { e.stopPropagation(); onClick(); }}
       aria-label={label}
       aria-pressed={active}
-      title={label}
       className="w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-90 select-none"
       style={{
         background: bg, backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
@@ -777,11 +778,26 @@ function LotDetailPanel({
 
 // ── Amenity Modal ─────────────────────────────────────────────────────────────
 
-function AmenityModal({ amenity, onClose }: { amenity: Amenity; onClose: () => void }) {
-  const info = AMENITY_INFO[amenity.id] ?? AMENITY_INFO[amenity.id.replace(/-\d+$/, '')] ?? {
+function AmenityModal({ amenity, amenityOverrides, onClose }: {
+  amenity: Amenity;
+  amenityOverrides?: Record<string, unknown>[];
+  onClose: () => void;
+}) {
+  // Merge backoffice override → hardcoded defaults
+  const override = amenityOverrides?.find(
+    o => o.id === amenity.id || o.id === amenity.id.replace(/-\d+$/, ''),
+  );
+  const base = AMENITY_INFO[amenity.id] ?? AMENITY_INFO[amenity.id.replace(/-\d+$/, '')] ?? {
     title: amenity.label,
     description: 'Área de uso comum do empreendimento.',
   };
+  const title       = ((override?.title       ?? base.title)       as string);
+  const description = ((override?.description ?? base.description) as string);
+  const features    = ((override?.features    ?? base.features)    as string[] | undefined);
+  const photos      = ((override?.photos      ?? amenity.photos)   as string[] | undefined)?.filter(Boolean);
+  const video       = ((override?.video       ?? amenity.video)    as string | undefined);
+  const videos      = ((override?.videos      ?? amenity.videos)   as string[] | undefined)?.filter(Boolean);
+  const tour360     = ((override?.tour360     ?? amenity.tour360)  as string | undefined);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -803,26 +819,63 @@ function AmenityModal({ amenity, onClose }: { amenity: Amenity; onClose: () => v
         animate={{ y: 0, opacity: 1, scale: 1 }}
         exit={{ y: 32, opacity: 0 }}
         transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full sm:max-w-sm rounded-t-[24px] sm:rounded-[20px] overflow-hidden"
-        style={{ background: 'rgba(10,22,40,0.98)', border: '1px solid rgba(200,164,74,0.25)' }}
+        className="w-full sm:max-w-md rounded-t-[24px] sm:rounded-[20px] overflow-hidden overflow-y-auto"
+        style={{ background: 'rgba(10,22,40,0.98)', border: '1px solid rgba(200,164,74,0.25)', maxHeight: '85svh' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Color bar */}
         <div style={{ height: 3, background: amenity.color }} />
+
+        {/* Tour 360° */}
+        {tour360 && (
+          <div style={{ aspectRatio: '16/9', width: '100%' }}>
+            <iframe src={tour360} style={{ width: '100%', height: '100%', border: 0 }} allow="xr-spatial-tracking; gyroscope; accelerometer" allowFullScreen />
+          </div>
+        )}
+
+        {/* Photo gallery */}
+        {photos && photos.length > 0 && (
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '12px 16px 0', scrollbarWidth: 'none' }}>
+            {photos.map((src, i) => (
+              <img key={i} src={src} alt="" style={{ height: 120, width: 'auto', borderRadius: 10, flexShrink: 0, objectFit: 'cover', display: 'block' }} />
+            ))}
+          </div>
+        )}
+
         <div className="p-5">
           <div className="flex items-start justify-between mb-3">
             <div>
               <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(200,164,74,0.80)', textTransform: 'uppercase', letterSpacing: '0.2em', margin: '0 0 4px' }}>Área Comum</p>
-              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'Outfit', sans-serif" }}>{info.title}</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'Outfit', sans-serif" }}>{title}</h3>
             </div>
-            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.50)' }}>
+            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.50)' }}>
               <X size={14} />
             </button>
           </div>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)', lineHeight: 1.6, margin: '0 0 16px' }}>{info.description}</p>
-          {info.features && (
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)', lineHeight: 1.6, margin: '0 0 16px' }}>{description}</p>
+
+          {/* Vídeo embed (YouTube/Vimeo) */}
+          {video && (
+            <div style={{ aspectRatio: '16/9', borderRadius: 12, overflow: 'hidden', marginBottom: 14 }}>
+              <iframe src={video} style={{ width: '100%', height: '100%', border: 0 }} allowFullScreen />
+            </div>
+          )}
+
+          {/* Vídeos enviados (MP4) */}
+          {videos && videos.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
+              {videos.map((src, i) => (
+                <video key={i} src={src} controls preload="metadata" playsInline
+                  style={{ width: '100%', borderRadius: 12, background: '#000', display: 'block' }}
+                  onError={(e) => { (e.currentTarget as HTMLVideoElement).style.display = 'none'; }}
+                />
+              ))}
+            </div>
+          )}
+
+          {features && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {info.features.map(f => (
+              {features.map(f => (
                 <span key={f} style={{ fontSize: 10, fontWeight: 600, padding: '4px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.60)', border: '1px solid rgba(255,255,255,0.10)' }}>{f}</span>
               ))}
             </div>
@@ -910,7 +963,7 @@ function LayerPanel({
 const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
 
 export default function AltoBellevueGeoMap({
-  developmentId, developmentName, whatsappPhone = WA, height = '100svh',
+  developmentId, developmentName, whatsappPhone = WA, height = '100svh', mapAmenities,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -958,6 +1011,14 @@ export default function AltoBellevueGeoMap({
   }, [dbLots, isAB, canonStatus, liveAvail]);
 
   // UI state
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const [darkMode, setDarkMode] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedLot, setSelectedLot] = useState<ABLot | null>(null);
@@ -1196,11 +1257,11 @@ export default function AltoBellevueGeoMap({
 
       {/* ── Right control column ─────────────────────────────────────────── */}
       <div className="absolute right-3 top-20 z-20 flex flex-col gap-2">
-        <CtrlBtn onClick={zoomIn}  label="Aproximar"><ZoomIn  size={15} /></CtrlBtn>
-        <CtrlBtn onClick={zoomOut} label="Afastar">  <ZoomOut size={15} /></CtrlBtn>
+        {!isMobile && <CtrlBtn onClick={zoomIn}  label="Aproximar"><ZoomIn  size={15} /></CtrlBtn>}
+        {!isMobile && <CtrlBtn onClick={zoomOut} label="Afastar">  <ZoomOut size={15} /></CtrlBtn>}
         <CtrlBtn onClick={resetView} label="Resetar visão"><RotateCcw size={14} /></CtrlBtn>
 
-        <div style={{ height: 1, background: 'rgba(200,164,74,0.20)', margin: '2px 4px' }} />
+        {!isMobile && <div style={{ height: 1, background: 'rgba(200,164,74,0.20)', margin: '2px 4px' }} />}
 
         <div className="relative">
           <CtrlBtn onClick={() => setShowLayerPanel(p => !p)} label="Camadas" active={showLayerPanel}>
@@ -1244,6 +1305,7 @@ export default function AltoBellevueGeoMap({
           <AmenityModal
             key={selectedAmenity.id}
             amenity={selectedAmenity}
+            amenityOverrides={mapAmenities}
             onClose={() => setSelectedAmenity(null)}
           />
         )}
