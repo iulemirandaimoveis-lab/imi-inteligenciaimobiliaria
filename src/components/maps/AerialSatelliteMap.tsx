@@ -40,6 +40,12 @@ export default function AerialSatelliteMap({
       center: [lng, lat],
       zoom,
       pitch: 0,
+      // Esri World Imagery não tem imagem real além de ~z18 nesta região
+      // (Garanhuns/PE) — passar disso devolve tiles "Map data not yet available".
+      // Limitamos o zoom do mapa e o maxzoom da fonte: o MapLibre faz overzoom
+      // (amplia o último tile real) em vez de pedir tiles inexistentes.
+      maxZoom: 18,
+      minZoom: 13,
       attributionControl: false,
       style: {
         version: 8,
@@ -50,7 +56,7 @@ export default function AerialSatelliteMap({
               'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
             ],
             tileSize: 256,
-            maxzoom: 19,
+            maxzoom: 18,
             attribution:
               'Imagery © Esri — Maxar, Earthstar Geographics, and the GIS User Community',
           },
@@ -60,7 +66,7 @@ export default function AerialSatelliteMap({
               'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
             ],
             tileSize: 256,
-            maxzoom: 19,
+            maxzoom: 18,
           },
         },
         layers: [

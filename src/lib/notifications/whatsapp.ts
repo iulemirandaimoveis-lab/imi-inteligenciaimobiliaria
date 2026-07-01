@@ -95,6 +95,46 @@ export async function sendWhatsAppBatch(
   return Promise.all(messages.map((m) => sendWhatsAppText(m.phone, m.text)))
 }
 
+/**
+ * Envia um arquivo (por URL) via OpenWA — usado para anexar os documentos da
+ * proposta na notificação ao corretor. Best-effort: nunca lança. Mesmo que o
+ * gateway não suporte send-file, o fluxo segue (os links vão também no texto).
+ */
+export async function sendWhatsAppFile(
+  phone: string | null | undefined,
+  file: { url: string; filename?: string; caption?: string },
+): Promise<WhatsAppResult> {
+  const cfg = readConfig()
+  if (!cfg) return { ok: false, skipped: true, error: 'OpenWA não configurado.' }
+  if (!file.url) return { ok: false, skipped: true, error: 'URL do arquivo ausente.' }
+
+  const chatId = toChatId(phone, cfg.defaultDdi)
+  if (!chatId) return { ok: false, skipped: true, error: 'Telefone inválido/ausente.' }
+
+  try {
+    const res = await fetch(
+      `${cfg.baseUrl}/api/sessions/${encodeURIComponent(cfg.session)}/messages/send-file`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': cfg.apiKey },
+        body: JSON.stringify({
+          chatId,
+          file: { url: file.url, filename: file.filename },
+          caption: file.caption,
+        }),
+        signal: AbortSignal.timeout(12000),
+      }
+    )
+    if (!res.ok) {
+      const body = await res.text().catch(() => '')
+      return { ok: false, error: `OpenWA ${res.status}: ${body.slice(0, 200)}` }
+    }
+    return { ok: true }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Falha ao enviar arquivo.' }
+  }
+}
+
 /** True quando o gateway está configurado (para gating de UI/health). */
 export function isWhatsAppConfigured(): boolean {
   return readConfig() !== null
