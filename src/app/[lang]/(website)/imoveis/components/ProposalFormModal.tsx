@@ -12,9 +12,9 @@
  * Visual alinhado aos painéis do mapa (glass navy + dourado). Mobile-first.
  */
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, ShoppingCart, Loader2, CheckCircle2, ShieldCheck, MessageCircle, FileText } from 'lucide-react';
+import { X, ShoppingCart, Loader2, CheckCircle2, ShieldCheck, MessageCircle, FileText, Paperclip, Trash2, UploadCloud } from 'lucide-react';
 import { cartTotals, buildCartWhatsAppMessage, type CartLot } from '@/lib/lotmap/cart';
 
 const GOLD = '#C8A44A';
@@ -78,6 +78,38 @@ export default function ProposalFormModal({
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Documentos anexados pelo cliente (upload para o Supabase via API pública).
+  const [docs, setDocs] = useState<{ name: string; url: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFiles(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      Array.from(fileList).slice(0, 8).forEach((f) => fd.append('files', f));
+      const res = await fetch('/api/lots/proposal/documents', { method: 'POST', body: fd });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body?.success) {
+        throw new Error(body?.error || 'Não foi possível enviar os documentos.');
+      }
+      const incoming = (body.documents as { name: string; url: string }[]).filter((d) => d.url);
+      setDocs((prev) => [...prev, ...incoming].slice(0, 8));
+    } catch (e) {
+      setUploadError(e instanceof Error ? e.message : 'Falha no upload dos documentos.');
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  }
+
+  function removeDoc(idx: number) {
+    setDocs((prev) => prev.filter((_, i) => i !== idx));
+  }
+
   const valid = nome.trim().length >= 2 && fone.replace(/\D/g, '').length >= 8;
 
   async function handleSubmit() {
@@ -120,6 +152,7 @@ export default function ProposalFormModal({
           lots: items.map((l) => ({ id: l.id, block: l.block, lot: l.lot, areaM2: l.areaM2, price: l.price })),
           totalAmount: totals.totalPrice,
           downPayment: suggestedDown,
+          documents: docs,
         }),
       });
       // Best-effort: mesmo que o gateway falhe, garantimos o canal via wa.me.
@@ -196,6 +229,7 @@ export default function ProposalFormModal({
         {done ? (
           <SuccessView
             count={items.length}
+            docCount={docs.length}
             error={error}
             onWhatsApp={openWhatsApp}
           />
@@ -291,9 +325,60 @@ export default function ProposalFormModal({
                     </li>
                   ))}
                 </ul>
-                <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', margin: '8px 0 0', lineHeight: 1.45 }}>
-                  Você poderá enviar os documentos ao corretor após a confirmação da reserva.
+                <p style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)', margin: '8px 0 6px', lineHeight: 1.45 }}>
+                  Anexe agora os documentos que já tiver — o restante pode ser enviado ao corretor depois.
                 </p>
+
+                {/* Upload de documentos */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="application/pdf,image/jpeg,image/png,image/webp,image/heic,image/heif"
+                  onChange={(e) => handleFiles(e.target.files)}
+                  style={{ display: 'none' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading || docs.length >= 8}
+                  className="flex items-center justify-center gap-2 w-full"
+                  style={{
+                    height: 44, borderRadius: 11,
+                    background: 'rgba(200,164,74,0.10)',
+                    border: '1px dashed rgba(200,164,74,0.45)',
+                    color: GOLD, fontSize: 12.5, fontWeight: 700,
+                    cursor: uploading || docs.length >= 8 ? 'not-allowed' : 'pointer',
+                    fontFamily: "'Outfit', sans-serif",
+                  }}
+                >
+                  {uploading ? (
+                    <><Loader2 size={15} className="animate-spin" /> Enviando documentos…</>
+                  ) : (
+                    <><UploadCloud size={15} /> {docs.length > 0 ? 'Anexar mais documentos' : 'Anexar documentos (PDF ou foto)'}</>
+                  )}
+                </button>
+
+                {docs.length > 0 && (
+                  <div className="flex flex-col gap-1.5 mt-2">
+                    {docs.map((d, i) => (
+                      <div key={d.url} className="flex items-center gap-2"
+                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9, padding: '7px 10px' }}>
+                        <Paperclip size={12} color="rgba(255,255,255,0.5)" style={{ flexShrink: 0 }} />
+                        <span className="flex-1 truncate" style={{ fontSize: 11.5, color: 'rgba(255,255,255,0.82)' }}>{d.name}</span>
+                        <CheckCircle2 size={13} color="#34D399" style={{ flexShrink: 0 }} />
+                        <button type="button" onClick={() => removeDoc(i)} aria-label="Remover documento"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', padding: 0, flexShrink: 0 }}>
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {uploadError && (
+                  <p style={{ fontSize: 10.5, color: 'rgba(251,191,36,0.9)', margin: '6px 0 0' }}>{uploadError}</p>
+                )}
               </div>
 
               {/* Progressive disclosure */}
@@ -342,7 +427,7 @@ export default function ProposalFormModal({
   );
 }
 
-function SuccessView({ count, error, onWhatsApp }: { count: number; error: string | null; onWhatsApp: () => void }) {
+function SuccessView({ count, docCount, error, onWhatsApp }: { count: number; docCount: number; error: string | null; onWhatsApp: () => void }) {
   return (
     <div className="px-6 pb-6 pt-2 text-center">
       <div className="flex justify-center mb-4">
@@ -351,8 +436,9 @@ function SuccessView({ count, error, onWhatsApp }: { count: number; error: strin
         </div>
       </div>
       <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.78)', lineHeight: 1.6, margin: '0 0 6px' }}>
-        Sua proposta para {count} {count === 1 ? 'lote' : 'lotes'} foi registrada. Você receberá no WhatsApp a
-        relação de documentação, o contrato e a forma de pagamento da entrada.
+        Sua proposta para {count} {count === 1 ? 'lote' : 'lotes'} foi registrada
+        {docCount > 0 ? ` com ${docCount} ${docCount === 1 ? 'documento anexado' : 'documentos anexados'}` : ''}.
+        {' '}Você receberá no WhatsApp a relação de documentação, o contrato e a forma de pagamento da entrada.
       </p>
       <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', margin: '0 0 18px' }}>
         Um corretor entrará em contato para concluir a reserva.

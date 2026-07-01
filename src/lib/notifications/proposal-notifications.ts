@@ -1,6 +1,6 @@
 import 'server-only'
 import { supabaseAdmin } from '@/lib/supabase/admin'
-import { sendWhatsAppBatch, sendWhatsAppText } from './whatsapp'
+import { sendWhatsAppBatch, sendWhatsAppText, sendWhatsAppFile } from './whatsapp'
 
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 const money = (v: number | null | undefined) => (v != null && Number.isFinite(v) ? BRL.format(v) : 'a combinar')
@@ -93,6 +93,8 @@ export async function notifyLotProposal(input: {
   totalAmount?: number | null
   downPayment?: number | null
   lotCount?: number | null
+  /** Documentos anexados pelo cliente (URLs assinadas do bucket de propostas). */
+  documents?: Array<{ name: string; url: string }> | null
 }): Promise<{ clientNotified: boolean; teamNotified: number }> {
   let clientNotified = false
   let teamNotified = 0
@@ -118,6 +120,13 @@ export async function notifyLotProposal(input: {
       usersByRoles(['BROKER'], input.projectId ?? undefined),
     ])
 
+    const docs = (input.documents ?? []).filter((d) => d?.url)
+    const docsBlock =
+      docs.length > 0
+        ? `\n\n📎 *Documentos anexados (${docs.length})*\n` +
+          docs.map((d, i) => `${i + 1}. ${d.name}\n${d.url}`).join('\n')
+        : ''
+
     const unidade = [input.unitLabel, input.projectName].filter(Boolean).join(' · ')
     const teamText =
       `🟡 *Novo lote em NEGOCIAÇÃO*\n` +
@@ -126,7 +135,9 @@ export async function notifyLotProposal(input: {
       (unidade ? `Unidade: ${unidade}\n` : '') +
       (input.lotCount ? `Lotes: ${input.lotCount}\n` : '') +
       `Valor: ${money(input.totalAmount)}\n` +
-      `\nProposta preenchida pelo cliente no site. Acesse o IMI Console.`
+      (docs.length > 0 ? `Documentos: ${docs.length} anexo(s)\n` : '') +
+      `\nProposta preenchida pelo cliente no site. Acesse o IMI Console.` +
+      docsBlock
 
     const recipients = new Map<string, string>()
     for (const r of [...approvers, ...managers, ...brokers]) {
@@ -135,6 +146,21 @@ export async function notifyLotProposal(input: {
     if (recipients.size > 0) {
       await sendWhatsAppBatch(Array.from(recipients, ([phone, text]) => ({ phone, text })))
       teamNotified = recipients.size
+
+      // Anexa os arquivos em si (best-effort) — além dos links no texto acima.
+      if (docs.length > 0) {
+        await Promise.all(
+          Array.from(recipients.keys()).flatMap((phone) =>
+            docs.map((d) =>
+              sendWhatsAppFile(phone, {
+                url: d.url,
+                filename: d.name,
+                caption: `Documento — proposta de ${input.clientName}`,
+              }),
+            ),
+          ),
+        )
+      }
     }
   } catch {
     // swallow — best-effort
