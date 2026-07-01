@@ -84,7 +84,11 @@ export default function AerialSatelliteMap({
     const el = document.createElement('div')
     el.style.cssText = `width:18px;height:18px;border-radius:50%;background:${markerColor};border:3px solid #0B1928;box-shadow:0 0 0 4px rgba(200,164,74,0.35);`
     const marker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat])
-    if (label) marker.setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
+    // className explícita — o CSS padrão do MapLibre não define `color` no
+    // popup (só o fundo branco), então o texto herda a cor do ancestral DOM.
+    // Sem isto, em páginas com `color` claro herdado o texto fica invisível
+    // (balão branco "vazio"). Forçamos contraste independente do tema em volta.
+    if (label) marker.setPopup(new maplibregl.Popup({ offset: 18, className: 'ab-anchor-popup' }).setText(label))
     marker.addTo(map)
 
     mapRef.current = map
@@ -95,9 +99,19 @@ export default function AerialSatelliteMap({
   }, [lng, lat, zoom, label, markerColor])
 
   return (
-    <div
-      ref={containerRef}
-      style={{ width: '100%', height, minHeight: 440, overflow: 'hidden' }}
-    />
+    <>
+      <div
+        ref={containerRef}
+        style={{ width: '100%', height, minHeight: 440, overflow: 'hidden' }}
+      />
+      <style>{`
+        .ab-anchor-popup .maplibregl-popup-content {
+          color: #0B1928;
+          font-weight: 700;
+          font-size: 13px;
+          font-family: 'Outfit', sans-serif;
+        }
+      `}</style>
+    </>
   )
 }

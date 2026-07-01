@@ -2,8 +2,8 @@ import { requirePermission } from '@/lib/imi-auth/server'
 import { PERMISSIONS } from '@/lib/imi-auth/rbac'
 import { getDevelopmentBySlug } from '@/lib/lotmap/engine'
 import { ImiSessionProvider } from '@/features/users/session-context'
-import { DashboardTopbar } from '@/features/users/dashboard/DashboardChrome'
-import { MapMirrorView, type MapProject } from '@/features/users/map/MapMirrorView'
+import { MapPageClient } from '@/features/users/map/MapPageClient'
+import type { MapProject } from '@/features/users/map/MapMirrorView'
 import { getGeoAnchor } from '@/features/users/map/anchors'
 
 export const dynamic = 'force-dynamic'
@@ -51,8 +51,7 @@ export default async function MapPage() {
 
   return (
     <ImiSessionProvider session={session}>
-      <DashboardTopbar projectName={session.projects[0]?.name ?? 'Alto Bellevue'} />
-      <MapMirrorView projects={projects} />
+      <MapPageClient projects={projects} fallbackName={session.projects[0]?.name ?? 'Alto Bellevue'} />
     </ImiSessionProvider>
   )
 }

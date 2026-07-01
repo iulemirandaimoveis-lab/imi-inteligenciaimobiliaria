@@ -10,13 +10,16 @@ import {
   Scale, Trophy, Sparkles, TrendingUp, Home, Star,
   CheckCircle2, Circle, ArrowRight, Zap, Building2,
   Layers, ChevronsUpDown, Tag, LayoutGrid, FileSignature,
+  ShoppingCart, Check,
 } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 import AltoBellevuePlanView from './AltoBellevuePlanView';
 import type { Lot as MiguelMarquesLot } from '../../projetos/miguel-marques/data/lotsData';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
-import type { CartLot } from '@/lib/lotmap/cart';
+import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
+import { useLotCart } from '@/hooks/useLotCart';
+import { CartFab, CartSheet } from './LotCartSheet';
 
 // Modal de proposta preenchida pelo cliente (mesmo usado no Satélite+Lotes).
 // Client-only: usa framer-motion + upload de documentos.
@@ -247,6 +250,8 @@ function LotModal({
   isInCompare,
   allLots,
   abPrice,
+  inCart,
+  onToggleCart,
 }: {
   lot: Lot;
   developmentName: string;
@@ -257,6 +262,9 @@ function LotModal({
   isInCompare: boolean;
   allLots: Lot[];
   abPrice?: ABPriceEntry;
+  /** Já está no carrinho de proposta compartilhado (mesmo carrinho do Satélite+Lotes). */
+  inCart: boolean;
+  onToggleCart: (lot: Lot) => void;
 }) {
   const cfg = STATUS[lot.status as StatusKey] ?? STATUS.DISPONIVEL;
   const isAvailable = lot.status === 'DISPONIVEL';
@@ -449,7 +457,21 @@ function LotModal({
         <div className="px-5 pb-6 pt-1 flex flex-col gap-2">
           {isAvailable ? (
             <>
-              {/* CTA primária — proposta de compra (abre o formulário do cliente). */}
+              {/* Adiciona ao carrinho de proposta compartilhado (mesmo do Satélite+Lotes) —
+                  permite juntar lotes de quadras diferentes antes de preencher o formulário. */}
+              <button
+                onClick={() => onToggleCart(lot)}
+                className="flex items-center justify-center gap-2 w-full h-11 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all active:scale-95"
+                style={{
+                  background: inCart ? '#DCFCE7' : '#FBF3DD',
+                  color: inCart ? '#166534' : '#8A6D1F',
+                  border: `1px solid ${inCart ? '#86EFAC' : '#E9D9AC'}`,
+                  cursor: 'pointer', fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                }}
+              >
+                {inCart ? <><Check size={15} /> Na proposta</> : <><ShoppingCart size={14} /> Adicionar à proposta</>}
+              </button>
+              {/* CTA — proposta de compra imediata deste lote (abre o formulário do cliente). */}
               <button
                 onClick={() => onProposal(lot)}
                 className="relative flex items-center justify-center gap-2 w-full h-12 rounded-xl text-[13px] font-bold uppercase tracking-wider overflow-hidden"
@@ -1026,6 +1048,41 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const [compareLots, setCompareLots] = useState<Lot[]>([]);
   const [showComparator, setShowComparator] = useState(false);
   const [showRankings, setShowRankings] = useState(false);
+
+  // ── Carrinho de lotes / proposta (compartilhado com a vista "Satélite + Lotes") ──
+  // Mesma chave de localStorage (devSlugFrom('Alto Bellevue') === 'alto-bellevue',
+  // igual ao devSlug hardcoded em AltoBellevueGeoMap.tsx) — lotes adicionados numa
+  // vista aparecem na outra ao trocar de aba.
+  const devSlug = useMemo(() => devSlugFrom(developmentName), [developmentName]);
+  const cart = useLotCart<CartLot>(devSlug);
+  const [showCart, setShowCart] = useState(false);
+  const [showCartProposal, setShowCartProposal] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const cartT = useMemo(() => cartTotals(cart.items), [cart.items]);
+
+  const toggleCart = useCallback((lot: Lot) => {
+    cart.toggle({
+      id: lot.id,
+      developmentSlug: devSlug,
+      developmentName,
+      block: lot.quadra,
+      lot: String(lot.lot_number),
+      areaM2: lot.area_m2,
+      price: lot.price ?? 0,
+      status: lot.status,
+    });
+  }, [cart, devSlug, developmentName]);
+
+  const copyShareLink = useCallback(() => {
+    try {
+      const url = buildCartShareUrl(typeof window !== 'undefined' ? window.location.origin : '', {
+        d: devSlug, ids: cart.items.map((l) => l.id),
+      });
+      navigator.clipboard?.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 1800);
+    } catch { /* clipboard indisponível */ }
+  }, [cart.items, devSlug]);
 
   // IA recommendations
   const [recommendations, setRecommendations] = useState<RecommendedLot[]>([]);
@@ -1836,6 +1893,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             isInCompare={compareIds.has(selectedLot.id)}
             allLots={lots}
             abPrice={abPricesMap.get(`${selectedLot.quadra}-${selectedLot.lot_number}`) ?? undefined}
+            inCart={cart.has(selectedLot.id)}
+            onToggleCart={toggleCart}
           />
         )}
       </AnimatePresence>
@@ -1879,6 +1938,43 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             items={proposalCartItems}
             onClose={() => setProposalLots(null)}
             onSubmitted={() => setProposalLots(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Botão flutuante "Proposta" (carrinho compartilhado) ──────────────── */}
+      {cart.items.length > 0 && !showCart && !showCartProposal && !selectedLot && !showComparator && (
+        <CartFab count={cart.items.length} onClick={() => setShowCart(true)} fixed />
+      )}
+
+      {/* ── Painel do carrinho / proposta ──────────────────────────────────── */}
+      <AnimatePresence>
+        {showCart && (
+          <CartSheet
+            items={cart.items}
+            totals={cartT}
+            linkCopied={linkCopied}
+            onRemove={cart.remove}
+            onClear={cart.clear}
+            onCopyLink={copyShareLink}
+            onProposal={() => { setShowCart(false); setShowCartProposal(true); }}
+            onClose={() => setShowCart(false)}
+            fixed
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal de proposta a partir do carrinho ────────────────────────── */}
+      <AnimatePresence>
+        {showCartProposal && cart.items.length > 0 && (
+          <ProposalFormModal
+            developmentId={developmentId}
+            developmentName={developmentName}
+            developmentSlug={devSlug}
+            whatsappPhone={whatsappPhone}
+            items={cart.items}
+            onClose={() => setShowCartProposal(false)}
+            onSubmitted={() => { cart.clear(); setShowCartProposal(false); }}
           />
         )}
       </AnimatePresence>
