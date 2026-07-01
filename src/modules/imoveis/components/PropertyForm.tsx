@@ -1,7 +1,7 @@
 'use client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Sparkles, Loader2 } from 'lucide-react'
+import { Sparkles, Loader2, MapPin } from 'lucide-react'
 import { propertySchema, PropertyFormData } from '../validations'
 import { Property } from '../types'
 import Input from '@/components/ui/Input'
@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import MediaUploader from '@/components/ui/MediaUploader'
+import { toast } from 'sonner'
 interface PropertyFormProps {
     property?: Property
     onSubmit: (data: PropertyFormData) => Promise<void>
@@ -21,6 +22,7 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
     const supabase = createClient()
     const [developers, setDevelopers] = useState<Array<{ id: string; name: string }>>([])
     const [isGenerating, setIsGenerating] = useState(false)
+    const [loadingCep, setLoadingCep] = useState(false)
     const {
         register,
         handleSubmit,
@@ -98,6 +100,26 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
             setValue('slug', slug)
         }
     }, [name, property, setValue])
+    async function handleCepLookup() {
+        const rawCep = (watch('zipcode') || '').replace(/\D/g, '')
+        if (rawCep.length !== 8) { toast.error('Digite um CEP válido com 8 dígitos'); return }
+        setLoadingCep(true)
+        try {
+            const res = await fetch(`/api/cep/${rawCep}`)
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error || 'CEP não encontrado')
+            if (data.logradouro) setValue('address', data.logradouro)
+            if (data.bairro) setValue('neighborhood', data.bairro)
+            if (data.localidade) setValue('city', data.localidade)
+            if (data.uf) setValue('state', data.uf)
+            toast.success('Endereço preenchido pelo CEP!')
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Erro ao buscar CEP')
+        } finally {
+            setLoadingCep(false)
+        }
+    }
+
     async function handleGenerateAIDescription() {
         const values = watch()
         if (!values.name) {
@@ -260,12 +282,26 @@ export default function PropertyForm({ property, onSubmit, onCancel, isSubmittin
                             { value: 'other', label: 'Outras Regiões' },
                         ]}
                     />
-                    <Input
-                        label="CEP"
-                        {...register('zipcode')}
-                        error={errors.zipcode?.message}
-                        placeholder="00000-000"
-                    />
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">CEP</label>
+                        <div className="flex gap-2">
+                            <Input
+                                {...register('zipcode')}
+                                error={errors.zipcode?.message}
+                                placeholder="00000-000"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleCepLookup}
+                                disabled={loadingCep}
+                                title="Buscar endereço pelo CEP"
+                                className="flex items-center justify-center gap-1.5 px-3 h-10 rounded-lg bg-accent-600 text-white text-xs font-semibold hover:bg-accent-700 transition-colors disabled:opacity-60 whitespace-nowrap"
+                            >
+                                {loadingCep ? <Loader2 size={14} className="animate-spin" /> : <MapPin size={14} />}
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             {/* Valores */}
