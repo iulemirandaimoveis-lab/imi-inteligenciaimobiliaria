@@ -37,6 +37,9 @@ describe('homologação /projetos/alto-bellevue — Digital Twin atrás de flag'
   });
 
   it('preserva o conteúdo legado como fallback (nada removido)', () => {
-    expect(homolog).toContain('SubdivisionLotMap');
+    // O fallback legado mantém o mapa de lotes interativo. Ele é servido pelo
+    // explorador multi-vista AltoBellevueMapExplorer (que renderiza o
+    // SubdivisionLotMap na vista "Plano"), então validamos o explorador.
+    expect(homolog).toContain('AltoBellevueMapExplorer');
   });
 });

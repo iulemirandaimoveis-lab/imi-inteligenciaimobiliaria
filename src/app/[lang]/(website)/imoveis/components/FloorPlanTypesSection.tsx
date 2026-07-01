@@ -107,17 +107,20 @@ export default function FloorPlanTypesSection({
   towers,
   developmentName,
 }: FloorPlanTypesSectionProps) {
-  if (!floorPlanTypes || floorPlanTypes.length === 0) return null;
-
+  // Hooks precisam rodar em toda renderização (rules-of-hooks) — por isso ficam
+  // ANTES de qualquer early return. Guardamos contra floorPlanTypes vazio/nulo.
+  const safePlans = floorPlanTypes ?? [];
   const hasTowers = towers && towers.length > 0;
   const towerIds = hasTowers
-    ? [...new Set(floorPlanTypes.map(f => f.tower_id))]
+    ? [...new Set(safePlans.map(f => f.tower_id))]
     : [];
 
   const [activeTower, setActiveTower] = useState<string>(towerIds[0] ?? 'all');
   const [activePlanId, setActivePlanId] = useState<string>(
-    floorPlanTypes.find(p => p.tower_id === (towerIds[0] ?? 'all'))?.id ?? floorPlanTypes[0]?.id ?? ''
+    safePlans.find(p => p.tower_id === (towerIds[0] ?? 'all'))?.id ?? safePlans[0]?.id ?? ''
   );
+
+  if (safePlans.length === 0) return null;
 
   const visiblePlans =
     activeTower === 'all'
