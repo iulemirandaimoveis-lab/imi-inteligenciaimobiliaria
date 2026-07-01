@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft, Building2, FileText, User, Phone,
-  Mail, MapPin, Save, Upload, X, Loader2, AlertCircle,
+  Mail, MapPin, Save, Upload, X, Loader2, AlertCircle, Search,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '@/app/(backoffice)/lib/theme'
@@ -38,6 +38,8 @@ export default function NovaConstrutora() {
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [loadingCep, setLoadingCep] = useState(false)
+  const [loadingCnpj, setLoadingCnpj] = useState(false)
 
   const [formData, setFormData] = useState({
     razaoSocial: '', nomeFantasia: '', cnpj: '',
@@ -48,6 +50,60 @@ export default function NovaConstrutora() {
     nomeResponsavel: '', cargoResponsavel: '', emailResponsavel: '', telefoneResponsavel: '',
     observacoes: '',
   })
+
+  const handleCepLookup = async () => {
+    const rawCep = formData.cep.replace(/\D/g, '')
+    if (rawCep.length !== 8) { toast.error('Digite um CEP válido com 8 dígitos'); return }
+    setLoadingCep(true)
+    try {
+      const res = await fetch(`/api/cep/${rawCep}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'CEP não encontrado')
+      setFormData(p => ({
+        ...p,
+        logradouro: data.logradouro || p.logradouro,
+        bairro: data.bairro || p.bairro,
+        cidade: data.localidade || p.cidade,
+        estado: data.uf || p.estado,
+      }))
+      toast.success('Endereço preenchido automaticamente!')
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro ao buscar CEP')
+    } finally {
+      setLoadingCep(false)
+    }
+  }
+
+  const handleCnpjLookup = async () => {
+    const rawCnpj = formData.cnpj.replace(/\D/g, '')
+    if (rawCnpj.length !== 14) { toast.error('Digite um CNPJ válido com 14 dígitos'); return }
+    setLoadingCnpj(true)
+    try {
+      const res = await fetch(`/api/cnpj/${rawCnpj}`)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'CNPJ não encontrado')
+      setFormData(p => ({
+        ...p,
+        razaoSocial: data.razaoSocial || p.razaoSocial,
+        nomeFantasia: data.nomeFantasia || p.nomeFantasia,
+        email: data.email || p.email,
+        telefone: data.telefone ? data.telefone.replace(/\D/g, '').slice(0, 11)
+          .replace(/(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d)/, '$1-$2') : p.telefone,
+        logradouro: data.logradouro || p.logradouro,
+        numero: data.numero || p.numero,
+        complemento: data.complemento || p.complemento,
+        bairro: data.bairro || p.bairro,
+        cidade: data.municipio || p.cidade,
+        estado: data.uf || p.estado,
+        cep: data.cep || p.cep,
+      }))
+      toast.success(`Dados da ${data.razaoSocial} preenchidos automaticamente!`)
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Erro ao buscar CNPJ')
+    } finally {
+      setLoadingCnpj(false)
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -205,10 +261,17 @@ export default function NovaConstrutora() {
             {field('nomeFantasia', 'Nome Fantasia', { required: true, placeholder: 'Ex: Central Empreendimentos' })}
             <div>
               <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>CNPJ *</label>
-              <input type="text" name="cnpj" value={formData.cnpj}
-                onChange={e => setFormData(p => ({ ...p, cnpj: formatCNPJ(e.target.value) }))}
-                placeholder="00.000.000/0000-00" maxLength={18}
-                style={{ ...inputStyle, border: errors.cnpj ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
+              <div className="flex gap-2">
+                <input type="text" name="cnpj" value={formData.cnpj}
+                  onChange={e => setFormData(p => ({ ...p, cnpj: formatCNPJ(e.target.value) }))}
+                  placeholder="00.000.000/0000-00" maxLength={18}
+                  style={{ ...inputStyle, border: errors.cnpj ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
+                <button type="button" onClick={handleCnpjLookup} disabled={loadingCnpj}
+                  title="Buscar dados da Receita Federal"
+                  style={{ background: T.accent, border: 'none', borderRadius: '6px', color: '#fff', padding: '0 12px', cursor: 'pointer', minWidth: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {loadingCnpj ? <Loader2 size={15} className="animate-spin" /> : <Search size={15} />}
+                </button>
+              </div>
               {errors.cnpj && <p className="mt-1 text-xs text-red-400 flex items-center gap-1"><AlertCircle size={11} />{errors.cnpj}</p>}
             </div>
             {field('inscricaoEstadual', 'Inscrição Estadual', { placeholder: '000.000.000.000' })}
@@ -225,9 +288,16 @@ export default function NovaConstrutora() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
               <label className="block text-xs font-semibold mb-1.5" style={{ color: T.textMuted }}>CEP *</label>
-              <input type="text" name="cep" value={formData.cep} placeholder="00000-000" maxLength={9}
-                onChange={e => setFormData(p => ({ ...p, cep: formatCEP(e.target.value) }))}
-                style={{ ...inputStyle, border: errors.cep ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
+              <div className="flex gap-2">
+                <input type="text" name="cep" value={formData.cep} placeholder="00000-000" maxLength={9}
+                  onChange={e => setFormData(p => ({ ...p, cep: formatCEP(e.target.value) }))}
+                  style={{ ...inputStyle, border: errors.cep ? '1px solid var(--error)' : `1px solid ${T.border}` }} />
+                <button type="button" onClick={handleCepLookup} disabled={loadingCep}
+                  title="Buscar endereço pelo CEP"
+                  style={{ background: T.accent, border: 'none', borderRadius: '6px', color: '#fff', padding: '0 12px', cursor: 'pointer', minWidth: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {loadingCep ? <Loader2 size={15} className="animate-spin" /> : <Search size={15} />}
+                </button>
+              </div>
               {errors.cep && <p className="mt-1 text-xs text-red-400">{errors.cep}</p>}
             </div>
             <div className="md:col-span-2">
