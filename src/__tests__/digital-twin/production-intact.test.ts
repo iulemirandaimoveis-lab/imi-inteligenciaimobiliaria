@@ -37,6 +37,6 @@ describe('homologação /projetos/alto-bellevue — Digital Twin atrás de flag'
   });
 
   it('preserva o conteúdo legado como fallback (nada removido)', () => {
-    expect(homolog).toContain('SubdivisionLotMap');
+    expect(homolog).toContain('AltoBellevueMapExplorer');
   });
 });
