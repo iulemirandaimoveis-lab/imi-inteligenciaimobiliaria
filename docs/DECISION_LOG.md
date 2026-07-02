@@ -5,6 +5,11 @@
 
 ---
 
+## D-09 · 2026-07-02 — Estratégia de rate limit diferenciada por classe de rota
+- **Contexto**: cobertura irregular; endpoints de credencial sem proteção anti brute-force.
+- **Decisão**: credenciais (login/first-access) = 5/min por IP; públicas com custo (WhatsApp/notificação) = 5/min por IP; públicas computacionais = `limiters.public` (10/10s); autenticadas = via `apiHandler`/`limiters.auth`; crons/webhooks = secret/assinatura (sem RL).
+- **Consequência**: P14 em KNOWN_PATTERNS; teste anti brute-force em `auth-login.test.ts` vira contrato.
+
 ## D-08 · 2026-07-02 — Sistema de inteligência de projeto em `/docs` + `/.memory`
 - **Contexto**: conhecimento disperso em 40+ MDs; redescoberta cara a cada sessão de IA.
 - **Decisão**: 17 docs canônicos em `docs/` (mapa, auditorias, roadmap) + memória de agente em `.memory/`; docs antigos permanecem como histórico, os novos são a entrada.

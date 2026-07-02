@@ -26,6 +26,11 @@
 - **L-09** Grep negativo por "falta auth" em rotas dá falso-positivo em massa — o padrão do projeto autentica inline. Ler a rota.
 - **L-10** Referências a env vars sensíveis em .tsx podem ser texto de UI (checklists de configuração) — verificar contexto antes de reportar vazamento.
 
+## Rate limit / Testes
+
+- **L-13** Adicionar rate limit a uma rota quebra testes que chamam o handler várias vezes: o limiter in-memory acumula por chave (`getClientIP` → `'unknown'` sem header). Solução: `x-forwarded-for` único por teste + um teste dedicado que ESPERA o 429 (vira contrato). Caso real: `auth-login.test.ts` 2026-07-02.
+- **L-14** O wrapper `apiHandler` (`src/lib/api-helpers.ts`) já faz auth+RL+audit por padrão — antes de acusar rota "sem auth", verificar se ela usa o wrapper (grep por `apiHandler`).
+
 ## Produto/UX
 
 - **L-11** Elementos sticky escondem CTAs no mobile (caso real: botão de proposta, PR #342). Todo sticky novo: testar com o conteúdo mais longo.

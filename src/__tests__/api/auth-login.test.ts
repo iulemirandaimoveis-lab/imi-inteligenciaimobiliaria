@@ -20,11 +20,18 @@ jest.mock('@/lib/supabase/server', () => ({
 import { POST } from '@/app/api/auth/login/route'
 import { NextRequest } from 'next/server'
 
-function makeRequest(body: object) {
+// IP único por teste: o rate limit da rota (5/min por IP) é real e o limiter
+// in-memory do ambiente de teste acumula entre chamadas.
+let ipCounter = 0
+function makeRequest(body: object, ip?: string) {
+    ipCounter += 1
     return new NextRequest('http://localhost:3000/api/auth/login', {
         method: 'POST',
         body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+            'Content-Type': 'application/json',
+            'x-forwarded-for': ip ?? `10.0.0.${ipCounter}`,
+        },
     })
 }
 
@@ -109,5 +116,23 @@ describe('POST /api/auth/login', () => {
 
         expect(res.status).toBe(500)
         expect(json.error).toBe('Erro interno do servidor')
+    })
+
+    it('rate limits repeated attempts from the same IP (anti brute-force)', async () => {
+        mockSignInWithPassword.mockResolvedValue({
+            data: { user: null, session: null },
+            error: { message: 'Invalid login credentials' },
+        })
+
+        const attackerIp = '203.0.113.66'
+        const statuses: number[] = []
+        for (let i = 0; i < 6; i++) {
+            const res = await POST(makeRequest({ email: 'user@test.com', password: `guess-${i}` }, attackerIp))
+            statuses.push(res.status)
+        }
+
+        // 5 tentativas passam pelo limiter (401 credencial inválida), a 6ª leva 429
+        expect(statuses.slice(0, 5).every(s => s === 401)).toBe(true)
+        expect(statuses[5]).toBe(429)
     })
 })

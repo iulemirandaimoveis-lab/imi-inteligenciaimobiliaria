@@ -20,6 +20,8 @@
 | P10 | Auditoria best-effort que nunca quebra o request (try/catch swallow) | `src/lib/imi-auth/audit.ts` |
 | P11 | Cron: `Authorization: Bearer ${CRON_SECRET}` na primeira linha do handler | `src/app/api/cron/daily/route.ts` |
 | P12 | Migration nova: `YYYYMMDD_descricao.sql` + atualizar `supabase/MIGRATIONS_MAP.md` | `supabase/MIGRATIONS_MAP.md` |
+| P13 | Rota nova de API: usar o wrapper `apiHandler` (auth+RL+audit por padrão) em vez de boilerplate manual | `src/lib/api-helpers.ts` |
+| P14 | Endpoint de credencial (login/first-access): rate limit por IP 5/min é obrigatório | `src/app/api/auth/login/route.ts` |
 
 ## Anti-Padrões (nunca)
 

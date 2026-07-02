@@ -10,15 +10,14 @@ Postura geral **boa**: middleware com security headers + CORS allowlist, CSP def
 
 ## Achados
 
-### F-01 — Senha temporária fraca no reset administrativo · **ALTA**
-- **Onde**: `src/app/api/admin/reset-password/route.ts` → `crypto.randomBytes(3).toString('hex')` = 6 hex chars (~24 bits).
-- **Impacto**: janela de brute-force se a troca obrigatória (`must_reset_password`) atrasar ou o rate limit não cobrir o login.
-- **Recomendação**: `randomBytes(9).toString('base64url')` (12+ chars) ou fluxo de link mágico do Supabase. **Complexidade: baixa. Risco da mudança: baixo.**
+### F-01 — Senha temporária fraca no reset administrativo · ✅ **CORRIGIDO 2026-07-02**
+- **Onde**: `src/app/api/admin/reset-password/route.ts` → era `randomBytes(3)` (~24 bits).
+- **Fix aplicado**: `randomBytes(12).toString('base64url')` (16 chars, ~96 bits) + `must_reset_password` força troca. Ambos os endpoints de first-access agora têm rate limit por IP (5/min).
 
-### F-02 — `getSession()` usado para autorização · **MÉDIA**
-- **Onde**: mesmo endpoint (e possivelmente outros — auditar com `grep -rn "getSession" src/app/api`).
-- **Causa**: `getSession()` lê o cookie sem validar o JWT no servidor; a doc do Supabase recomenda `getUser()` para decisões de acesso.
-- **Recomendação**: padronizar `getUser()` em decisões de autorização. Baixo risco, mudança mecânica.
+### F-02 — `getSession()` usado para autorização · ✅ **CORRIGIDO 2026-07-02**
+- **Varredura completa**: só existiam 4 usos em `src/app/api` + `src/lib`. Todos corrigidos:
+  `admin/reset-password` e `auth/set-password` → `getUser()`; os proxies `parse-property-book` e `enrich-developer-properties` → autorizam via `getUser()` e usam `getSession()` apenas para encaminhar o `access_token` à Edge Function (uso legítimo).
+- **Regra permanente**: `getUser()` para decisões de acesso (anti-padrão A1).
 
 ### F-03 — `X-Frame-Options` inconsistente · **BAIXA**
 - **Onde**: middleware envia `DENY` (rotas api/backoffice/users); `next.config.js` envia `SAMEORIGIN` global; CSP tem `frame-ancestors 'self'`.
@@ -29,9 +28,16 @@ Postura geral **boa**: middleware com security headers + CORS allowlist, CSP def
 - **Causa**: restrição prática do Next.js sem nonces.
 - **Recomendação**: migrar para nonce/strict-dynamic quando subir para Next 15; registrar como dívida, não corrigir às pressas.
 
-### F-05 — Rate limiting cobre ~11 de 275 rotas · **MÉDIA**
-- **Impacto**: rotas públicas de escrita (`contact`, `consultation`) e rotas caras sem limite → spam/custo.
-- **Recomendação**: aplicar `limiters.publicForm(ip)` nas públicas e `limiters.default(user.id)` nas autenticadas de escrita. Incremental, por rota.
+### F-05 — Cobertura de rate limiting · **REVISADO 2026-07-02 — parcialmente corrigido**
+- **Correção da auditoria**: `contact` e `consultation` JÁ tinham rate limit (falso positivo original). Além disso, o wrapper `apiHandler` (`src/lib/api-helpers.ts`) aplica **auth + rate limit por padrão** em todas as rotas que o usam (avaliacoes, pix, plantao/*, frota/*, developments, financeiro…) — a cobertura real era muito maior que 11 rotas.
+- **Fix aplicado 2026-07-02** (rotas que de fato estavam sem proteção): `auth/login`, `auth/first-access`, `users/auth/first-access` (5/min por IP — anti brute-force), `lots/proposal` (5/min — dispara WhatsApp), `intelligence/simulate` (público computacional), `proposals/respond` (10/min).
+- **Pendente**: triagem das rotas restantes sem `apiHandler` (`tracker/qrcode`, `analytics/vitals`, `webhooks/instagram`, `proposals/track`, `propostas/[token]/track`) — ver T-02b no TODO_MASTER.
+
+### F-09 — `proposals/respond` muta proposta por ID cru, sem token · **ALTA (verificar)** 🆕
+- **Onde**: `src/app/api/proposals/respond/route.ts` — aceita `proposal_id` + `action` sem autenticação nem token de acesso; aceita/contrapropõe qualquer proposta cujo UUID seja conhecido.
+- **Mitigação hoje**: cliente server anônimo → depende 100% da RLS de `proposals` bloquear UPDATE anônimo. Se a RLS permitir (como o fluxo público sugere), qualquer um pode aceitar propostas alheias.
+- **Fix aplicado (parcial)**: rate limit por IP.
+- **Recomendação (REQUER DECISÃO)**: exigir o token da proposta (mesmo mecanismo de `propostas/[token]/track`) antes de mutar. Risco médio — muda contrato com o front público. Verificar a policy RLS de `proposals` no banco antes.
 
 ### F-06 — `dangerouslySetInnerHTML` em 13 arquivos · **MÉDIA (verificação)**
 - **Estado**: `isomorphic-dompurify` presente e usado em 7 arquivos; biblioteca/conteúdo e-book renderizam HTML de banco.

@@ -15,7 +15,9 @@
 | Pública | sem auth (por design) | `contact`, `cep/[cep]`, `cnpj/[cnpj]`, webhooks |
 | Webhook | validação de assinatura/secret do provedor | `abacate-pay/webhook` |
 
-**Rate limiting**: `src/lib/rate-limit.ts` (Upstash Redis; fallback in-memory). Aplicado em ~11 rotas (principalmente `ai/*`). ⚠️ Rotas públicas de escrita (ex.: `contact`) e demais rotas caras devem adotar — ver KNOWN_ISSUES.
+**Wrapper centralizado**: `apiHandler` (`src/lib/api-helpers.ts`) — auth (`getUser`) + rate limit + audit por padrão (`auth: true`, RL `'auth'`/`'public'`). Usado por avaliacoes, pix, plantao/*, frota/*, developments, financeiro… **Rotas novas devem usá-lo** em vez de repetir o boilerplate.
+
+**Rate limiting**: `src/lib/rate-limit.ts` (Upstash Redis; fallback in-memory). Cobertura: rotas com `apiHandler` (automático) + `ai/*` + públicas de escrita (`contact`, `consultation`, `lots/proposal`, `intelligence/simulate`, `proposals/respond`) + credenciais (`auth/login`, `first-access` x2, 5/min por IP desde 2026-07-02).
 
 ## Grupos Funcionais (principais)
 

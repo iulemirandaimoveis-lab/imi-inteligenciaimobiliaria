@@ -7,18 +7,21 @@
 
 ## P0 — Segurança/risco imediato
 
-- [ ] T-01 Fortalecer senha temporária no reset admin (`randomBytes(3)` → `randomBytes(9).toString('base64url')`) — SECURITY F-01
-- [ ] T-02 Rate limit em `contact`/`consultation`/rotas públicas de escrita — F-05/K-07
+- [x] T-01 ✅ 2026-07-02 Senha temporária: `randomBytes(12).toString('base64url')` — F-01
+- [x] T-02 ✅ 2026-07-02 Rate limit aplicado: login, first-access (x2), lots/proposal, intelligence/simulate, proposals/respond. (`contact`/`consultation` já tinham — falso positivo da auditoria.)
+- [ ] T-02b Triar rotas públicas restantes sem `apiHandler`: `tracker/qrcode`, `analytics/vitals`, `webhooks/instagram`, `proposals/track`, `propostas/[token]/track` — F-05
+- [ ] T-23 🆕 **F-09**: `proposals/respond` muta proposta por ID cru — verificar RLS de `proposals` e exigir token (REQUER APROVAÇÃO: muda contrato do front público)
 
 ## P1 — Quick wins (baixo risco, ganho real)
 
-- [ ] T-03 Remover `continue-on-error` do job lint no CI (lint está limpo hoje) — D-05
-- [ ] T-04 `MotionConfig reducedMotion="user"` no provider raiz — A-01
-- [ ] T-05 Trocar `getSession()`→`getUser()` em decisões de autorização nas rotas — F-02
-- [ ] T-06 Remover deps mortas `jsonwebtoken`, `ua-parser-js` (+ @types) — D-03
+- [x] T-03 ✅ 2026-07-02 `continue-on-error` removido do job lint no CI
+- [ ] T-03b Avaliar remover `continue-on-error` dos jobs `security` e `build` (REQUER DECISÃO: podem quebrar por vulns transitivas/secrets)
+- [x] T-04 ✅ 2026-07-02 `MotionProvider` (`MotionConfig reducedMotion="user"`) no layout raiz
+- [x] T-05 ✅ 2026-07-02 `getSession()`→`getUser()` nas 4 ocorrências (varredura completa)
+- [x] T-06 ✅ 2026-07-02 Removidos `jsonwebtoken`, `ua-parser-js` + @types
 - [ ] T-07 Verificar os 13 usos de `dangerouslySetInnerHTML`: DOMPurify em todo HTML de banco/usuário — F-06
-- [ ] T-08 Unificar `X-Frame-Options` (middleware vs next.config) — F-03
-- [ ] T-09 Corrigir o único `<img>` sem `alt` — A-06
+- [ ] T-08 Unificar `X-Frame-Options` (middleware DENY vs config SAMEORIGIN) — decidir comportamento de framing pretendido antes
+- [x] T-09 ✅ N/A — o `<img>` sem alt era mock de teste (falso positivo da auditoria)
 
 ## P2 — Estruturais (planejar por sprint)
 

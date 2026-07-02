@@ -65,6 +65,7 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { MotionProvider } from '@/components/providers/MotionProvider';
 import CookieConsent from '@/components/CookieConsent';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import GlobalToaster from '@/components/GlobalToaster';
@@ -86,10 +87,12 @@ export default function RootLayout({
                     enableSystem={false}
                     disableTransitionOnChange
                 >
-                    <div id="main-content">{children}</div>
-                    <GlobalToaster />
-                    <CookieConsent />
-                    <ServiceWorkerRegistration />
+                    <MotionProvider>
+                        <div id="main-content">{children}</div>
+                        <GlobalToaster />
+                        <CookieConsent />
+                        <ServiceWorkerRegistration />
+                    </MotionProvider>
                 </ThemeProvider>
             </body>
         </html>

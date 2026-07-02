@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { notifyLotProposal } from '@/lib/notifications/proposal-notifications'
 import { createNotification } from '@/lib/notifications'
+import { rateLimit, getClientIP } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,6 +41,13 @@ const Schema = z.object({
  * aqui — best-effort, nunca quebra o envio para o cliente.
  */
 export async function POST(req: NextRequest) {
+  // Rota pública que dispara WhatsApp/notificações: 5 envios/min por IP
+  const ip = getClientIP(req)
+  const rl = await rateLimit(`lot-proposal:${ip}`, { limit: 5, windowMs: 60_000 })
+  if (!rl.success) {
+    return NextResponse.json({ error: 'Muitas requisições. Aguarde um minuto.' }, { status: 429 })
+  }
+
   let parsed
   try {
     parsed = Schema.safeParse(await req.json())

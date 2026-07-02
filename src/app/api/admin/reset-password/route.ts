@@ -6,16 +6,17 @@ import crypto from 'crypto'
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createServerClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    // getUser() valida o JWT no servidor (getSession só lê o cookie)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: 'Nao autenticado' }, { status: 401 })
     }
 
     const { data: adminProfile } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', session.user.id)
+      .eq('id', user.id)
       .single()
 
     const role = adminProfile?.role?.toLowerCase() || ''
@@ -29,7 +30,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'user_id obrigatorio' }, { status: 400 })
     }
 
-    const tempPassword = crypto.randomBytes(3).toString('hex')
+    // 12 bytes → 16 chars base64url (~96 bits). A senha é de uso único:
+    // must_reset_password força a troca no primeiro login.
+    const tempPassword = crypto.randomBytes(12).toString('base64url')
 
     const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
       user_id,
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
       .update({
         must_reset_password: true,
         password_reset_at: new Date().toISOString(),
-        password_reset_by: session.user.id,
+        password_reset_by: user.id,
       })
       .eq('id', user_id)
 

@@ -1,9 +1,17 @@
 // src/app/api/proposals/respond/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit, getClientIP } from '@/lib/rate-limit'
 export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
   try {
+    // Rota pública que muta estado de proposta: 10 req/min por IP
+    const ip = getClientIP(req)
+    const rl = await rateLimit(`proposal-respond:${ip}`, { limit: 10, windowMs: 60_000 })
+    if (!rl.success) {
+      return NextResponse.json({ error: 'Muitas requisições. Aguarde um minuto.' }, { status: 429 })
+    }
+
     const body = await req.json()
     const { proposal_id, action, counter } = body
     if (!proposal_id || !action) {

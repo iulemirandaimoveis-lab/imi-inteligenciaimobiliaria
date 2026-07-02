@@ -28,10 +28,11 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Pendências quentes (topo da fila)
 
-1. T-01 senha temporária fraca no reset admin (P0, SECURITY F-01)
-2. T-02 rate limit em rotas públicas de escrita (P0)
-3. T-03..T-09 quick wins (lint gate, reduced-motion, getUser, deps mortas…)
+1. **T-23 / F-09**: `proposals/respond` muta proposta por ID cru sem token — verificar RLS de `proposals` e decidir exigir token (REQUER APROVAÇÃO)
+2. T-02b: triar rotas públicas restantes sem apiHandler (tracker/qrcode, analytics/vitals, webhooks/instagram, tracks)
+3. T-07 verificação DOMPurify nos 13 `dangerouslySetInnerHTML`
 Fila completa: `docs/TODO_MASTER.md`.
+✅ Feitos 2026-07-02: F-01, F-02, RL em credenciais+públicas, lint gate no CI, MotionProvider, deps mortas removidas.
 
 ## Invariantes (NUNCA violar)
 

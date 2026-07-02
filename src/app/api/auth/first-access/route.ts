@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { rateLimit, getClientIP } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
     try {
+        // Anti brute-force da senha provisória: 5 tentativas/min por IP
+        const ip = getClientIP(req)
+        const rl = await rateLimit(`first-access:${ip}`, { limit: 5, windowMs: 60_000 })
+        if (!rl.success) {
+            return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto.' }, { status: 429 })
+        }
+
         const { email, temp_password, new_password } = await req.json()
 
         const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''

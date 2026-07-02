@@ -6,19 +6,18 @@
 
 ## Próxima tarefa recomendada
 
-**R-02 Quick wins (docs/REFACTOR_ROADMAP.md)** — lote único de baixo risco:
+**T-23 / F-09 (P0, REQUER APROVAÇÃO DO DONO)** — `src/app/api/proposals/respond/route.ts`:
+1. Verificar no banco a policy RLS de UPDATE em `proposals` para papel anônimo.
+2. Se anônimo consegue UPDATE: exigir token da proposta (mesmo mecanismo de `propostas/[token]/track`) antes de mutar. Alinhar o front público que consome a rota.
+3. Teste de contrato: respond sem token → 401/403.
 
-1. `src/app/api/admin/reset-password/route.ts`: `randomBytes(3)` → `randomBytes(9).toString('base64url')` e trocar `getSession()`→`getUser()` (T-01, parte de T-05).
-2. `.github/workflows/ci.yml`: remover `continue-on-error: true` do job lint (T-03) — lint está limpo, custo zero.
-3. Provider raiz: `MotionConfig reducedMotion="user"` (T-04).
-4. `package.json`: remover `jsonwebtoken`, `ua-parser-js`, `@types/jsonwebtoken`, `@types/ua-parser-js` após `grep -rn` de confirmação (T-06).
-5. Encontrar e corrigir o `<img>` sem alt: `grep -rn "<img " src --include="*.tsx" | grep -v "alt="` (T-09).
-
-**Gates**: type-check + lint + jest antes do commit. Sem UI visual afetada exceto item 3 (verificar 1 página animada).
+**Alternativa sem aprovação**: T-02b — triar `tracker/qrcode`, `analytics/vitals`, `webhooks/instagram`, `proposals/track`, `propostas/[token]/track` (classificar: público por design / falta RL / falta auth) e aplicar RL onde couber.
 
 ## Bloqueios/aguardando
 
-- Aplicação de migrations no banco exige aprovação explícita do dono (regra CLAUDE.md).
+- T-23 muda contrato do front público → aprovação explícita.
+- T-03b (`continue-on-error` em security/build no CI) → decisão do dono.
+- Aplicação de migrations no banco exige aprovação explícita (regra CLAUDE.md).
 - E2E no CI (T-10) depende de decisão: Supabase local vs mocks.
 
 ## Contexto que se perde fácil

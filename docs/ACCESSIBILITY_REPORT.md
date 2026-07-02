@@ -18,12 +18,12 @@
 
 | ID | Achado | Impacto | Prioridade | Recomendação |
 |---|---|---|---|---|
-| A-01 | Motion sem respeito global a `prefers-reduced-motion` | usuários sensíveis a movimento; scrollytelling (Jazz Boulevard) é o pior caso | ALTA | `MotionConfig reducedMotion="user"` no provider raiz — 1 linha cobre todo framer-motion |
+| A-01 | ✅ **CORRIGIDO 2026-07-02** — `MotionProvider` (`MotionConfig reducedMotion="user"`) no layout raiz cobre todo framer-motion | — | — | animações CSS/GSAP fora do framer ainda precisam de checagem individual |
 | A-02 | Mapas (canvas WebGL) sem alternativa acessível | seleção de lote é 100% visual/pointer | MÉDIA | manter/lista tabular dos lotes como alternativa navegável por teclado (a lista já existe em algumas vistas — padronizar) |
 | A-03 | Cobertura aria parcial em composições do backoffice | leitores de tela em tabelas/dashboards | MÉDIA | exigir aria em code review para componentes novos; corrigir ao tocar |
 | A-04 | Sem verificação automatizada | regressões invisíveis | MÉDIA | `@axe-core/playwright` nos 2 specs E2E existentes (baixo esforço) |
 | A-05 | Contraste do tema luxo (dourado/creme) não auditado | textos decorativos podem <4.5:1 | BAIXA | passar as páginas públicas no Lighthouse e registrar aqui |
-| A-06 | `<img>` sem alt (1) | leitor de tela | BAIXA | corrigir na próxima passada |
+| A-06 | ✅ N/A — a única ocorrência era mock de teste (`PropertyCard.test.tsx`), não código de produto | — | — | auditoria corrigida 2026-07-02 |
 
 ## Regras para Código Novo
 
