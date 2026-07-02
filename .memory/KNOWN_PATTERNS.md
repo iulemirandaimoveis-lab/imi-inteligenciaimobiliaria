@@ -43,6 +43,7 @@
 | A10 | Editar página monolítica sem screenshot antes/depois | regressão silenciosa (D-01) |
 | A11 | Criar policy RLS sem `ENABLE ROW LEVEL SECURITY` na tabela | policy fica inerte, anon herda GRANT → IDOR (F-09/FX-06) |
 | A12 | Rota pública mutar objeto por UUID cru confiando só na RLS | UUID não é segredo; validar token/ownership no handler (P15) |
+| A13 | Importar pacote baseado em jsdom/canvas/nativo em Server Component sem externalizar | quebra `next build` (asset ENOENT); usar `serverComponentsExternalPackages` (FX-07) |
 
 ---
 **Atualizado**: 2026-07-02

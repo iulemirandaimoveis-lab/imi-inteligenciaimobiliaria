@@ -136,3 +136,9 @@ usa service_role+token, funciona sob a RLS real).
 - Docs: SECURITY_AUDIT F-06 (corrigido), TODO_MASTER T-07, KNOWN_PATTERNS P18.
 - Gates: tsc ok, eslint ok, jest 853/858 (61 suites, +2 testes).
 - Risco baixo: DOMPurify é mais restritivo que os regex antigos; formatação preservada (perfil html + style mantido).
+
+## 2026-07-02 · Sessão 7: HOTFIX build — isomorphic-dompurify externo (regressão do T-07)
+- Vercel + CI job build falharam (4e6255e): ENOENT default-stylesheet.css em conteudo/[slug] (Server Component); jsdom do isomorphic-dompurify empacotado no server. tsc/lint/jest não pegam.
+- Fix: next.config.js experimental.serverComponentsExternalPackages: ['isomorphic-dompurify'].
+- VERIFICADO com next build local: passou de "Collecting page data" para "Generating static pages (0/454)". Fix confirmado.
+- FAILURES FX-07, LEARNINGS L-16, KNOWN_PATTERNS A13.

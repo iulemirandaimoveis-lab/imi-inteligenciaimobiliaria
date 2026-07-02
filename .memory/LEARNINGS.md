@@ -31,6 +31,10 @@
 - **L-13** Adicionar rate limit a uma rota quebra testes que chamam o handler várias vezes: o limiter in-memory acumula por chave (`getClientIP` → `'unknown'` sem header). Solução: `x-forwarded-for` único por teste + um teste dedicado que ESPERA o 429 (vira contrato). Caso real: `auth-login.test.ts` 2026-07-02.
 - **L-14** O wrapper `apiHandler` (`src/lib/api-helpers.ts`) já faz auth+RL+audit por padrão — antes de acusar rota "sem auth", verificar se ela usa o wrapper (grep por `apiHandler`).
 
+## Build (Next) vs gates locais
+
+- **L-16** `tsc`/`lint`/`jest` NÃO pegam erros de bundling do `next build` (ex.: pacote com jsdom em Server Component → ENOENT de asset). Ao adicionar dependência server-side não-trivial, rodar `next build` de fato. Pacotes jsdom/canvas/nativos em Server Components → `experimental.serverComponentsExternalPackages` (FX-07/A13).
+
 ## Banco vs migrations (crítico)
 
 - **L-15** As migrations versionadas NÃO refletem o estado real do banco (há drift aplicado via dashboard). O caso F-09: as migrations sugeriam RLS desabilitada em `proposals`, mas em produção estava habilitada, com policies diferentes e sem `tenant_id`. **Sempre verificar o estado real via MCP** (`pg_policies`, `pg_class.relrowsecurity`, `information_schema.columns`) antes de escrever/aplicar migration de policy/RLS. Uma migration "óbvia" baseada só no repo teria removido `bo_full_proposals` e referenciado coluna inexistente.

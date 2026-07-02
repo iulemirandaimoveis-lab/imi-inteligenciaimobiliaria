@@ -38,6 +38,14 @@
 - **LIÇÃO (L-15)**: migrations versionadas ≠ estado real; verificar `pg_policies`/`relrowsecurity`/`columns` antes de mutar (A11 revisado).
 - **Confiança**: alta (verificado diretamente no banco).
 
+## FX-07 · Build quebrou ao usar isomorphic-dompurify em Server Component (T-07)
+- **Sintoma**: `next build` falha em "Collecting page data" — `ENOENT: default-stylesheet.css` em `conteudo/[slug]/page.js`. tsc/lint/jest passavam (é erro de bundling, não de tipo).
+- **Causa-raiz**: `isomorphic-dompurify` carrega **jsdom**; ao ser importado em um **Server Component** (`conteudo/[slug]` não tem 'use client'), o Next empacota o jsdom no bundle do servidor e o `readFileSync` do CSS interno do jsdom aponta para `.next/server/.../browser/default-stylesheet.css`, que não é traçado. Client Components (biblioteca) não quebram — usam o DOMPurify do browser.
+- **Afeta**: build de produção (Vercel + CI job build).
+- **Solução**: `experimental.serverComponentsExternalPackages: ['isomorphic-dompurify']` no next.config — mantém jsdom externo, require resolve de node_modules em runtime (CSS existe lá).
+- **Prevenção (A13)**: pacotes baseados em jsdom/canvas/nativos usados em Server Components devem ir em `serverComponentsExternalPackages`. Ao adicionar dep server-side pesada, rodar `next build` (tsc/jest não pegam erro de bundling).
+- **Confiança**: alta (erro e fix documentados do Next; CSS confirmado em node_modules).
+
 ---
 **Template para nova entrada**: sintoma / causa-raiz / afetou / solução / prevenção / confiança.
 **Atualizado**: 2026-07-02

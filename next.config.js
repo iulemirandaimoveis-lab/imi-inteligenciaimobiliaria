@@ -89,6 +89,11 @@ const nextConfig = {
             bodySizeLimit: '2mb',
         },
         optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'sonner', 'date-fns'],
+        // isomorphic-dompurify (usado por src/lib/sanitize-html) carrega jsdom no
+        // server; empacotá-lo quebra o build (jsdom lê default-stylesheet.css via
+        // readFileSync, que não é traçado para .next/server). Mantê-lo externo faz
+        // o require resolver de node_modules em runtime, onde o CSS existe. (T-07 fix)
+        serverComponentsExternalPackages: ['isomorphic-dompurify'],
     },
     // Security headers
     async headers() {
