@@ -33,8 +33,22 @@ Postura geral **boa**: middleware com security headers + CORS allowlist, CSP def
 - **Fix aplicado 2026-07-02** (rotas que de fato estavam sem proteção): `auth/login`, `auth/first-access`, `users/auth/first-access` (5/min por IP — anti brute-force), `lots/proposal` (5/min — dispara WhatsApp), `intelligence/simulate` (público computacional), `proposals/respond` (10/min).
 - **Pendente**: triagem das rotas restantes sem `apiHandler` (`tracker/qrcode`, `analytics/vitals`, `webhooks/instagram`, `proposals/track`, `propostas/[token]/track`) — ver T-02b no TODO_MASTER.
 
-### F-09 — IDOR em `proposals/respond` (e `proposals/track`) · ✅ **CORRIGIDO 2026-07-02 (aprovado)** 🔴→🟢
-**Fase A (app) + Fase B (migration) aplicadas. Ver commit da sessão 4.**
+### F-09 — Autorização de proposta pública · ✅ **RESOLVIDO + REAVALIADO no banco (2026-07-02)** 🟢
+**⚠️ Correção de severidade (verificado em produção via Supabase MCP):** a hipótese original de IDOR **anônimo ALTA não se confirmou**. Em produção, `public.proposals`/`proposal_events` já tinham **RLS habilitada** e **todas as policies exigem `auth.uid() IS NOT NULL`** → `anon` já era bloqueado pelo banco. O que existia de fato era o fluxo público (cliente = anon) **falhando silenciosamente** sob RLS.
+
+**Resolução (mantida — é a correta):** rotas públicas passam a autorizar por **token secreto** + `service_role` (após validar o token); `p/[token]/page.tsx` via admin; client envia token. Isso (a) faz o fluxo público funcionar, (b) usa o modelo correto (token = segredo), (c) é defesa em profundidade. 8 testes de contrato.
+
+**Banco (aplicado):** migration mínima e segura adicionando `time_on_page_seconds`/`device_type` a `proposal_events` (inserts falhavam sem elas). **Nenhuma policy alterada** — as de produção já protegem contra anon. A versão anterior desta migration (que reescrevia policies por `tenant_id`) foi **descartada**: `proposals` **não tem coluna `tenant_id`** em produção e a migration teria removido `bo_full_proposals` (regressão de acesso do backoffice). Lição: nunca confiar só nas migrations versionadas — verificar o estado real (A11 revisado).
+
+### F-11 — Policies de `proposals` não escopadas por tenant · **INFORMATIVO (by-design)** 🆕
+- `auth_access_proposals`/`auth_manage_proposals` (role public, `USING auth.uid() IS NOT NULL`) e `bo_full_proposals` (`true/true`) → **qualquer usuário autenticado lê/edita qualquer proposta**.
+- **Avaliação**: `proposals` não tem `tenant_id`; o modelo é **single-org** (todos os autenticados são staff da empresa). Não é vulnerabilidade no modelo atual. **Ação**: revisitar SOMENTE se a plataforma virar multi-tenant real — aí escopar por `broker_id`/`created_by`/org. Não alterar agora (aperto quebraria acesso legítimo do backoffice).
+
+### K-13 — Auditoria de RLS de todo o schema `public` · ✅ **LIMPO (2026-07-02)**
+- Query executada: **0 tabelas** em `public` com RLS desabilitada; **0 tabelas** com policy porém RLS off. Toda tabela exposta tem RLS habilitada. O bug hipotetizado (policy sem `ENABLE`) **não existe** neste banco.
+
+---
+**Registro histórico da resolução (app, mantido):**
 
 **Correções:**
 - `proposals/respond` e `proposals/track` reescritos: autorização pelo **token secreto** (`z.string().min(16)`), lookup por `token` via `supabaseAdmin`, `proposal_id` do cliente **não é mais aceito**. Validam expiração (410), estado respondável (409), token inválido (403). Rate limit mantido.

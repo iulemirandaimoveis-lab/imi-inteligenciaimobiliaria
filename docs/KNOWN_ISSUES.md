@@ -12,16 +12,16 @@
 | K-01 | Cache de Service Worker serve versão velha do `/users` | "Mapa ainda não disponível…" mesmo com dados corretos | PWA + skipWaiting nem sempre auto-corrige em iOS | Cliente vê app quebrado | ALTA (mitigado: NetworkFirst) |
 | K-02 | Jest: "worker process failed to exit gracefully" | aviso ao final da suíte | timers/handles sem teardown em algum teste | mascarará vazamentos futuros | BAIXA |
 | K-03 | 5 testes skipped | `Tests: 5 skipped` | não investigado | cobertura fantasma | BAIXA |
-| K-04 | Lint não bloqueia CI | job `lint` com `continue-on-error: true` | erros históricos de ESLint | regressões de qualidade passam | MÉDIA |
+| K-04 ✅ | Lint não bloqueia CI | — | **Corrigido**: `continue-on-error` removido do job lint | — | RESOLVIDO |
 | K-05 | Build sem gate de tipos no Vercel | `ignoreBuildErrors: true` | OOM no type-check do Vercel | dependência total do job de CI | MÉDIA (aceito, documentado) |
 | K-06 | Migrations com prefixos duplicados | ver `supabase/MIGRATIONS_MAP.md` | histórico sem convenção | drift entre ambientes | MÉDIA |
 | K-07 | Rate limit ausente em rotas públicas de escrita | `contact`, `consultation` sem limiter | adoção incremental parou | spam/custo | MÉDIA (=F-05) |
-| K-08 | Senha temporária de 6 hex no reset admin | — | `randomBytes(3)` | segurança | ALTA (=F-01) |
+| K-08 ✅ | Senha temporária de 6 hex no reset admin | — | **Corrigido** `randomBytes(12)` base64url | — | RESOLVIDO (F-01) |
 | K-09 | RTL não validado para locale `ar` | layout árabe possivelmente espelhado errado | i18n adicionou `ar` sem auditoria RTL | UX quebrada p/ árabe | BAIXA |
-| K-10 | Headers X-Frame-Options divergentes | DENY (middleware) vs SAMEORIGIN (config) | duas fontes | ambiguidade | BAIXA (=F-03; analisado T-08) |
-| K-11 🔴 | IDOR em `proposals/respond`/`track` | proposta alheia mutável por UUID | RLS de `public.proposals` não habilitada + handler sem token | integridade comercial | ALTA (=F-09; aguarda aprovação do fix) |
-| K-12 | `xlsx` com prototype pollution + ReDoS (sem fix) | vuln de produção | dependência sem patch | parsing de planilha | MÉDIA (=F-08/T-24) |
-| K-13 | RLS possivelmente ausente em outras tabelas `public.*` | policies criadas sem `ENABLE ROW LEVEL SECURITY` | padrão repetido? | vazamento potencial | MÉDIA (auditar — ver TESTING §RLS) |
+| K-10 ✅ | Headers X-Frame-Options divergentes | — | **Corrigido**: fonte única escopada no next.config (T-08) | — | RESOLVIDO |
+| K-11 ✅ | (era: IDOR proposals) | — | **Reavaliado**: RLS estava habilitada em prod; anon bloqueado; não explorável. App migrado p/ token+admin; migration de colunas aplicada | — | RESOLVIDO/rebaixado (F-09) |
+| K-12 ✅ | `xlsx` com prototype pollution + ReDoS | — | **Removido**: substituído por adapter ExcelJS (`src/lib/spreadsheet/`) | nenhum | RESOLVIDO (T-24) |
+| K-13 ✅ | Auditoria de RLS do schema public | — | **Auditado via MCP 2026-07-02: 0 tabelas com RLS off** | nenhum | LIMPO |
 
 ## Resolvidos recentemente (referência rápida)
 

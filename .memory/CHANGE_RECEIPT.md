@@ -100,3 +100,26 @@
 
 ### Risco
 - Médio-baixo. App fix é reversível (revert). Migration é aditiva/não-destrutiva (rollback: DISABLE RLS). Ação do dono: aplicar migration.
+
+## 2026-07-02 · Sessão 5: Verificação de banco via MCP + correção de diagnóstico F-09/K-13
+
+**Banco de produção** (Supabase MCP, projeto zocffccwjjyelwrgunhu):
+- Descoberto que RLS de proposals/proposal_events JÁ estava habilitada; policies exigem auth.uid()
+  → anon bloqueado. F-09 anônimo NÃO era explorável (severidade ALTA→informativa/resolvido).
+- proposals NÃO tem tenant_id → a migration do repo (que reescrevia policies por tenant e removia
+  bo_full_proposals) teria QUEBRADO produção. Não aplicada; reescrita para versão segura.
+- APLICADA migration segura `proposal_events_add_tracking_columns` (add time_on_page_seconds,
+  device_type — faltavam; inserts falhavam). Idempotente, não-destrutiva.
+- K-13: query confirmou 0 tabelas public com RLS off (schema todo protegido).
+- F-11 registrado (informativo): policies de proposals são org-wide; by-design single-org.
+
+**Repo**: migration file reescrita para refletir a realidade + docs corrigidos honestamente
+(SECURITY_AUDIT F-09/F-11/K-13, FAILURES FX-06, LEARNINGS L-15, KNOWN_ISSUES K-11/K-13,
+PROJECT_STATE, NEXT_TASK).
+
+**Lição L-15**: migrations versionadas ≠ estado real; sempre verificar via MCP antes de migration de RLS/policy.
+
+**Código**: sem mudança nesta sessão além da migration file (app da sessão 4 continua correto —
+usa service_role+token, funciona sob a RLS real).
+
+**Risco**: baixo. A migration aplicada é aditiva (colunas). Rollback trivial (DROP COLUMN).

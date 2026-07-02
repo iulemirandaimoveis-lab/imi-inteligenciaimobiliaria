@@ -26,16 +26,18 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 - #338 proposta: estado civil, cônjuge, checklist docs
 - 2026-07-02: criado sistema de inteligência (`docs/` 17 arquivos + `.memory/`)
 
-## ⚠️ Ação pendente DO DONO (não é código)
-- **Aplicar a migration `supabase/migrations/20260702_f09_proposals_rls_hardening.sql`** no banco (habilita RLS em `public.proposals`/`proposal_events`). Sem isso, o F-09 fica protegido só pela camada de app (token) — que já fecha o IDOR, mas a defesa em profundidade só entra com a migration. Rodar depois: `SELECT relrowsecurity FROM pg_class WHERE relname IN ('proposals','proposal_events')` (esperar true).
+## Banco (verificado via MCP 2026-07-02) — sem ação pendente
+- RLS de `public.proposals`/`proposal_events`: **habilitada**; policies exigem `auth.uid()` → anon bloqueado. F-09 anônimo **não era explorável** (correção de severidade).
+- **K-13 LIMPO**: 0 tabelas `public` com RLS off.
+- Migration segura APLICADA (`proposal_events` + colunas de tracking). A versão que reescrevia policies foi descartada (proposals não tem `tenant_id`).
 
 ## Pendências quentes (topo da fila)
-1. **K-13**: auditar RLS de TODAS as tabelas `public.*` com policy (mesmo bug do F-09 pode existir alhures) — query em TESTING_STRATEGY §RLS.
-2. **T-07**: DOMPurify nos 13 `dangerouslySetInnerHTML`.
-3. Upgrade Next/next-pwa (altas de `npm audit` de produção) → depois subir gate do CI para `high`.
+1. **T-07**: DOMPurify nos 13 `dangerouslySetInnerHTML` (verificação por uso).
+2. Upgrade Next/next-pwa (altas de `npm audit` de produção) → depois subir gate do CI para `high`.
+3. **F-11 (informativo)**: policies de proposals são org-wide (sem tenant). By-design hoje; revisitar se virar multi-tenant.
 Fila completa: `docs/TODO_MASTER.md`.
 
-✅ Feitos 2026-07-02 (PR #343): F-01, F-02, RL credenciais+públicas, lint gate CI, gate `npm audit` prod-crítico (D-10), MotionProvider, deps mortas, DEPENDENCY_GRAPH, **F-09 IDOR (app+migration+testes)**, **T-08 X-Frame-Options escopado**, **T-24 xlsx→exceljs**.
+✅ Feitos 2026-07-02 (PR #343): F-01, F-02, RL credenciais+públicas, lint gate CI, gate `npm audit` prod-crítico (D-10), MotionProvider, deps mortas, DEPENDENCY_GRAPH, **F-09 (app token-auth + migration de colunas aplicada; severidade corrigida)**, **T-08 X-Frame-Options escopado**, **T-24 xlsx→exceljs**, **K-13 auditoria RLS (limpo)**.
 
 ## Invariantes (NUNCA violar)
 

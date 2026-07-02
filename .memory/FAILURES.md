@@ -30,13 +30,13 @@
 - **Solução**: type-check movido para CI; build ignora tipos (D-07).
 - **Prevenção**: L-01; monitorar duração do job typecheck como proxy do crescimento do grafo.
 
-## FX-06 · IDOR em `proposals/respond` — RLS criada mas não habilitada (F-09/K-11)
-- **Sintoma**: rota pública muta estado de proposta por `proposal_id` (UUID) sem token/auth.
-- **Causa-raiz**: `public.proposals` tem policies `TO authenticated` (migration 20260319) mas **nenhum `ENABLE ROW LEVEL SECURITY`** — policies ficam inertes; anon (anon-key server client) herda GRANT padrão do Supabase e escreve. Confirmado por comportamento: o "marcar como visualizado" anônimo depende de escrever nessa tabela.
-- **Afeta**: integridade comercial (aceite/contraproposta forjados).
-- **Solução (aguarda aprovação)**: exigir token no handler (padrão `propostas/[token]/track`) + habilitar RLS explicitamente.
-- **Prevenção**: teste de auditoria `pg_class.relrowsecurity` para toda tabela com policy (TESTING §RLS); anti-padrão A11.
-- **Confiança**: alta na causa-raiz (evidência de código+migration); verificação final = `SELECT relrowsecurity FROM pg_class WHERE relname='proposals'`.
+## FX-06 · F-09 — hipótese de IDOR anônimo NÃO confirmada no banco (lição de verificação)
+- **Hipótese inicial (ALTA)**: `public.proposals` teria policies mas sem `ENABLE ROW LEVEL SECURITY` (lido só das migrations) → anon mutaria proposta por UUID.
+- **Verificação em produção (Supabase MCP, 2026-07-02)**: RLS estava **habilitada**; todas as policies exigem `auth.uid() IS NOT NULL` → **anon já bloqueado**. IDOR anônimo **não explorável**. `proposals` sequer tem `tenant_id`. K-13: 0 tabelas public com RLS off.
+- **O que era real**: o fluxo público (anon) de aceite/tracking falhava silenciosamente sob RLS; e `proposal_events` faltavam colunas (inserts falhavam).
+- **Solução aplicada**: autorização por token + service_role no app (correto e funcional) + migration mínima (só colunas). A migration que reescrevia policies foi **descartada** (referenciava `tenant_id` inexistente e removeria `bo_full_proposals`).
+- **LIÇÃO (L-15)**: migrations versionadas ≠ estado real; verificar `pg_policies`/`relrowsecurity`/`columns` antes de mutar (A11 revisado).
+- **Confiança**: alta (verificado diretamente no banco).
 
 ---
 **Template para nova entrada**: sintoma / causa-raiz / afetou / solução / prevenção / confiança.
