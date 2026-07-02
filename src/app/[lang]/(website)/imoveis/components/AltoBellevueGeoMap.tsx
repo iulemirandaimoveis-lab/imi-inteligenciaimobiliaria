@@ -772,7 +772,7 @@ function LotDetailPanel({
         onDragEnd={(_, info) => {
           if (info.offset.y > 110 || info.velocity.y > 700) onClose();
         }}
-        className="sm:hidden fixed bottom-0 left-0 right-0 z-40 max-h-[78svh] flex flex-col rounded-t-[24px] overflow-hidden"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-[9999] max-h-[78svh] flex flex-col rounded-t-[24px] overflow-hidden"
         style={{
           background: 'rgba(8,20,36,0.97)',
           backdropFilter: 'blur(24px)',
@@ -908,7 +908,7 @@ function AmenityModal({ amenity, amenityOverrides, onClose }: {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-6"
       style={{ background: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(12px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >

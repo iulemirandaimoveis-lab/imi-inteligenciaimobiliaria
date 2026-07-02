@@ -1,8 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { AnimatePresence } from 'framer-motion'
 import { LayoutGrid, Satellite, Layers } from 'lucide-react'
+import { useLotCart } from '@/hooks/useLotCart'
+import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart'
+import { CartFab, CartSheet } from './LotCartSheet'
 
 // Mapa de lotes vetorial interativo (zoom/drag/seleção/comparar) — fonte canônica.
 const SubdivisionLotMap = dynamic(
@@ -30,8 +34,15 @@ const AltoBellevueGeoMap = dynamic(
   },
 )
 
+const ProposalFormModal = dynamic(() => import('./ProposalFormModal'), { ssr: false })
+
 // Âncora geográfica confirmada do Alto Bellevue (Plus Code 4FFQ+RJ, Garanhuns/PE).
 const AB_ANCHOR = { lng: -36.510937, lat: -8.875437, zoom: 16.5 }
+
+// Mesma chave de localStorage usada em SubdivisionLotMap/AltoBellevueGeoMap —
+// lotes adicionados em qualquer vista aparecem aqui também.
+const DEV_SLUG = 'alto-bellevue'
+const WA_DEFAULT = '5581986141487'
 
 type ViewMode = 'plano' | 'satelite' | 'satlotes'
 
@@ -61,6 +72,26 @@ export default function AltoBellevueMapExplorer({
   virtualTourUrl,
 }: Props) {
   const [view, setView] = useState<ViewMode>('plano')
+
+  // ── Carrinho de lotes / proposta — só usado na vista "Satélite" (as outras
+  // duas vistas já têm seu próprio carrinho embutido). Mesma chave de
+  // localStorage, então lotes adicionados em qualquer vista aparecem aqui. ──
+  const cart = useLotCart<CartLot>(DEV_SLUG)
+  const [showCart, setShowCart] = useState(false)
+  const [showProposal, setShowProposal] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
+  const cartT = useMemo(() => cartTotals(cart.items), [cart.items])
+
+  const copyShareLink = useCallback(() => {
+    try {
+      const url = buildCartShareUrl(typeof window !== 'undefined' ? window.location.origin : '', {
+        d: DEV_SLUG, ids: cart.items.map((l) => l.id),
+      })
+      navigator.clipboard?.writeText(url)
+      setLinkCopied(true)
+      setTimeout(() => setLinkCopied(false), 1800)
+    } catch { /* clipboard indisponível */ }
+  }, [cart.items])
 
   return (
     <div>
@@ -143,6 +174,41 @@ export default function AltoBellevueMapExplorer({
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
             Vista de satélite real (Esri World Imagery) centrada no terreno em Garanhuns/PE.
           </p>
+
+          {/* ── Proposta — o carrinho é compartilhado com "Plano" e "Satélite +
+              Lotes"; aqui o cliente revisa/conclui mesmo sem selecionar lotes
+              nesta vista (que é apenas uma foto aérea, sem lotes clicáveis). */}
+          {cart.items.length > 0 && !showCart && !showProposal && (
+            <CartFab count={cart.items.length} onClick={() => setShowCart(true)} fixed />
+          )}
+          <AnimatePresence>
+            {showCart && (
+              <CartSheet
+                items={cart.items}
+                totals={cartT}
+                linkCopied={linkCopied}
+                onRemove={cart.remove}
+                onClear={cart.clear}
+                onCopyLink={copyShareLink}
+                onProposal={() => { setShowCart(false); setShowProposal(true) }}
+                onClose={() => setShowCart(false)}
+                fixed
+              />
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showProposal && cart.items.length > 0 && (
+              <ProposalFormModal
+                developmentId={developmentId}
+                developmentName={developmentName}
+                developmentSlug={DEV_SLUG}
+                whatsappPhone={whatsappPhone ?? WA_DEFAULT}
+                items={cart.items}
+                onClose={() => setShowProposal(false)}
+                onSubmitted={() => { cart.clear(); setShowProposal(false) }}
+              />
+            )}
+          </AnimatePresence>
         </div>
       )}
     </div>

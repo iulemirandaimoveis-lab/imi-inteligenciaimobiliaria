@@ -6,6 +6,10 @@
  * (AltoBellevueGeoMap). Extraído de AltoBellevueGeoMap.tsx (nenhuma mudança
  * visual) para as duas vistas usarem exatamente o mesmo componente — evita
  * o carrinho divergir entre elas no futuro.
+ *
+ * z-index alto (mesmo padrão de SubdivisionLotMap/DevelopmentUnits/LeadCaptureModal)
+ * para nunca ficar escondido atrás de barras fixas da página (ex.: MobileStickyBar,
+ * z-[140]) — sem isso o cliente não conseguia abrir/concluir a proposta.
  */
 
 import React, { useEffect } from 'react';
@@ -38,7 +42,7 @@ export function CartFab({
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0, opacity: 0 }}
       onClick={onClick}
-      className={`${fixed ? 'fixed' : 'absolute'} z-30 flex items-center gap-2 right-3 bottom-16 sm:bottom-6`}
+      className={`${fixed ? 'fixed' : 'absolute'} z-[9990] flex items-center gap-2 right-3 bottom-16 sm:bottom-6`}
       style={{
         height: 48, padding: '0 16px 0 14px', borderRadius: 24, border: 'none',
         background: GOLD, color: NAVY, boxShadow: '0 8px 28px rgba(200,164,74,0.45)',
@@ -86,7 +90,7 @@ export function CartSheet({
       {/* Scrim */}
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        className={`${posClass} inset-0 z-30`}
+        className={`${posClass} inset-0 z-[9998]`}
         style={{ background: 'rgba(0,0,0,0.45)' }}
         onClick={onClose}
       />
@@ -95,7 +99,7 @@ export function CartSheet({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: '100%', opacity: 0 }}
         transition={{ type: 'spring', stiffness: 380, damping: 40 }}
-        className={`${posClass} z-40 left-0 right-0 bottom-0 sm:left-auto sm:right-4 sm:bottom-4 sm:w-[380px] rounded-t-[24px] sm:rounded-[20px] flex flex-col overflow-hidden`}
+        className={`${posClass} z-[9999] left-0 right-0 bottom-0 sm:left-auto sm:right-4 sm:bottom-4 sm:w-[380px] rounded-t-[24px] sm:rounded-[20px] flex flex-col overflow-hidden`}
         style={{
           background: 'rgba(9,20,38,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
           border: '1px solid rgba(200,164,74,0.25)', boxShadow: '0 -8px 40px rgba(0,0,0,0.6)', maxHeight: '80svh',
@@ -138,7 +142,7 @@ export function CartSheet({
         </div>
 
         {/* Totais + ações */}
-        <div className="px-5 py-4 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="px-5 pt-4 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
           <div className="flex items-center justify-between mb-1">
             <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Área total</span>
             <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', fontFamily: "'JetBrains Mono', monospace" }}>{fmtM2(totals.totalArea)}</span>
