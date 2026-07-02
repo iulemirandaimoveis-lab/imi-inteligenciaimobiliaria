@@ -161,7 +161,7 @@ export default function ProposalFormModal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-6"
       style={{ background: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(10px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -318,7 +318,7 @@ export default function ProposalFormModal({
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-4 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="px-5 pt-4 flex-shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))' }}>
               <button
                 onClick={handleSubmit}
                 disabled={!valid || submitting}
