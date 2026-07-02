@@ -81,7 +81,6 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -89,9 +88,14 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - name: npm audit
-        run: npm audit --audit-level=critical
-        continue-on-error: true
+      # Gate REAL: bloqueia só vulnerabilidades CRÍTICAS que chegam a produção.
+      # Dev/test toolchain (ts-jest→handlebars, jsdom…) fica fora do gate porque
+      # não é embarcado no runtime. Ver docs/SECURITY_AUDIT.md D-10/T-03b.
+      - name: Audit (produção — bloqueante)
+        run: npm audit --omit=dev --audit-level=critical
+      # Informativo: árvore completa (não bloqueia; visível no log).
+      - name: Audit (completo — informativo)
+        run: npm audit || true
 
   build:
     runs-on: ubuntu-latest

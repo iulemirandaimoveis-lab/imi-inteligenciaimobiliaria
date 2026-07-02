@@ -22,6 +22,7 @@
 | P12 | Migration nova: `YYYYMMDD_descricao.sql` + atualizar `supabase/MIGRATIONS_MAP.md` | `supabase/MIGRATIONS_MAP.md` |
 | P13 | Rota nova de API: usar o wrapper `apiHandler` (auth+RL+audit por padrão) em vez de boilerplate manual | `src/lib/api-helpers.ts` |
 | P14 | Endpoint de credencial (login/first-access): rate limit por IP 5/min é obrigatório | `src/app/api/auth/login/route.ts` |
+| P15 | Rota pública sobre objeto (proposta/doc): lookup e mutação por **token secreto**, validado server-side; nunca por UUID cru | `src/app/api/propostas/[token]/track/route.ts` |
 
 ## Anti-Padrões (nunca)
 
@@ -37,6 +38,8 @@
 | A8 | Snapshot de árvore React como teste | frágil, não expressa comportamento |
 | A9 | Nova lib de UI/estado/animação sem DECISION_LOG | proliferação (já há duplicatas) |
 | A10 | Editar página monolítica sem screenshot antes/depois | regressão silenciosa (D-01) |
+| A11 | Criar policy RLS sem `ENABLE ROW LEVEL SECURITY` na tabela | policy fica inerte, anon herda GRANT → IDOR (F-09/FX-06) |
+| A12 | Rota pública mutar objeto por UUID cru confiando só na RLS | UUID não é segredo; validar token/ownership no handler (P15) |
 
 ---
 **Atualizado**: 2026-07-02

@@ -56,7 +56,13 @@
 1. Antes de adicionar dependência: verifique se já existe equivalente nesta lista.
 2. Libs pesadas de parsing (xlsx/mammoth/pdf-parse) **sempre** via `await import()` — nunca import estático.
 3. Nova lib de UI/animação/gráfico exige entrada no DECISION_LOG.
-4. `npm audit` não roda no CI — rodar manualmente em cada sprint (registrar em SECURITY_AUDIT).
+4. `npm audit` roda no CI desde 2026-07-02: gate bloqueante para **críticas de produção** (`--omit=dev --audit-level=critical`) + audit informativo completo (D-10).
+
+## Estado do `npm audit` (2026-07-02)
+
+- **Produção** (`--omit=dev`): 0 críticas · 15 altas · 13 moderadas · 1 baixa.
+- **Árvore completa**: 1 crítica (`handlebars` via ts-jest — dev) · 19 altas.
+- **Altas de produção sem fix / a tratar**: `xlsx` (prototype pollution + ReDoS — substituir, T-24); `next`/`next-pwa`/`workbox-*`/`rollup-plugin-terser`/`serialize-javascript`/`undici` (toolchain build — priorizar upgrade do Next e do next-pwa, que está defasado); `lodash`, `minimatch`, `@xmldom/xmldom`, `fast-uri`.
 
 ---
 **Última atualização**: 2026-07-02

@@ -51,3 +51,26 @@
 
 ### Risco
 - Baixo. Rollback: revert do commit (nenhuma migration, nenhum contrato quebrado — RL é aditivo).
+
+## 2026-07-02 · Sessão 3: Investigação IDOR (F-09) + análises T-03b/T-08 (FABLE SUPREME CTO MODE)
+
+**Branch**: `claude/project-intelligence-audit-9vzb7e` (PR #343)
+
+### Investigação (sem alterar código de produto — findings requerem aprovação)
+- **F-09 IDOR (ALTA)**: rastreado o fluxo proposta pública (token) → client envia proposal_id cru → `proposals/respond` faz UPDATE anon sem token/ownership. Evidência de migrations: `public.proposals` tem policies `TO authenticated` mas **NENHUM `ENABLE ROW LEVEL SECURITY`** (varrido migrations + rls-policies.sql + rls_block8.sql + manual-schema.sql). Corroborado por comportamento (viewed anon). CVSS~8.1. Fix (token + enable RLS) documentado, AGUARDA APROVAÇÃO.
+- **F-10**: mesma raiz em `proposals/track` (impacto menor).
+- **T-02b**: rotas públicas restantes triadas — todas ok exceto a família proposals.
+- **T-08**: nenhum iframe interno emoldura backoffice/users/api; frame-ancestors 'self' é o controle real. Recomendação: padronizar X-Frame-Options=SAMEORIGIN (aguarda ok).
+
+### Código alterado (baixo risco, auto-executado)
+- **CI security job (T-03b/D-10)**: gate bloqueante `npm audit --omit=dev --audit-level=critical` (0 críticas em prod hoje) + audit informativo completo. Dev-only criticals (handlebars via ts-jest) não travam.
+
+### Evidência npm audit
+- Prod: 0 crítica / 15 alta / 13 mod. Completo: 1 crítica (handlebars/dev) / 19 alta.
+- xlsx (prod, sem fix): T-24 substituir.
+
+### Docs/memória atualizados
+- SECURITY_AUDIT (F-09 completo, F-10, F-03 rev, F-08 rev, D-10), DECISION_LOG (D-10), KNOWN_ISSUES (K-11..K-13), TESTING_STRATEGY (RLS audit), DEPENDENCIES (estado audit), TODO_MASTER (T-23/T-24/T-02b/T-03b), FAILURES (FX-06), KNOWN_PATTERNS (P15/A11/A12), PROJECT_STATE.
+
+### Risco do commit
+- Baixo. Só CI config + docs. Nenhum contrato/rota/schema alterado.

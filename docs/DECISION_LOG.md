@@ -5,6 +5,11 @@
 
 ---
 
+## D-10 · 2026-07-02 — Gate de segurança do CI escopado a produção
+- **Contexto**: `npm audit` completo acusa 1 crítica + 19 altas, mas a crítica (`handlebars` via ts-jest) e muitas altas são toolchain de dev/test, sem exposição em runtime. Bloquear no total travaria o CI por ruído; ignorar tudo (`continue-on-error`) não protege.
+- **Decisão**: job `security` bloqueia em `npm audit --omit=dev --audit-level=critical` (0 críticas em produção hoje) + step informativo da árvore completa. `build` continua `continue-on-error` (risco de OOM — D-07; já gated por typecheck).
+- **Consequência**: nova crítica em dep de **produção** barra o PR; ruído de dev fica visível mas não trava. Reavaliar subir para `high` após tratar `xlsx`/`next-pwa` (T-24).
+
 ## D-09 · 2026-07-02 — Estratégia de rate limit diferenciada por classe de rota
 - **Contexto**: cobertura irregular; endpoints de credencial sem proteção anti brute-force.
 - **Decisão**: credenciais (login/first-access) = 5/min por IP; públicas com custo (WhatsApp/notificação) = 5/min por IP; públicas computacionais = `limiters.public` (10/10s); autenticadas = via `apiHandler`/`limiters.auth`; crons/webhooks = secret/assinatura (sem RL).

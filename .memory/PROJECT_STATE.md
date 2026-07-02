@@ -26,13 +26,14 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 - #338 proposta: estado civil, cônjuge, checklist docs
 - 2026-07-02: criado sistema de inteligência (`docs/` 17 arquivos + `.memory/`)
 
-## Pendências quentes (topo da fila)
+## Pendências quentes (topo da fila) — AGUARDAM APROVAÇÃO DO DONO
 
-1. **T-23 / F-09**: `proposals/respond` muta proposta por ID cru sem token — verificar RLS de `proposals` e decidir exigir token (REQUER APROVAÇÃO)
-2. T-02b: triar rotas públicas restantes sem apiHandler (tracker/qrcode, analytics/vitals, webhooks/instagram, tracks)
-3. T-07 verificação DOMPurify nos 13 `dangerouslySetInnerHTML`
+1. 🔴 **T-23 / F-09 (ALTA, investigado)**: IDOR em `proposals/respond`+`track`. RLS de `public.proposals` **não habilitada** nas migrations → anon muta proposta por UUID. Fix = exigir token + `ENABLE ROW LEVEL SECURITY`. REQUER APROVAÇÃO (contrato público + migration). Verificação final: `SELECT relrowsecurity FROM pg_class WHERE relname='proposals'`.
+2. **T-08**: unificar X-Frame-Options (recomendação pronta, aguarda ok).
+3. **T-24**: substituir `xlsx` (vuln sem fix).
+4. **K-13**: auditar RLS de todas as tabelas `public.*` com policy (mesmo bug do F-09 pode existir alhures).
 Fila completa: `docs/TODO_MASTER.md`.
-✅ Feitos 2026-07-02: F-01, F-02, RL em credenciais+públicas, lint gate no CI, MotionProvider, deps mortas removidas.
+✅ Feitos 2026-07-02: F-01, F-02, RL credenciais+públicas, lint gate CI, gate `npm audit` prod-crítico (D-10), MotionProvider, deps mortas, DEPENDENCY_GRAPH.
 
 ## Invariantes (NUNCA violar)
 

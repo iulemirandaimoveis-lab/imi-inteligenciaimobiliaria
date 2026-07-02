@@ -22,8 +22,8 @@
 
 ## Lacunas Priorizadas
 
-1. **Fluxo de proposta ponta-a-ponta** (maior valor de negócio): mapa → carrinho → formulário → submit. E2E com Supabase local ou mock de rede.
-2. **RLS**: para cada papel do `rbac.ts`, asserts de leitura/escrita permitida/negada nas tabelas `imi.*`. Falha de RLS hoje só aparece como "dados vazios" em produção.
+1. **Fluxo de proposta ponta-a-ponta** (maior valor de negócio): mapa → carrinho → formulário → submit. E2E com Supabase local ou mock de rede. Incluir teste de **negação IDOR**: responder a proposta sem token válido → deve falhar (contrato do fix F-09).
+2. **RLS**: para cada papel do `rbac.ts`, asserts de leitura/escrita permitida/negada nas tabelas `imi.*`. Falha de RLS hoje só aparece como "dados vazios" em produção. **🔴 Prioridade elevada (F-09)**: incluir teste que verifica `relrowsecurity=true` em TODAS as tabelas `public.*` com policies — descobrimos que `public.proposals` tem policies mas RLS possivelmente **não habilitada** (criar policy não habilita RLS). Query de auditoria: `SELECT c.relname, c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r' AND EXISTS (SELECT 1 FROM pg_policy p WHERE p.polrelid=c.oid);` — qualquer linha com `relrowsecurity=false` é um buraco.
 3. **Rotas de API**: handlers críticos (`admin/*`, `financeiro/*`) com testes de 401/403/429 — o padrão de segurança vira contrato.
 4. **Middleware**: locale por geo-header, rewrites `/{locale}/users`, CORS — puro e testável em jsdom/node.
 

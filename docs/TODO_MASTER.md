@@ -9,13 +9,14 @@
 
 - [x] T-01 ✅ 2026-07-02 Senha temporária: `randomBytes(12).toString('base64url')` — F-01
 - [x] T-02 ✅ 2026-07-02 Rate limit aplicado: login, first-access (x2), lots/proposal, intelligence/simulate, proposals/respond. (`contact`/`consultation` já tinham — falso positivo da auditoria.)
-- [ ] T-02b Triar rotas públicas restantes sem `apiHandler`: `tracker/qrcode`, `analytics/vitals`, `webhooks/instagram`, `proposals/track`, `propostas/[token]/track` — F-05
-- [ ] T-23 🆕 **F-09**: `proposals/respond` muta proposta por ID cru — verificar RLS de `proposals` e exigir token (REQUER APROVAÇÃO: muda contrato do front público)
+- [ ] T-02b Triar rotas públicas restantes sem `apiHandler` — **triado 2026-07-02**: `tracker/qrcode` (auth Bearer ✅), `propostas/[token]/track` (por token via admin ✅), `analytics/vitals` (stub sem escrita ✅ — só falta RL), `webhooks/instagram`/`webhooks/whatsapp`/`webhooks/signature` (assinatura HMAC ✅), `proposals/track` → **F-10** (IDOR menor)
+- [ ] T-23 🔴 **F-09 (ALTA, investigado)**: IDOR em `proposals/respond` + `proposals/track` — RLS de `public.proposals` **não está habilitada** nas migrations. Fix: exigir `token` (padrão de `propostas/[token]/track`) + `ENABLE ROW LEVEL SECURITY`. **REQUER APROVAÇÃO** (contrato público + migration). Evidência em SECURITY_AUDIT F-09.
+- [ ] T-24 Substituir `xlsx` (prototype pollution + ReDoS, sem fix) por `exceljs` ou parser restrito — F-08. Uso: `src/lib/document-parser.ts` + `backoffice/imoveis/[id]/lotes`.
 
 ## P1 — Quick wins (baixo risco, ganho real)
 
 - [x] T-03 ✅ 2026-07-02 `continue-on-error` removido do job lint no CI
-- [ ] T-03b Avaliar remover `continue-on-error` dos jobs `security` e `build` (REQUER DECISÃO: podem quebrar por vulns transitivas/secrets)
+- [x] T-03b ✅ 2026-07-02 (parcial) Job `security` agora bloqueia em `npm audit --omit=dev --audit-level=critical` (D-10). `build` fica non-blocking (OOM/D-07) — recomendação: manter.
 - [x] T-04 ✅ 2026-07-02 `MotionProvider` (`MotionConfig reducedMotion="user"`) no layout raiz
 - [x] T-05 ✅ 2026-07-02 `getSession()`→`getUser()` nas 4 ocorrências (varredura completa)
 - [x] T-06 ✅ 2026-07-02 Removidos `jsonwebtoken`, `ua-parser-js` + @types

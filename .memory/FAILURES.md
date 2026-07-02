@@ -30,6 +30,14 @@
 - **Solução**: type-check movido para CI; build ignora tipos (D-07).
 - **Prevenção**: L-01; monitorar duração do job typecheck como proxy do crescimento do grafo.
 
+## FX-06 · IDOR em `proposals/respond` — RLS criada mas não habilitada (F-09/K-11)
+- **Sintoma**: rota pública muta estado de proposta por `proposal_id` (UUID) sem token/auth.
+- **Causa-raiz**: `public.proposals` tem policies `TO authenticated` (migration 20260319) mas **nenhum `ENABLE ROW LEVEL SECURITY`** — policies ficam inertes; anon (anon-key server client) herda GRANT padrão do Supabase e escreve. Confirmado por comportamento: o "marcar como visualizado" anônimo depende de escrever nessa tabela.
+- **Afeta**: integridade comercial (aceite/contraproposta forjados).
+- **Solução (aguarda aprovação)**: exigir token no handler (padrão `propostas/[token]/track`) + habilitar RLS explicitamente.
+- **Prevenção**: teste de auditoria `pg_class.relrowsecurity` para toda tabela com policy (TESTING §RLS); anti-padrão A11.
+- **Confiança**: alta na causa-raiz (evidência de código+migration); verificação final = `SELECT relrowsecurity FROM pg_class WHERE relname='proposals'`.
+
 ---
 **Template para nova entrada**: sintoma / causa-raiz / afetou / solução / prevenção / confiança.
 **Atualizado**: 2026-07-02

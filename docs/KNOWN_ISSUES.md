@@ -18,7 +18,10 @@
 | K-07 | Rate limit ausente em rotas públicas de escrita | `contact`, `consultation` sem limiter | adoção incremental parou | spam/custo | MÉDIA (=F-05) |
 | K-08 | Senha temporária de 6 hex no reset admin | — | `randomBytes(3)` | segurança | ALTA (=F-01) |
 | K-09 | RTL não validado para locale `ar` | layout árabe possivelmente espelhado errado | i18n adicionou `ar` sem auditoria RTL | UX quebrada p/ árabe | BAIXA |
-| K-10 | Headers X-Frame-Options divergentes | DENY (middleware) vs SAMEORIGIN (config) | duas fontes | ambiguidade | BAIXA (=F-03) |
+| K-10 | Headers X-Frame-Options divergentes | DENY (middleware) vs SAMEORIGIN (config) | duas fontes | ambiguidade | BAIXA (=F-03; analisado T-08) |
+| K-11 🔴 | IDOR em `proposals/respond`/`track` | proposta alheia mutável por UUID | RLS de `public.proposals` não habilitada + handler sem token | integridade comercial | ALTA (=F-09; aguarda aprovação do fix) |
+| K-12 | `xlsx` com prototype pollution + ReDoS (sem fix) | vuln de produção | dependência sem patch | parsing de planilha | MÉDIA (=F-08/T-24) |
+| K-13 | RLS possivelmente ausente em outras tabelas `public.*` | policies criadas sem `ENABLE ROW LEVEL SECURITY` | padrão repetido? | vazamento potencial | MÉDIA (auditar — ver TESTING §RLS) |
 
 ## Resolvidos recentemente (referência rápida)
 
