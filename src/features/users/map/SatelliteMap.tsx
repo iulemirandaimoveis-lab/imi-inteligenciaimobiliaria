@@ -73,7 +73,10 @@ export function SatelliteMap({
     const el = document.createElement('div')
     el.style.cssText = `width:18px;height:18px;border-radius:50%;background:${T.gold};border:3px solid #1A1206;box-shadow:0 0 0 4px rgba(200,164,74,0.35);`
     const marker = new maplibregl.Marker({ element: el }).setLngLat([lng, lat])
-    if (label) marker.setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
+    // className explícita — o CSS padrão do MapLibre não define `color` no
+    // popup (só o fundo branco); sem isto o texto herda a cor do ancestral
+    // DOM e fica invisível (balão branco "vazio") em telas com tema escuro.
+    if (label) marker.setPopup(new maplibregl.Popup({ offset: 18, className: 'ab-anchor-popup' }).setText(label))
     marker.addTo(map)
 
     mapRef.current = map
@@ -84,9 +87,19 @@ export function SatelliteMap({
   }, [lng, lat, zoom, label])
 
   return (
-    <div
-      ref={containerRef}
-      style={{ width: '100%', height: '72vh', minHeight: 440, borderRadius: 12, overflow: 'hidden' }}
-    />
+    <>
+      <div
+        ref={containerRef}
+        style={{ width: '100%', height: '72vh', minHeight: 440, borderRadius: 12, overflow: 'hidden' }}
+      />
+      <style>{`
+        .ab-anchor-popup .maplibregl-popup-content {
+          color: #0B1928;
+          font-weight: 700;
+          font-size: 13px;
+          font-family: 'Outfit', sans-serif;
+        }
+      `}</style>
+    </>
   )
 }
