@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { T } from '@/app/(backoffice)/lib/theme'
 import { BookOpen, ChevronLeft, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+// T-07: sanitização via DOMPurify (util compartilhado), não mais regex frágil.
+import { sanitizeHtml } from '@/lib/sanitize-html'
 
 interface Chapter {
     numero: number
@@ -25,20 +27,6 @@ interface BookData {
     capitulos: Chapter[]
 }
 
-/** Sanitize HTML string — strip scripts, event handlers, and dangerous URIs */
-function sanitizeHtml(html: string): string {
-    return html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-        .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
-        .replace(/<embed\b[^>]*>/gi, '')
-        .replace(/<link\b[^>]*>/gi, '')
-        .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
-        .replace(/on\w+\s*=\s*'[^']*'/gi, '')
-        .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
-        .replace(/javascript\s*:/gi, 'nojavascript:')
-        .replace(/data\s*:\s*text\/html/gi, 'nodata:text/html')
-}
 
 function renderContent(content: string): string {
     if (!content) return '<p>Conteúdo não disponível.</p>'

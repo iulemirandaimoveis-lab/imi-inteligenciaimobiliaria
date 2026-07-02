@@ -25,6 +25,7 @@
 | P15 | Rota pública sobre objeto (proposta/doc): lookup e mutação por **token secreto**, validado server-side; nunca por UUID cru | `src/app/api/proposals/respond/route.ts`, `propostas/[token]/track` |
 | P16 | Parsing de planilha só via adapter `src/lib/spreadsheet/` (nunca xlsx/exceljs direto) | `src/lib/spreadsheet/index.ts` |
 | P17 | Header de segurança tem fonte única e escopada (X-Frame-Options no next.config, não no middleware) | `next.config.js` / `middleware.ts` (D-12) |
+| P18 | HTML de banco/usuário em `dangerouslySetInnerHTML` só via `sanitizeHtml()` (DOMPurify); nunca regex | `src/lib/sanitize-html.ts` (T-07) |
 
 ## Anti-Padrões (nunca)
 

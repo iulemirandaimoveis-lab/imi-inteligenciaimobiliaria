@@ -8,6 +8,8 @@ import {
     BookOpen, ChevronLeft, ChevronRight, ArrowLeft,
     Loader2, List, Sun, Moon, Minus, Plus, Share2,
 } from 'lucide-react'
+// T-07: sanitização via DOMPurify (util compartilhado), não mais regex frágil.
+import { sanitizeHtml } from '@/lib/sanitize-html'
 
 // ── Reading progress helpers ─────────────────
 function saveProgress(slug: string, chapter: number) {
@@ -45,15 +47,6 @@ interface BookData {
         slug?: string
     }
     capitulos: Chapter[]
-}
-
-function sanitizeHtml(html: string): string {
-    return html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-        .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
-        .replace(/on\w+\s*=\s*'[^']*'/gi, '')
-        .replace(/javascript\s*:/gi, 'nojavascript:')
 }
 
 type Section = NonNullable<Chapter['secoes']>[number]

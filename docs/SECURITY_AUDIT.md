@@ -96,9 +96,10 @@ Um UUID de proposta vazado/adivinhado (aparece em links de tracking, logs, refer
 - **Verificação**: nenhum `<iframe>` interno aponta para `/backoffice`, `/users` ou `/api` (os iframes do backoffice embarcam YouTube/Maps/previews — nós embarcando terceiros, não o contrário). Logo ninguém precisa emoldurar essas áreas same-origin.
 - **Recomendação**: `frame-ancestors 'self'` já protege contra clickjacking em todo o site. Padronizar `X-Frame-Options` = `SAMEORIGIN` em ambos os pontos (remover o override `DENY` do middleware) elimina a duplicação/ambiguidade sem perder proteção. Baixo risco; **apresentado para aprovação** por tocar header de segurança.
 
-### F-06 — `dangerouslySetInnerHTML` em 13 arquivos · **MÉDIA (verificação)**
-- **Estado**: `isomorphic-dompurify` presente e usado em 7 arquivos; biblioteca/conteúdo e-book renderizam HTML de banco.
-- **Ação**: verificação por uso — todo HTML originado de usuário/banco DEVE passar por DOMPurify; HTML estático de build pode ficar. Checklist em TODO_MASTER T-07.
+### F-06 — `dangerouslySetInnerHTML` · ✅ **CORRIGIDO 2026-07-02 (T-07)**
+- **Auditoria dos 13 usos**: 7 eram JSON-LD estático (schema SEO — não é HTML de usuário, seguro); 2 já usavam DOMPurify (avaliacoes/motor, conteudo/ebook); 1 é SVG de QR gerado por nós; 1 é `<script>` estático (handler de print); 1 SVG remoto de asset próprio (baixo risco).
+- **Corrigidos (renderizavam HTML de banco com sanitizador por regex bypassável)**: `biblioteca/[slug]/page.tsx`, `backoffice/biblioteca/[slug]/[chapter]/page.tsx`, `conteudo/[slug]/page.tsx` → agora usam o util único `src/lib/sanitize-html.ts` (DOMPurify, isomorphic). Os regex antigos deixavam passar `<img onerror>`, `<svg><script>`, entidades HTML, etc.
+- **Regra permanente (P18)**: HTML de banco/usuário só via `sanitizeHtml()`; JSON-LD estático é exceção. Teste de contrato em `__tests__/lib/sanitize-html.test.ts`.
 
 ### F-07 — Higiene de migrations e RLS · **MÉDIA**
 - **Estado**: 12 prefixos duplicados, 3 esquemas de nomes (`supabase/MIGRATIONS_MAP.md`); histórico de policy RLS morta (auto-referência `pu.project_id = pu.id`, corrigida em 20260627).

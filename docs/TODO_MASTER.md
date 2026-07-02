@@ -20,7 +20,7 @@
 - [x] T-04 ✅ 2026-07-02 `MotionProvider` (`MotionConfig reducedMotion="user"`) no layout raiz
 - [x] T-05 ✅ 2026-07-02 `getSession()`→`getUser()` nas 4 ocorrências (varredura completa)
 - [x] T-06 ✅ 2026-07-02 Removidos `jsonwebtoken`, `ua-parser-js` + @types
-- [ ] T-07 Verificar os 13 usos de `dangerouslySetInnerHTML`: DOMPurify em todo HTML de banco/usuário — F-06
+- [x] T-07 ✅ 2026-07-02 Auditados os 13 `dangerouslySetInnerHTML`; 3 sanitizadores por regex → util único DOMPurify (`src/lib/sanitize-html.ts`) + teste. JSON-LD estático é seguro (F-06)
 - [x] T-08 ✅ 2026-07-02 X-Frame-Options escopado (DENY protegido / SAMEORIGIN público), fonte única no next.config + teste de regressão (D-12)
 - [x] T-09 ✅ N/A — o `<img>` sem alt era mock de teste (falso positivo da auditoria)
 

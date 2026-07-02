@@ -123,3 +123,16 @@ PROJECT_STATE, NEXT_TASK).
 usa service_role+token, funciona sob a RLS real).
 
 **Risco**: baixo. A migration aplicada é aditiva (colunas). Rollback trivial (DROP COLUMN).
+
+## 2026-07-02 · Sessão 6: T-07 — sanitização de HTML (DOMPurify único)
+
+- Auditados os 13 `dangerouslySetInnerHTML`: 7 JSON-LD estático (seguro), 2 já com DOMPurify,
+  1 QR-SVG próprio, 1 script estático, 1 SVG remoto próprio; 3 usavam sanitizador por regex
+  (bypassável) em HTML de banco.
+- Novo util `src/lib/sanitize-html.ts` (DOMPurify isomorphic, perfil html, guarda de nulos).
+- Substituídos os 3 regex por `sanitizeHtml()`: biblioteca (site+backoffice) e conteudo/[slug].
+- Teste `__tests__/lib/sanitize-html.test.ts` (contrato do wrapper; isomorphic-dompurify mockado
+  por incompatibilidade de jsdom aninhado sob jest — código funciona em prod).
+- Docs: SECURITY_AUDIT F-06 (corrigido), TODO_MASTER T-07, KNOWN_PATTERNS P18.
+- Gates: tsc ok, eslint ok, jest 853/858 (61 suites, +2 testes).
+- Risco baixo: DOMPurify é mais restritivo que os regex antigos; formatação preservada (perfil html + style mantido).
