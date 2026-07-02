@@ -9,13 +9,27 @@ import {
   ChevronDown, ChevronUp, BarChart2, List, Map as MapIcon,
   Scale, Trophy, Sparkles, TrendingUp, Home, Star,
   CheckCircle2, Circle, ArrowRight, Zap, Building2,
-  Layers, ChevronsUpDown, Tag, LayoutGrid,
+  Layers, ChevronsUpDown, Tag, LayoutGrid, FileSignature,
+  ShoppingCart, Check,
 } from 'lucide-react';
 import SubdivisionPlanView, { PLAN_VIEW_IDS } from './SubdivisionPlanView';
 import AltoBellevuePlanView from './AltoBellevuePlanView';
 import type { Lot as MiguelMarquesLot } from '../../projetos/miguel-marques/data/lotsData';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
+import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
+import { useLotCart } from '@/hooks/useLotCart';
+import { CartFab, CartSheet } from './LotCartSheet';
+
+// Modal de proposta preenchida pelo cliente (mesmo usado no Satélite+Lotes).
+// Client-only: usa framer-motion + upload de documentos.
+const ProposalFormModal = dynamic(() => import('./ProposalFormModal'), { ssr: false });
+
+// slug estável do empreendimento p/ a proposta (carrinho usa como chave).
+function devSlugFrom(name: string): string {
+  return name.normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
 // Mapa vetorial premium do Miguel Marques (geometria CAD) — carregado sob demanda,
 // client-only (usa Pointer Events / fullscreen). Mesma fonte de /projetos/miguel-marques.
@@ -232,18 +246,25 @@ function LotModal({
   whatsappPhone,
   onClose,
   onAddToCompare,
+  onProposal,
   isInCompare,
   allLots,
   abPrice,
+  inCart,
+  onToggleCart,
 }: {
   lot: Lot;
   developmentName: string;
   whatsappPhone: string;
   onClose: () => void;
   onAddToCompare: (lot: Lot) => void;
+  onProposal: (lot: Lot) => void;
   isInCompare: boolean;
   allLots: Lot[];
   abPrice?: ABPriceEntry;
+  /** Já está no carrinho de proposta compartilhado (mesmo carrinho do Satélite+Lotes). */
+  inCart: boolean;
+  onToggleCart: (lot: Lot) => void;
 }) {
   const cfg = STATUS[lot.status as StatusKey] ?? STATUS.DISPONIVEL;
   const isAvailable = lot.status === 'DISPONIVEL';
@@ -436,30 +457,54 @@ function LotModal({
         <div className="px-5 pb-6 pt-1 flex flex-col gap-2">
           {isAvailable ? (
             <>
-              <a
-                href={`https://wa.me/${whatsappPhone}?text=${waMsg}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative flex items-center justify-center gap-2 w-full h-12 rounded-xl text-[13px] font-bold uppercase tracking-wider overflow-hidden"
-                style={{ background: '#0B1928', color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none' }}
-              >
-                <MessageCircle size={15} />
-                Tenho Interesse
-                <span style={{ position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.6 }} />
-              </a>
+              {/* Adiciona ao carrinho de proposta compartilhado (mesmo do Satélite+Lotes) —
+                  permite juntar lotes de quadras diferentes antes de preencher o formulário. */}
               <button
-                onClick={() => { onAddToCompare(lot); onClose(); }}
-                className="flex items-center justify-center gap-2 w-full h-10 rounded-xl text-[12px] font-bold border border-gray-200 transition-colors"
+                onClick={() => onToggleCart(lot)}
+                className="flex items-center justify-center gap-2 w-full h-11 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all active:scale-95"
                 style={{
-                  color: isInCompare ? '#2563EB' : '#0B1928',
-                  background: isInCompare ? '#DBEAFE' : '#F8F6F2',
-                  borderColor: isInCompare ? '#2563EB' : '#E5E0D8',
-                  fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  background: inCart ? '#DCFCE7' : '#FBF3DD',
+                  color: inCart ? '#166534' : '#8A6D1F',
+                  border: `1px solid ${inCart ? '#86EFAC' : '#E9D9AC'}`,
+                  cursor: 'pointer', fontFamily: "var(--fu, 'Outfit', sans-serif)",
                 }}
               >
-                <Scale size={13} />
-                {isInCompare ? 'Remover comparação' : 'Comparar este lote'}
+                {inCart ? <><Check size={15} /> Na proposta</> : <><ShoppingCart size={14} /> Adicionar à proposta</>}
               </button>
+              {/* CTA — proposta de compra imediata deste lote (abre o formulário do cliente). */}
+              <button
+                onClick={() => onProposal(lot)}
+                className="relative flex items-center justify-center gap-2 w-full h-12 rounded-xl text-[13px] font-bold uppercase tracking-wider overflow-hidden"
+                style={{ background: '#C8A44A', color: '#0B1928', fontFamily: "var(--fu, 'Outfit', sans-serif)", border: 'none', cursor: 'pointer' }}
+              >
+                <FileSignature size={15} />
+                Fazer proposta
+              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={`https://wa.me/${whatsappPhone}?text=${waMsg}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative flex items-center justify-center gap-2 w-full h-10 rounded-xl text-[12px] font-bold overflow-hidden"
+                  style={{ background: '#0B1928', color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)", textDecoration: 'none' }}
+                >
+                  <MessageCircle size={14} />
+                  Tenho Interesse
+                </a>
+                <button
+                  onClick={() => { onAddToCompare(lot); onClose(); }}
+                  className="flex items-center justify-center gap-2 w-full h-10 rounded-xl text-[12px] font-bold border transition-colors"
+                  style={{
+                    color: isInCompare ? '#2563EB' : '#0B1928',
+                    background: isInCompare ? '#DBEAFE' : '#F8F6F2',
+                    borderColor: isInCompare ? '#2563EB' : '#E5E0D8',
+                    fontFamily: "var(--fu, 'Outfit', sans-serif)",
+                  }}
+                >
+                  <Scale size={13} />
+                  {isInCompare ? 'Remover' : 'Comparar'}
+                </button>
+              </div>
             </>
           ) : (
             <a
@@ -487,6 +532,7 @@ function LotComparator({
   whatsappPhone,
   allLots,
   onRemove,
+  onProposal,
   onClose,
 }: {
   lots: Lot[];
@@ -495,8 +541,13 @@ function LotComparator({
   whatsappPhone: string;
   allLots: Lot[];
   onRemove: (id: string) => void;
+  onProposal: (lots: Lot[]) => void;
   onClose: () => void;
 }) {
+  const availableCompared = useMemo(
+    () => compareLots.filter((l) => l.status === 'DISPONIVEL'),
+    [compareLots],
+  );
   const scores = useMemo(() => compareLots.map((l: Lot) => computeScore(l, allLots)), [compareLots, allLots]) as LotScore[];
 
   const rows = [
@@ -624,19 +675,30 @@ function LotComparator({
             })}
           </div>
 
-          {/* WhatsApp CTA for best lot */}
-          {compareLots.length > 0 && compareLots[0].status === 'DISPONIVEL' && (
-            <a
-              href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(
-                `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${compareLots[0].lot_number} da Quadra ${compareLots[0].quadra}. Gostaria de saber mais.`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 14, background: '#C8A44A', color: '#0B1928', fontSize: 13, fontWeight: 800, textDecoration: 'none', marginTop: 12, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
-            >
-              <MessageCircle size={15} />
-              Tenho Interesse no Lote 1
-            </a>
+          {/* CTAs — proposta (disponíveis) + interesse via WhatsApp */}
+          {availableCompared.length > 0 && (
+            <div className="flex flex-col gap-2" style={{ marginTop: 12 }}>
+              <button
+                onClick={() => onProposal(availableCompared)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, borderRadius: 14, background: '#C8A44A', color: '#0B1928', fontSize: 13, fontWeight: 800, border: 'none', cursor: 'pointer', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+              >
+                <FileSignature size={15} />
+                {availableCompared.length === 1
+                  ? 'Fazer proposta deste lote'
+                  : `Fazer proposta (${availableCompared.length} lotes)`}
+              </button>
+              <a
+                href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(
+                  `Olá! Após comparar os lotes no ${developmentName}, tenho interesse no Lote ${availableCompared[0].lot_number} da Quadra ${availableCompared[0].quadra}. Gostaria de saber mais.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 44, borderRadius: 14, background: '#F8F6F2', border: '1px solid #E5E0D8', color: '#0B1928', fontSize: 12.5, fontWeight: 700, textDecoration: 'none', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+              >
+                <MessageCircle size={14} />
+                Tenho interesse (falar no WhatsApp)
+              </a>
+            </div>
           )}
         </div>
       </motion.div>
@@ -987,6 +1049,41 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const [showComparator, setShowComparator] = useState(false);
   const [showRankings, setShowRankings] = useState(false);
 
+  // ── Carrinho de lotes / proposta (compartilhado com a vista "Satélite + Lotes") ──
+  // Mesma chave de localStorage (devSlugFrom('Alto Bellevue') === 'alto-bellevue',
+  // igual ao devSlug hardcoded em AltoBellevueGeoMap.tsx) — lotes adicionados numa
+  // vista aparecem na outra ao trocar de aba.
+  const devSlug = useMemo(() => devSlugFrom(developmentName), [developmentName]);
+  const cart = useLotCart<CartLot>(devSlug);
+  const [showCart, setShowCart] = useState(false);
+  const [showCartProposal, setShowCartProposal] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const cartT = useMemo(() => cartTotals(cart.items), [cart.items]);
+
+  const toggleCart = useCallback((lot: Lot) => {
+    cart.toggle({
+      id: lot.id,
+      developmentSlug: devSlug,
+      developmentName,
+      block: lot.quadra,
+      lot: String(lot.lot_number),
+      areaM2: lot.area_m2,
+      price: lot.price ?? 0,
+      status: lot.status,
+    });
+  }, [cart, devSlug, developmentName]);
+
+  const copyShareLink = useCallback(() => {
+    try {
+      const url = buildCartShareUrl(typeof window !== 'undefined' ? window.location.origin : '', {
+        d: devSlug, ids: cart.items.map((l) => l.id),
+      });
+      navigator.clipboard?.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 1800);
+    } catch { /* clipboard indisponível */ }
+  }, [cart.items, devSlug]);
+
   // IA recommendations
   const [recommendations, setRecommendations] = useState<RecommendedLot[]>([]);
   const [recProfile, setRecProfile] = useState<'all' | 'investor' | 'resident'>('all');
@@ -1168,6 +1265,30 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   }, []);
 
   const compareIds = useMemo(() => new Set((compareLots as Lot[]).map((l: Lot) => l.id)), [compareLots]) as Set<string>;
+
+  // Proposta do cliente a partir do Plano (reaproveita o modal do Satélite+Lotes).
+  // Aceita 1 lote (card) ou vários (comparador). Constrói CartLots com o preço de
+  // tabela de cada lote.
+  const [proposalLots, setProposalLots] = useState<Lot[] | null>(null);
+  const proposalCartItems = useMemo<CartLot[]>(() => {
+    if (!proposalLots || proposalLots.length === 0) return [];
+    const slug = devSlugFrom(developmentName);
+    return proposalLots.map((l) => ({
+      id: l.id,
+      developmentSlug: slug,
+      developmentName,
+      block: l.quadra,
+      lot: String(l.lot_number),
+      areaM2: l.area_m2,
+      price: l.price ?? 0,
+      status: l.status,
+    }));
+  }, [proposalLots, developmentName]);
+  const openProposal = useCallback((...lots: Lot[]) => {
+    setSelectedLot(null);
+    setShowComparator(false);
+    setProposalLots(lots);
+  }, []);
 
   const expandAll = () => setActiveQuadras(new Set(quadras.keys()));
   const collapseAll = () => setActiveQuadras(new Set());
@@ -1768,9 +1889,12 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             whatsappPhone={whatsappPhone}
             onClose={() => setSelectedLot(null)}
             onAddToCompare={addToCompare}
+            onProposal={openProposal}
             isInCompare={compareIds.has(selectedLot.id)}
             allLots={lots}
             abPrice={abPricesMap.get(`${selectedLot.quadra}-${selectedLot.lot_number}`) ?? undefined}
+            inCart={cart.has(selectedLot.id)}
+            onToggleCart={toggleCart}
           />
         )}
       </AnimatePresence>
@@ -1785,6 +1909,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             whatsappPhone={whatsappPhone}
             allLots={lots}
             onRemove={removeFromCompare}
+            onProposal={(ls) => openProposal(...ls)}
             onClose={() => setShowComparator(false)}
           />
         )}
@@ -1798,6 +1923,58 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             onRemove={removeFromCompare}
             onOpen={() => setShowComparator(true)}
             onClear={() => setCompareLots([])}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Proposta do cliente (lote único ou comparados) ───────────────────── */}
+      <AnimatePresence>
+        {proposalLots && proposalCartItems.length > 0 && (
+          <ProposalFormModal
+            developmentId={developmentId}
+            developmentName={developmentName}
+            developmentSlug={devSlugFrom(developmentName)}
+            whatsappPhone={whatsappPhone}
+            items={proposalCartItems}
+            onClose={() => setProposalLots(null)}
+            onSubmitted={() => setProposalLots(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Botão flutuante "Proposta" (carrinho compartilhado) ──────────────── */}
+      {cart.items.length > 0 && !showCart && !showCartProposal && !selectedLot && !showComparator && (
+        <CartFab count={cart.items.length} onClick={() => setShowCart(true)} fixed />
+      )}
+
+      {/* ── Painel do carrinho / proposta ──────────────────────────────────── */}
+      <AnimatePresence>
+        {showCart && (
+          <CartSheet
+            items={cart.items}
+            totals={cartT}
+            linkCopied={linkCopied}
+            onRemove={cart.remove}
+            onClear={cart.clear}
+            onCopyLink={copyShareLink}
+            onProposal={() => { setShowCart(false); setShowCartProposal(true); }}
+            onClose={() => setShowCart(false)}
+            fixed
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal de proposta a partir do carrinho ────────────────────────── */}
+      <AnimatePresence>
+        {showCartProposal && cart.items.length > 0 && (
+          <ProposalFormModal
+            developmentId={developmentId}
+            developmentName={developmentName}
+            developmentSlug={devSlug}
+            whatsappPhone={whatsappPhone}
+            items={cart.items}
+            onClose={() => setShowCartProposal(false)}
+            onSubmitted={() => { cart.clear(); setShowCartProposal(false); }}
           />
         )}
       </AnimatePresence>

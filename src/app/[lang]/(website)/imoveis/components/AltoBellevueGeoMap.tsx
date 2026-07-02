@@ -11,8 +11,10 @@ import {
   Shield, ShoppingCart, Check,
   SlidersHorizontal, Copy, RotateCw,
 } from 'lucide-react';
-import type { UseLotCart } from '@/hooks/useLotCart';
-import { type CartLot } from '@/lib/lotmap/cart';
+import { useLotCart } from '@/hooks/useLotCart';
+import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
+import ProposalFormModal from './ProposalFormModal';
+import { CartFab, CartSheet } from './LotCartSheet';
 import { loadAltoBellevueMap } from '@/lib/lots/alto-bellevue';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
@@ -42,9 +44,6 @@ interface Props {
   height?: string;
   /** Mídias das áreas comuns vindas do backoffice (developments.lot_map_amenities). */
   mapAmenities?: Record<string, unknown>[];
-  /** Carrinho de lotes/proposta — instanciado no explorador (AltoBellevueMapExplorer)
-   *  e compartilhado entre as 3 vistas (Plano, Satélite + Lotes, Satélite). */
-  cart: UseLotCart<CartLot>;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -1057,8 +1056,6 @@ function LayerPanel({
   );
 }
 
-// ── Cart sheet (proposta multi-lote) ───────────────────────────────────────────
-
 // ── Calibration overlay (admin) ────────────────────────────────────────────────
 // Alinha os lotes à imagem de satélite real sem precisar de GPS: a equipe ajusta
 // rotação/escala/posição e copia o JSON para chumbar em AB_CALIBRATION_DEFAULT
@@ -1156,7 +1153,7 @@ function round(n: number, d: number): number {
 const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
 
 export default function AltoBellevueGeoMap({
-  developmentId, developmentName, whatsappPhone = WA, height = '100svh', mapAmenities, cart,
+  developmentId, developmentName, whatsappPhone = WA, height = '100svh', mapAmenities,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -1214,9 +1211,13 @@ export default function AltoBellevueGeoMap({
     new Set(['lots', 'streets', 'perimeter', 'amenities', 'green', 'labels'])
   );
 
-  // ── Carrinho de lotes / proposta — instanciado no explorador e compartilhado
-  // entre as 3 vistas (Plano, Satélite + Lotes, Satélite); ver `cart` em Props.
+  // ── Carrinho de lotes / proposta (compartilhado com a vista "Plano") ───────
   const devSlug = 'alto-bellevue';
+  const cart = useLotCart<CartLot>(devSlug);
+  const [showCart, setShowCart] = useState(false);
+  const [showProposal, setShowProposal] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const cartT = useMemo(() => cartTotals(cart.items), [cart.items]);
 
   // Hidrata a calibração de georreferenciamento persistida (best-effort).
   useEffect(() => { hydrateAbCalibration(); }, []);
@@ -1241,6 +1242,17 @@ export default function AltoBellevueGeoMap({
     price: dbLot?.price ?? lot.price ?? 0,
     status: dbLot?.status ?? lot.status,
   }), [developmentName]);
+
+  const copyShareLink = useCallback(() => {
+    try {
+      const url = buildCartShareUrl(typeof window !== 'undefined' ? window.location.origin : '', {
+        d: devSlug, ids: cart.items.map((l) => l.id),
+      });
+      navigator.clipboard?.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 1800);
+    } catch { /* clipboard indisponível */ }
+  }, [cart.items]);
 
   const stats = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1578,8 +1590,41 @@ export default function AltoBellevueGeoMap({
         )}
       </AnimatePresence>
 
-      {/* Nota: FAB "Proposta", carrinho e modal de proposta agora vivem em
-          AltoBellevueMapExplorer (nível acima), compartilhados pelas 3 vistas. */}
+      {/* ── Botão flutuante "Proposta" (carrinho) ─────────────────────────── */}
+      {cart.items.length > 0 && !showCart && !showProposal && !selectedLot && !selectedAmenity && (
+        <CartFab count={cart.items.length} onClick={() => setShowCart(true)} />
+      )}
+
+      {/* ── Painel do carrinho / proposta ─────────────────────────────────── */}
+      <AnimatePresence>
+        {showCart && (
+          <CartSheet
+            items={cart.items}
+            totals={cartT}
+            linkCopied={linkCopied}
+            onRemove={cart.remove}
+            onClear={cart.clear}
+            onCopyLink={copyShareLink}
+            onProposal={() => { setShowCart(false); setShowProposal(true); }}
+            onClose={() => setShowCart(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Modal de proposta (cliente preenche) ──────────────────────────── */}
+      <AnimatePresence>
+        {showProposal && cart.items.length > 0 && (
+          <ProposalFormModal
+            developmentId={developmentId}
+            developmentName={developmentName}
+            developmentSlug={devSlug}
+            whatsappPhone={whatsappPhone}
+            items={cart.items}
+            onClose={() => setShowProposal(false)}
+            onSubmitted={() => { cart.clear(); setShowProposal(false); }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ── Overlay de calibração (admin · ?calibrar=1) ───────────────────── */}
       {calibrateMode && (

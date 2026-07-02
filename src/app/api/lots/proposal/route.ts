@@ -25,6 +25,11 @@ const Schema = z.object({
   lots: z.array(LotSchema).default([]),
   totalAmount: z.number().optional().nullable(),
   downPayment: z.number().optional().nullable(),
+  documents: z
+    .array(z.object({ name: z.string(), url: z.string().url() }))
+    .max(8)
+    .optional()
+    .default([]),
 })
 
 /**
@@ -57,7 +62,13 @@ export async function POST(req: NextRequest) {
     type: 'proposta_nova',
     title: 'Nova proposta (site)',
     message: `${d.clientName} — ${unitLabel ?? d.developmentName}`,
-    data: { source: 'public-map', development: d.developmentName, lots: d.lots, total: d.totalAmount },
+    data: {
+      source: 'public-map',
+      development: d.developmentName,
+      lots: d.lots,
+      total: d.totalAmount,
+      documents: d.documents,
+    },
     url: '/users/proposals',
   }).catch(() => {})
 
@@ -71,6 +82,7 @@ export async function POST(req: NextRequest) {
     totalAmount: d.totalAmount ?? undefined,
     downPayment: d.downPayment ?? undefined,
     lotCount: d.lots.length || undefined,
+    documents: d.documents,
   })
 
   return NextResponse.json({ success: true, ...result })

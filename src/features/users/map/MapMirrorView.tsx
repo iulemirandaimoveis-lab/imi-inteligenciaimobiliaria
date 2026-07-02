@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Building2, MapPinned, RefreshCw, Satellite, LayoutGrid } from 'lucide-react'
 import { tokens as T } from '../ui/tokens'
@@ -56,7 +56,17 @@ const LEGEND: { label: string; color: string }[] = [
   { label: 'Bloqueado', color: '#94A3B8' },
 ]
 
-export function MapMirrorView({ projects }: { projects: MapProject[] }) {
+export function MapMirrorView({
+  projects,
+  onActiveProjectChange,
+}: {
+  projects: MapProject[]
+  /** Notifica o cabeçalho da página (fora deste componente) qual projeto está
+   *  ativo, para que o nome exibido no topo NUNCA fique dessincronizado do
+   *  conteúdo mostrado aqui embaixo (bug: cabeçalho dizia "Alto Bellevue"
+   *  enquanto o mapa já mostrava o Jazz Boulevard). */
+  onActiveProjectChange?: (name: string) => void
+}) {
   const [activeId, setActiveId] = useState(projects[0]?.projectId ?? '')
   const active = projects.find((p) => p.projectId === activeId) ?? projects[0]
   const isVertical = active?.kind === 'vertical'
@@ -66,13 +76,17 @@ export function MapMirrorView({ projects }: { projects: MapProject[] }) {
   const [view, setView] = useState<ViewMode>(anchor ? 'satelite' : 'lotes')
   const mode: ViewMode = view === 'satelite' && !anchor ? 'lotes' : view
 
+  useEffect(() => {
+    if (active?.name) onActiveProjectChange?.(active.name)
+  }, [active?.name, onActiveProjectChange])
+
   return (
     <div style={{ maxWidth: 1240, margin: '0 auto', padding: '24px 16px 48px' }}>
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 18 }}>
         <div>
           <Eyebrow style={{ color: T.gold }}>Disponibilidade</Eyebrow>
           <h1 style={{ fontFamily: T.fSerif, fontWeight: 500, fontSize: 28, color: T.t1, margin: '8px 0 4px' }}>
-            Mapa de Lotes
+            {isVertical ? 'Disponibilidade' : 'Mapa de Lotes'}
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, color: T.t3 }}>
             <RefreshCw size={13} color={T.green} />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { TrendingUp, ArrowUpRight, ArrowDownRight, RefreshCw, Loader2 } from 'lucide-react'
+import { TrendingUp, ArrowUpRight, ArrowDownRight, RefreshCw, BarChart2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { T } from '../../../lib/theme'
 import { PageIntelHeader } from '../../../components/ui'
@@ -35,10 +35,42 @@ function SparkBars({ values, color }: { values: number[]; color: string }) {
   )
 }
 
+interface BolsaQuote {
+  ticker: string
+  shortName: string
+  price: number
+  change: number
+  changePercent: number
+}
+
+const BOLSA_LABELS: Record<string, string> = {
+  IBOV: 'Ibovespa',
+  IFIX: 'IFIX (FIIs)',
+  BOVA11: 'BOVA11 ETF',
+  KNRI11: 'KNRI11 (FII)',
+  HGLG11: 'HGLG11 (FII)',
+  VISC11: 'VISC11 (FII)',
+}
+
 export default function IndicesPage() {
   const [indices, setIndices] = useState<Record<string, IndexData>>({})
   const [loading, setLoading] = useState(true)
   const [lastUpdate, setLastUpdate] = useState<string>('')
+  const [bolsaQuotes, setBolsaQuotes] = useState<BolsaQuote[]>([])
+  const [loadingBolsa, setLoadingBolsa] = useState(true)
+
+  const fetchBolsa = () => {
+    setLoadingBolsa(true)
+    fetch('/api/invest/bolsa')
+      .then(r => r.json())
+      .then(data => {
+        setBolsaQuotes(data.quotes || [])
+        setLoadingBolsa(false)
+      })
+      .catch(() => {
+        setLoadingBolsa(false)
+      })
+  }
 
   const fetchIndices = () => {
     setLoading(true)
@@ -55,7 +87,7 @@ export default function IndicesPage() {
       })
   }
 
-  useEffect(() => { fetchIndices() }, [])
+  useEffect(() => { fetchIndices(); fetchBolsa() }, [])
 
   const categories = [
     {
@@ -194,11 +226,66 @@ export default function IndicesPage() {
         </div>
       )}
 
+      {/* B3 / Bolsa de Valores */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart2 size={15} style={{ color: '#60a5fa' }} />
+          <h2 className="text-sm font-semibold" style={{ color: T.textMuted }}>
+            Bolsa de Valores — B3 / FIIs
+          </h2>
+          {loadingBolsa && (
+            <RefreshCw size={12} className="animate-spin" style={{ color: T.textDim }} />
+          )}
+        </div>
+        {bolsaQuotes.length === 0 && !loadingBolsa ? (
+          <div className="rounded-lg p-6 text-center text-sm" style={{ background: T.surface, border: `1px solid ${T.border}`, color: T.textDim }}>
+            Dados da B3 indisponíveis no momento.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {(loadingBolsa ? Array.from({ length: 6 }) : bolsaQuotes).map((q, i) => {
+              if (loadingBolsa) {
+                return <div key={i} className="h-24 rounded-lg animate-pulse" style={{ background: T.hover }} />
+              }
+              const quote = q as BolsaQuote
+              const isPositive = quote.changePercent >= 0
+              return (
+                <div key={quote.ticker} className="rounded-lg p-4 transition-all"
+                  style={{ background: T.surface, border: `1px solid ${T.border}` }}>
+                  <div className="flex items-start justify-between mb-1">
+                    <div>
+                      <div className="text-[10px] font-bold tracking-widest mb-0.5" style={{ color: '#60a5fa' }}>
+                        {quote.ticker}
+                      </div>
+                      <div className="text-xs" style={{ color: T.textDim }}>
+                        {BOLSA_LABELS[quote.ticker] || quote.shortName}
+                      </div>
+                    </div>
+                    <div className={`flex items-center gap-0.5 text-xs font-semibold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+                      {Math.abs(quote.changePercent).toFixed(2)}%
+                    </div>
+                  </div>
+                  <div className="text-xl font-bold mt-2" style={{ color: T.text, fontFamily: T.font.data }}>
+                    {quote.ticker === 'IBOV' || quote.ticker === 'IFIX'
+                      ? quote.price.toLocaleString('pt-BR', { maximumFractionDigits: 0 })
+                      : `R$ ${quote.price.toFixed(2)}`}
+                  </div>
+                  <div className="text-xs mt-0.5" style={{ color: isPositive ? '#34d399' : '#f87171' }}>
+                    {isPositive ? '+' : ''}{quote.change.toFixed(2)} hoje
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
       <div
         className="text-xs text-center pt-4"
         style={{ color: T.textDim, borderTop: `1px solid ${T.borderSubtle}` }}
       >
-        Dados obtidos via API do Banco Central do Brasil (BCB) e fontes publicas. Atualizacao diaria.
+        BCB / IBGE: atualização diária · B3 / FIIs via Brapi: atualização a cada 15 min.
       </div>
     </div>
   )
