@@ -25,7 +25,10 @@ const ALLOWED_ORIGINS = [
 
 function addSecurityHeaders(response: NextResponse): NextResponse {
     response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('X-Frame-Options', 'DENY')
+    // X-Frame-Options é definido de forma ESCOPADA em next.config.js (T-08):
+    // DENY nas áreas protegidas (/backoffice, /users, /api, /auth, /login),
+    // SAMEORIGIN nas públicas — fonte única, sem header duplicado/ambíguo.
+    // A autoridade real anti-clickjacking é a CSP `frame-ancestors 'self'`.
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
     response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
     return response

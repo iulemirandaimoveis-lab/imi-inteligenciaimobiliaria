@@ -30,7 +30,8 @@
 | remotion + @remotion/player | 3 | Vídeo |
 | maplibre-gl | 2 | Mapas (motor real) |
 | bcryptjs | 2 | Hash local |
-| xlsx, mammoth, pdf-parse | dynamic import | `src/lib/document-parser.ts` (lazy — correto) |
+| exceljs | dynamic import | `src/lib/spreadsheet/` (adapter T-24; substituiu `xlsx`) |
+| mammoth, pdf-parse | dynamic import | `src/lib/document-parser.ts` (lazy — correto) |
 | gsap / @gsap/react | 1 | Uso pontual |
 | @google/generative-ai | 1 | Uso pontual |
 | web-push | 1 | Push server-side |
@@ -62,7 +63,8 @@
 
 - **Produção** (`--omit=dev`): 0 críticas · 15 altas · 13 moderadas · 1 baixa.
 - **Árvore completa**: 1 crítica (`handlebars` via ts-jest — dev) · 19 altas.
-- **Altas de produção sem fix / a tratar**: `xlsx` (prototype pollution + ReDoS — substituir, T-24); `next`/`next-pwa`/`workbox-*`/`rollup-plugin-terser`/`serialize-javascript`/`undici` (toolchain build — priorizar upgrade do Next e do next-pwa, que está defasado); `lodash`, `minimatch`, `@xmldom/xmldom`, `fast-uri`.
+- **`xlsx` REMOVIDO 2026-07-02** (T-24) → substituído por `exceljs` via adapter `src/lib/spreadsheet/`.
+- **Altas de produção restantes**: `next`/`next-pwa`/`workbox-*`/`rollup-plugin-terser`/`serialize-javascript`/`undici` (toolchain build — priorizar upgrade do Next e do next-pwa, que está defasado); `lodash`, `minimatch`, `@xmldom/xmldom`, `fast-uri`. (Reavaliar após esses: subir o gate do CI para `high`.)
 
 ---
 **Última atualização**: 2026-07-02

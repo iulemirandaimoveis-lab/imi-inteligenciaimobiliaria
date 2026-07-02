@@ -74,3 +74,29 @@
 
 ### Risco do commit
 - Baixo. Só CI config + docs. Nenhum contrato/rota/schema alterado.
+
+## 2026-07-02 · Sessão 4: F-09 fix (app+RLS), T-08, T-24 — aprovados (FABLE SUPREME CTO MODE)
+
+**Branch**: `claude/project-intelligence-audit-9vzb7e` (PR #343)
+
+### F-09 IDOR — CORRIGIDO (Fase A app + Fase B migration)
+- `proposals/respond` + `proposals/track`: reescritos p/ autorizar por TOKEN secreto (min 16), lookup via supabaseAdmin, proposal_id do cliente rejeitado. Valida expiração(410)/estado(409)/token inválido(403)/rate limit(429). Colunas de evento → ip_address.
+- `src/app/p/[token]/page.tsx` → supabaseAdmin (token-gated), pois a migration habilita RLS.
+- `PropostaPublicaClient.tsx` → envia token (não proposal_id); trackEvent(token,...).
+- Migration `20260702_f09_proposals_rls_hardening.sql`: ENABLE+FORCE RLS em public.proposals e proposal_events; policies só authenticated (tenant/owner); anon sem policy; +colunas time_on_page_seconds/device_type. ⚠️ Requer aplicação no banco pelo dono.
+- Testes: `__tests__/api/proposals-respond.test.ts` (8) — valid/missing/short/invalid/expired/replay/no-counter/ratelimit.
+
+### T-08 X-Frame-Options escopado (fonte única)
+- Removido do middleware; next.config: DENY p/ backoffice|users|api|auth|login|admin|console, SAMEORIGIN público (negative-lookahead). CSP frame-ancestors 'self' = autoridade. Teste `__tests__/middleware/frame-options.test.ts` (5).
+
+### T-24 xlsx→exceljs
+- Adapter `src/lib/spreadsheet/` (SpreadsheetParser + ExcelJS + limites anti-DoS 10MB/100k linhas). Refatorados document-parser.ts e backoffice/imoveis/[id]/lotes. `xlsx` removido; `exceljs` adicionado. Testes `__tests__/lib/spreadsheet-parser.test.ts` (8): rows/vazio/fórmula/data/bool/unicode/CPF/CSV-escaping/limite/corrompido.
+
+### Gates
+- tsc ✅ · eslint ✅ · jest 851/856 ✅ (60 suítes, 5 skipped pré-existentes, +21 testes novos).
+
+### Docs/memória
+- SECURITY_AUDIT (F-09 corrigido), DECISION_LOG (D-11/D-12/D-13), TODO_MASTER (T-08/T-23/T-24 done), DEPENDENCIES, PROJECT_STATE, KNOWN_PATTERNS (P15-P17), REUSABLE_COMPONENTS.
+
+### Risco
+- Médio-baixo. App fix é reversível (revert). Migration é aditiva/não-destrutiva (rollback: DISABLE RLS). Ação do dono: aplicar migration.

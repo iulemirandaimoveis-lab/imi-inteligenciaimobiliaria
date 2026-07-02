@@ -10,8 +10,8 @@
 - [x] T-01 ✅ 2026-07-02 Senha temporária: `randomBytes(12).toString('base64url')` — F-01
 - [x] T-02 ✅ 2026-07-02 Rate limit aplicado: login, first-access (x2), lots/proposal, intelligence/simulate, proposals/respond. (`contact`/`consultation` já tinham — falso positivo da auditoria.)
 - [ ] T-02b Triar rotas públicas restantes sem `apiHandler` — **triado 2026-07-02**: `tracker/qrcode` (auth Bearer ✅), `propostas/[token]/track` (por token via admin ✅), `analytics/vitals` (stub sem escrita ✅ — só falta RL), `webhooks/instagram`/`webhooks/whatsapp`/`webhooks/signature` (assinatura HMAC ✅), `proposals/track` → **F-10** (IDOR menor)
-- [ ] T-23 🔴 **F-09 (ALTA, investigado)**: IDOR em `proposals/respond` + `proposals/track` — RLS de `public.proposals` **não está habilitada** nas migrations. Fix: exigir `token` (padrão de `propostas/[token]/track`) + `ENABLE ROW LEVEL SECURITY`. **REQUER APROVAÇÃO** (contrato público + migration). Evidência em SECURITY_AUDIT F-09.
-- [ ] T-24 Substituir `xlsx` (prototype pollution + ReDoS, sem fix) por `exceljs` ou parser restrito — F-08. Uso: `src/lib/document-parser.ts` + `backoffice/imoveis/[id]/lotes`.
+- [x] T-23 ✅ 2026-07-02 **F-09 corrigido** (aprovado): respond/track por token + `page.tsx` via admin + client envia token + migration `20260702_f09_proposals_rls_hardening.sql` (ENABLE/FORCE RLS) + 8 testes de contrato. ⚠️ **Ação do dono**: aplicar a migration no banco.
+- [x] T-24 ✅ 2026-07-02 **xlsx→exceljs** via adapter `src/lib/spreadsheet/` + 8 testes; `xlsx` removido.
 
 ## P1 — Quick wins (baixo risco, ganho real)
 
@@ -21,7 +21,7 @@
 - [x] T-05 ✅ 2026-07-02 `getSession()`→`getUser()` nas 4 ocorrências (varredura completa)
 - [x] T-06 ✅ 2026-07-02 Removidos `jsonwebtoken`, `ua-parser-js` + @types
 - [ ] T-07 Verificar os 13 usos de `dangerouslySetInnerHTML`: DOMPurify em todo HTML de banco/usuário — F-06
-- [ ] T-08 Unificar `X-Frame-Options` (middleware DENY vs config SAMEORIGIN) — decidir comportamento de framing pretendido antes
+- [x] T-08 ✅ 2026-07-02 X-Frame-Options escopado (DENY protegido / SAMEORIGIN público), fonte única no next.config + teste de regressão (D-12)
 - [x] T-09 ✅ N/A — o `<img>` sem alt era mock de teste (falso positivo da auditoria)
 
 ## P2 — Estruturais (planejar por sprint)

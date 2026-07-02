@@ -33,8 +33,19 @@ Postura geral **boa**: middleware com security headers + CORS allowlist, CSP def
 - **Fix aplicado 2026-07-02** (rotas que de fato estavam sem proteção): `auth/login`, `auth/first-access`, `users/auth/first-access` (5/min por IP — anti brute-force), `lots/proposal` (5/min — dispara WhatsApp), `intelligence/simulate` (público computacional), `proposals/respond` (10/min).
 - **Pendente**: triagem das rotas restantes sem `apiHandler` (`tracker/qrcode`, `analytics/vitals`, `webhooks/instagram`, `proposals/track`, `propostas/[token]/track`) — ver T-02b no TODO_MASTER.
 
-### F-09 — IDOR em `proposals/respond` (e `proposals/track`) · **ALTA — investigado 2026-07-02** 🔴
-**Veredito: IDOR muito provavelmente explorável. Requer aprovação para o fix (muda contrato público).**
+### F-09 — IDOR em `proposals/respond` (e `proposals/track`) · ✅ **CORRIGIDO 2026-07-02 (aprovado)** 🔴→🟢
+**Fase A (app) + Fase B (migration) aplicadas. Ver commit da sessão 4.**
+
+**Correções:**
+- `proposals/respond` e `proposals/track` reescritos: autorização pelo **token secreto** (`z.string().min(16)`), lookup por `token` via `supabaseAdmin`, `proposal_id` do cliente **não é mais aceito**. Validam expiração (410), estado respondável (409), token inválido (403). Rate limit mantido.
+- `src/app/p/[token]/page.tsx` migrado para `supabaseAdmin` (autorizado pelo token) — necessário porque a Fase B habilita RLS e o cliente anônimo deixaria de ler/escrever.
+- Client `PropostaPublicaClient.tsx` envia `token` (não `proposal_id`).
+- **Migration `20260702_f09_proposals_rls_hardening.sql`** (requer aplicação no banco): `ENABLE`+`FORCE ROW LEVEL SECURITY` em `public.proposals` e `public.proposal_events`; policies escopadas por tenant/owner só para `authenticated`; **sem policy para anon** (rota pública usa service_role pós-token). Adiciona colunas `time_on_page_seconds`/`device_type` (drift). Colunas de evento alinhadas a `ip_address`.
+- **Testes de contrato** (`__tests__/api/proposals-respond.test.ts`, 8 casos): token válido/ausente/curto/inválido/expirado/replay(estado terminal)/countered-sem-payload/rate-limit → 200/400/403/410/409/429.
+- **⚠️ Ação do dono**: aplicar a migration no banco e rodar as queries de verificação (`relrowsecurity=true`; anon não faz UPDATE).
+
+---
+**Registro histórico da investigação (mantido para rastreabilidade):**
 
 #### Fluxo rastreado (frontend → banco)
 1. `src/app/p/[token]/page.tsx` (Server Component) carrega a proposta por **token** (`.eq('token', params.token)`) — o token é o segredo (16 bytes hex, `gen_random_bytes`). ✅ correto.

@@ -26,14 +26,16 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 - #338 proposta: estado civil, cônjuge, checklist docs
 - 2026-07-02: criado sistema de inteligência (`docs/` 17 arquivos + `.memory/`)
 
-## Pendências quentes (topo da fila) — AGUARDAM APROVAÇÃO DO DONO
+## ⚠️ Ação pendente DO DONO (não é código)
+- **Aplicar a migration `supabase/migrations/20260702_f09_proposals_rls_hardening.sql`** no banco (habilita RLS em `public.proposals`/`proposal_events`). Sem isso, o F-09 fica protegido só pela camada de app (token) — que já fecha o IDOR, mas a defesa em profundidade só entra com a migration. Rodar depois: `SELECT relrowsecurity FROM pg_class WHERE relname IN ('proposals','proposal_events')` (esperar true).
 
-1. 🔴 **T-23 / F-09 (ALTA, investigado)**: IDOR em `proposals/respond`+`track`. RLS de `public.proposals` **não habilitada** nas migrations → anon muta proposta por UUID. Fix = exigir token + `ENABLE ROW LEVEL SECURITY`. REQUER APROVAÇÃO (contrato público + migration). Verificação final: `SELECT relrowsecurity FROM pg_class WHERE relname='proposals'`.
-2. **T-08**: unificar X-Frame-Options (recomendação pronta, aguarda ok).
-3. **T-24**: substituir `xlsx` (vuln sem fix).
-4. **K-13**: auditar RLS de todas as tabelas `public.*` com policy (mesmo bug do F-09 pode existir alhures).
+## Pendências quentes (topo da fila)
+1. **K-13**: auditar RLS de TODAS as tabelas `public.*` com policy (mesmo bug do F-09 pode existir alhures) — query em TESTING_STRATEGY §RLS.
+2. **T-07**: DOMPurify nos 13 `dangerouslySetInnerHTML`.
+3. Upgrade Next/next-pwa (altas de `npm audit` de produção) → depois subir gate do CI para `high`.
 Fila completa: `docs/TODO_MASTER.md`.
-✅ Feitos 2026-07-02: F-01, F-02, RL credenciais+públicas, lint gate CI, gate `npm audit` prod-crítico (D-10), MotionProvider, deps mortas, DEPENDENCY_GRAPH.
+
+✅ Feitos 2026-07-02 (PR #343): F-01, F-02, RL credenciais+públicas, lint gate CI, gate `npm audit` prod-crítico (D-10), MotionProvider, deps mortas, DEPENDENCY_GRAPH, **F-09 IDOR (app+migration+testes)**, **T-08 X-Frame-Options escopado**, **T-24 xlsx→exceljs**.
 
 ## Invariantes (NUNCA violar)
 

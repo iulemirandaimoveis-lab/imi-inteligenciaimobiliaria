@@ -34,6 +34,10 @@ O middleware (`src/middleware.ts`) é o ponto único de: locale, refresh de sess
 
 Regra: toda rota que usa `supabaseAdmin` DEVE antes validar sessão + role com o cliente server (padrão visto em `api/admin/reset-password`). ~123 arquivos referenciam admin/service-role — qualquer novo uso exige justificativa.
 
+**Exceção controlada — rotas públicas por token**: fluxos públicos sobre um objeto (proposta em `/p/[token]`) autorizam pelo **token secreto** validado server-side e então usam `supabaseAdmin` (service_role bypassa RLS de forma segura porque o token provou a posse). Nunca autorizar por UUID cru (F-09/IDOR; padrões P15/A12). RLS deve estar habilitada nas tabelas expostas — `public.proposals`/`proposal_events` receberam `ENABLE ROW LEVEL SECURITY` na migration `20260702_f09_proposals_rls_hardening.sql`.
+
+**Security headers**: `X-Frame-Options` tem fonte única e escopada no `next.config.js` (DENY em áreas protegidas, SAMEORIGIN em públicas); o middleware não o define (D-12). A CSP `frame-ancestors 'self'` é a autoridade anti-clickjacking.
+
 ## Padrão de Route Handler
 
 ```

@@ -14,7 +14,8 @@ Botões, inputs, dialogs, command palette (cmdk), slots radix. Base de todos os 
 
 ## Infra/Lib
 - `src/lib/rate-limit.ts` — `limiters.<tipo>(chave)`; adicionar limiter novo aqui, não criar outro mecanismo.
-- `src/lib/document-parser.ts` — docx/xlsx/pdf/txt → texto (lazy). Não importar xlsx direto.
+- `src/lib/document-parser.ts` — docx/xlsx/pdf/txt → texto (lazy).
+- `src/lib/spreadsheet/` — **adapter de planilha** (`readSpreadsheetRows`, `readSpreadsheetSheetsAsCsv`; ExcelJS). Todo parsing de xlsx passa por aqui — NUNCA importar xlsx/exceljs direto (T-24/D-13).
 - `src/lib/imi-auth/` — `getImiSession`, RBAC, `logActivity` (audit best-effort).
 - `src/lib/supabase/{client,server,admin,middleware,storage}.ts` — únicos pontos de acesso a dados.
 - `src/lib/supabase-storage.ts` — upload client-side com progresso.

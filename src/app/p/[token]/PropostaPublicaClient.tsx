@@ -16,13 +16,15 @@ interface Props { proposal: Record<string, any> }
 const fmtDate = (s: string) =>
   s ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date(s)) : '—'
 
-async function trackEvent(proposalId: string, eventType: string, metadata: Record<string, unknown> = {}, timeOnPage?: number) {
+async function trackEvent(token: string, eventType: string, metadata: Record<string, unknown> = {}, timeOnPage?: number) {
+  if (!token) return
   try {
     await fetch('/api/proposals/track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        proposal_id: proposalId,
+        // F-09: o token (segredo) autoriza a escrita; proposal_id (UUID) não é mais aceito sozinho.
+        token,
         event_type: eventType,
         metadata,
         time_on_page_seconds: timeOnPage,
@@ -52,14 +54,14 @@ export default function PropostaPublicaClient({ proposal }: Props) {
   useEffect(() => {
     if (tracked.current) return
     tracked.current = true
-    trackEvent(proposalId, 'proposal_opened', {})
+    trackEvent(token, 'proposal_opened', {})
   }, [proposalId])
 
   // Track time on page on unmount
   useEffect(() => {
     return () => {
       const seconds = Math.round((Date.now() - startTime.current) / 1000)
-      trackEvent(proposalId, 'proposal_opened', { revisit: true }, seconds)
+      trackEvent(token, 'proposal_opened', { revisit: true }, seconds)
     }
   }, [proposalId])
 
@@ -120,9 +122,9 @@ export default function PropostaPublicaClient({ proposal }: Props) {
     await fetch('/api/proposals/respond', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ proposal_id: proposalId, action: 'accepted' }),
+      body: JSON.stringify({ token, action: 'accepted' }),
     })
-    trackEvent(proposalId, 'proposal_accepted', {})
+    trackEvent(token, 'proposal_accepted', {})
     setAccepted(true)
   }
 
@@ -131,12 +133,12 @@ export default function PropostaPublicaClient({ proposal }: Props) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        proposal_id: proposalId,
+        token,
         action: 'countered',
         counter: { value: parseFloat(counterValue.replace(/[^\d,]/g, '').replace(',', '.')) || null, conditions: counterConditions },
       }),
     })
-    trackEvent(proposalId, 'counter_submitted', { value: counterValue })
+    trackEvent(token, 'counter_submitted', { value: counterValue })
     setCounterSent(true)
     setCounterOpen(false)
   }
@@ -204,7 +206,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                 src={imovel.fotos[0]}
                 alt={imovel.titulo}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                onLoad={() => trackEvent(proposalId, 'section_viewed', { section: 'photos' })}
+                onLoad={() => trackEvent(token, 'section_viewed', { section: 'photos' })}
               />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg, rgba(13,27,42,0.7) 0%, transparent 60%)' }} />
               <div style={{ position: 'absolute', bottom: 16, left: 20, right: 20 }}>
@@ -274,7 +276,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.5 }}
           style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, marginBottom: 20 }}
-          onViewportEnter={() => trackEvent(proposalId, 'section_viewed', { section: 'financing' })}
+          onViewportEnter={() => trackEvent(token, 'section_viewed', { section: 'financing' })}
         >
           <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.gold, marginBottom: 16 }}>
             Condições da Proposta
@@ -348,7 +350,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
           <button
             onClick={() => {
               setSimOpen(v => !v)
-              if (!simOpen) trackEvent(proposalId, 'simulation_opened', {})
+              if (!simOpen) trackEvent(token, 'simulation_opened', {})
             }}
             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', background: 'none', border: 'none', color: C.text, cursor: 'pointer' }}
           >
@@ -435,7 +437,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
           >
             <button
               onClick={() => {
-                trackEvent(proposalId, 'cta_clicked', { cta: 'advance' })
+                trackEvent(token, 'cta_clicked', { cta: 'advance' })
                 handleAccept()
               }}
               style={{
@@ -457,7 +459,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
                   href={whatsappBroker}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() => trackEvent(proposalId, 'whatsapp_clicked', {})}
+                  onClick={() => trackEvent(token, 'whatsapp_clicked', {})}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                     padding: '12px', borderRadius: 10, textDecoration: 'none',
@@ -472,7 +474,7 @@ export default function PropostaPublicaClient({ proposal }: Props) {
               <button
                 onClick={() => {
                   setCounterOpen(v => !v)
-                  trackEvent(proposalId, 'cta_clicked', { cta: 'counter' })
+                  trackEvent(token, 'cta_clicked', { cta: 'counter' })
                 }}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

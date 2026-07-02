@@ -22,7 +22,9 @@
 | P12 | Migration nova: `YYYYMMDD_descricao.sql` + atualizar `supabase/MIGRATIONS_MAP.md` | `supabase/MIGRATIONS_MAP.md` |
 | P13 | Rota nova de API: usar o wrapper `apiHandler` (auth+RL+audit por padrão) em vez de boilerplate manual | `src/lib/api-helpers.ts` |
 | P14 | Endpoint de credencial (login/first-access): rate limit por IP 5/min é obrigatório | `src/app/api/auth/login/route.ts` |
-| P15 | Rota pública sobre objeto (proposta/doc): lookup e mutação por **token secreto**, validado server-side; nunca por UUID cru | `src/app/api/propostas/[token]/track/route.ts` |
+| P15 | Rota pública sobre objeto (proposta/doc): lookup e mutação por **token secreto**, validado server-side; nunca por UUID cru | `src/app/api/proposals/respond/route.ts`, `propostas/[token]/track` |
+| P16 | Parsing de planilha só via adapter `src/lib/spreadsheet/` (nunca xlsx/exceljs direto) | `src/lib/spreadsheet/index.ts` |
+| P17 | Header de segurança tem fonte única e escopada (X-Frame-Options no next.config, não no middleware) | `next.config.js` / `middleware.ts` (D-12) |
 
 ## Anti-Padrões (nunca)
 

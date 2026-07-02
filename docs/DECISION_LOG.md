@@ -5,6 +5,21 @@
 
 ---
 
+## D-13 · 2026-07-02 — Migração de parsing de planilha para adapter (xlsx→ExcelJS)
+- **Contexto**: `xlsx` (SheetJS) com prototype pollution + ReDoS **sem patch** (F-08/T-24).
+- **Decisão**: interface `SpreadsheetParser` (`src/lib/spreadsheet/`) com implementação ExcelJS; consumidores importam do índice, nunca do vendor. Limites anti-DoS (10MB, 100k linhas). `xlsx` removido.
+- **Consequência**: troca futura de vendor = 1 arquivo. Comportamento preservado (readRows / readSheetsAsCsv). Anti-padrão: importar xlsx/exceljs direto.
+
+## D-12 · 2026-07-02 — X-Frame-Options escopado, fonte única (T-08)
+- **Contexto**: middleware DENY vs next.config SAMEORIGIN → header duplicado/ambíguo.
+- **Decisão**: `X-Frame-Options` sai do middleware; definido só no `next.config.js` de forma escopada — `DENY` para `/backoffice|/users|/api|/auth|/login|/admin|/console`, `SAMEORIGIN` para públicas (negative-lookahead, sem sobreposição). CSP `frame-ancestors 'self'` continua a autoridade global.
+- **Consequência**: nenhum header duplicado; áreas sensíveis mantêm a proteção máxima. Teste de regressão em `__tests__/middleware/frame-options.test.ts`.
+
+## D-11 · 2026-07-02 — F-09: autorização de proposta pública por token + RLS
+- **Contexto**: IDOR — `public.proposals` sem RLS habilitada; rotas públicas mutavam por UUID.
+- **Decisão**: rotas públicas de proposta autorizam pelo **token secreto** validado no backend (service_role pós-validação — P15); migration habilita RLS (`ENABLE`+`FORCE`) com policies só para `authenticated` (tenant/owner) e nenhuma para anon.
+- **Consequência**: UUID deixa de ser credencial. Página pública passa a usar `supabaseAdmin` (token-gated). Regra: rota pública sobre objeto = token, nunca id (A12).
+
 ## D-10 · 2026-07-02 — Gate de segurança do CI escopado a produção
 - **Contexto**: `npm audit` completo acusa 1 crítica + 19 altas, mas a crítica (`handlebars` via ts-jest) e muitas altas são toolchain de dev/test, sem exposição em runtime. Bloquear no total travaria o CI por ruído; ignorar tudo (`continue-on-error`) não protege.
 - **Decisão**: job `security` bloqueia em `npm audit --omit=dev --audit-level=critical` (0 críticas em produção hoje) + step informativo da árvore completa. `build` continua `continue-on-error` (risco de OOM — D-07; já gated por typecheck).

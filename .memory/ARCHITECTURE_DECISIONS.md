@@ -12,6 +12,11 @@
 | D-06 | PWA NetworkFirst para `/users/*` | nunca regredir p/ CacheFirst |
 | D-07 | Type-check fora do build Vercel (OOM) — gate no CI | job `typecheck` é intocável |
 | D-08 | Sistema de inteligência docs/ + .memory/ (2026-07-02) | sessões começam por PROJECT_STATE.md |
+| D-09 | Rate limit diferenciado por classe de rota | credenciais 5/min IP; ver KNOWN_PATTERNS P14 |
+| D-10 | Gate `npm audit` do CI escopado a produção-crítico | não subir p/ high até tratar next-pwa/xlsx |
+| D-11 | F-09: proposta pública autoriza por token + RLS habilitada | nunca autorizar por UUID (A12) |
+| D-12 | X-Frame-Options fonte única escopada no next.config | middleware não define header de frame |
+| D-13 | Planilha via adapter (ExcelJS), xlsx removido | importar só de src/lib/spreadsheet (P16) |
 
 ## Suposições críticas (se quebrarem, muita coisa quebra)
 
