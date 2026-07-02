@@ -5,9 +5,10 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createServerClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    // getUser() valida o JWT no servidor (getSession só lê o cookie)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-    if (!session) {
+    if (userError || !user) {
       return NextResponse.json({ error: 'Nao autenticado' }, { status: 401 })
     }
 
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { error: authError } = await supabaseAdmin.auth.admin.updateUserById(
-      session.user.id,
+      user.id,
       { password: new_password }
     )
 
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     await supabaseAdmin
       .from('profiles')
       .update({ must_reset_password: false, first_login: false })
-      .eq('id', session.user.id)
+      .eq('id', user.id)
 
     return NextResponse.json({ success: true })
   } catch {

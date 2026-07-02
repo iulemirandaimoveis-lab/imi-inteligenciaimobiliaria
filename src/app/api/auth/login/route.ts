@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { z } from 'zod'
+import { rateLimit, getClientIP } from '@/lib/rate-limit'
 
 const LoginSchema = z.object({
     email: z.string().email(),
@@ -9,6 +10,13 @@ const LoginSchema = z.object({
 
 export async function POST(request: NextRequest) {
     try {
+        // Anti brute-force: 5 tentativas/min por IP
+        const ip = getClientIP(request)
+        const rl = await rateLimit(`login:${ip}`, { limit: 5, windowMs: 60_000 })
+        if (!rl.success) {
+            return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto.' }, { status: 429 })
+        }
+
         const body = await request.json()
         const parsed = LoginSchema.safeParse(body)
         if (!parsed.success) {

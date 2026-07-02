@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { simulate, SimulationValidationError } from '@/lib/intelligence/subsidy-engine'
 import { buildStrategy, AcquisitionScenario, BuyerProfile } from '@/lib/intelligence/acquisition-strategy'
+import { limiters, getClientIP } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 
@@ -9,6 +10,12 @@ export const runtime = 'nodejs'
 // Body: { mode: 'single' | 'strategy', buyer_a: SimulationInput, buyer_b?: SimulationInput, scenario?: AcquisitionScenario }
 
 export async function POST(request: NextRequest) {
+    // Endpoint público computacional: 10 req/10s por IP
+    const rl = await limiters.public(getClientIP(request))
+    if (!rl.success) {
+        return NextResponse.json({ error: 'Muitas requisições. Aguarde alguns segundos.' }, { status: 429 })
+    }
+
     let body: unknown
     try {
         body = await request.json()

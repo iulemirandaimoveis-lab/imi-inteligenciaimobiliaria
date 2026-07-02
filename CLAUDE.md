@@ -17,6 +17,11 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 **MANDATORY** at start of each session:
 
 ```bash
+# 0. Load persistent memory (~400 tokens) — estado vivo do projeto
+✓ .memory/PROJECT_STATE.md             # ⚠️ READ FIRST — saúde, pendências, invariantes
+✓ .memory/NEXT_TASK.md                 # Próxima tarefa com contexto pronto
+✓ .memory/KNOWN_PATTERNS.md            # Padrões P1-P12 / anti-padrões A1-A10
+
 # 1. Load essential docs (~800 tokens - 2 min read)
 ✓ .claude/COMMON_MISTAKES.md           # ⚠️ CRITICAL - Read FIRST
 ✓ .claude/UI_DESIGN_STANDARDS.md       # ⚠️ OBRIGATÓRIO para qualquer UI/front-end
@@ -25,6 +30,12 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 ✓ .claude/ALTO_BELLEVUE_LOCATION.md    # ⚠️ NEVER change location/tour URLs
 ✓ .claude/UI_REGRESSION_POLICY.md     # ⚠️ OBRIGATÓRIO antes de qualquer mudança de UI/layout
 ```
+
+**At task completion (memory update — OBRIGATÓRIO):**
+- Update `.memory/PROJECT_STATE.md` (saúde/pendências) + `.memory/NEXT_TASK.md`
+- Append em `.memory/CHANGE_RECEIPT.md`; sobrescrever `.memory/SESSION_MEMORY.md`
+- Bug com causa-raiz → `.memory/FAILURES.md` · Lição >1h → `.memory/LEARNINGS.md`
+- Decisão arquitetural → `docs/DECISION_LOG.md` + índice `.memory/ARCHITECTURE_DECISIONS.md`
 
 **At task completion:**
 - Create completion doc in `.claude/completions/YYYY-MM-DD-task-name.md`
@@ -66,6 +77,13 @@ Next.js application for Plataforma de inteligência imobiliária com análise de
 - **Architecture Map**: `.claude/ARCHITECTURE_MAP.md`
 - **Maintenance**: `.claude/DOCUMENTATION_MAINTENANCE.md`
 
+### Project Intelligence System (2026-07-02)
+- **Estado vivo**: `.memory/PROJECT_STATE.md` · **Fila**: `docs/TODO_MASTER.md`
+- **Mapa**: `docs/PROJECT_MAP.md` · **Arquitetura**: `docs/ARCHITECTURE.md` · **APIs**: `docs/API_MAP.md`
+- **Auditorias**: `docs/SECURITY_AUDIT.md`, `docs/PERFORMANCE_REPORT.md`, `docs/ACCESSIBILITY_REPORT.md`, `docs/RESPONSIVE_AUDIT.md`
+- **Dívida/plano**: `docs/TECH_DEBT.md`, `docs/KNOWN_ISSUES.md`, `docs/REFACTOR_ROADMAP.md`
+- **Decisões**: `docs/DECISION_LOG.md` · **Acoplamentos**: `docs/COMPONENT_RELATIONS.md` · **Testes**: `docs/TESTING_STRATEGY.md`
+
 ---
 
 ---
@@ -99,5 +117,5 @@ O contexto gerado fica em `.context/query-context.md` — inclua-o na conversa a
 
 ---
 
-**Last Updated**: 2026-05-30
+**Last Updated**: 2026-07-02
 **Optimized with**: [Claude Token Optimizer](https://github.com/nadimtuhin/claude-token-optimizer)

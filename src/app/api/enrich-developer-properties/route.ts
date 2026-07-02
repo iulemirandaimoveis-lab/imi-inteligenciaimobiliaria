@@ -8,8 +8,14 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
-    if (authError || !session) {
+    // Autorização via getUser() (valida o JWT no servidor); a sessão é lida
+    // apenas para encaminhar o access_token à Edge Function.
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    }
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 

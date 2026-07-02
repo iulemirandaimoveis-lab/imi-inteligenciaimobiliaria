@@ -45,22 +45,15 @@ async function parseDocx(buffer: Buffer): Promise<ParsedDocument> {
 }
 
 async function parseXlsx(buffer: Buffer): Promise<ParsedDocument> {
-  const XLSX = await import('xlsx')
-  const workbook = XLSX.read(buffer, { type: 'buffer' })
-  const sheets: string[] = []
-
-  for (const sheetName of workbook.SheetNames) {
-    const sheet = workbook.Sheets[sheetName]
-    const csv = XLSX.utils.sheet_to_csv(sheet)
-    if (csv.trim()) {
-      sheets.push(`## ${sheetName}\n${csv}`)
-    }
-  }
+  // T-24: parsing via adapter (ExcelJS) — sem dependência direta de vendor.
+  const { readSpreadsheetSheetsAsCsv } = await import('@/lib/spreadsheet')
+  const sheetsCsv = await readSpreadsheetSheetsAsCsv(buffer)
+  const sheets = sheetsCsv.map(({ name, csv }) => `## ${name}\n${csv}`)
 
   return {
     text: sheets.join('\n\n'),
     format: 'xlsx',
-    pageCount: workbook.SheetNames.length,
+    pageCount: sheetsCsv.length,
   }
 }
 

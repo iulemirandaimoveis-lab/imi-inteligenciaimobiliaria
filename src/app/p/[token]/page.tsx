@@ -1,15 +1,16 @@
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import PropostaPublicaClient from './PropostaPublicaClient'
 
 export const dynamic = 'force-dynamic'
 
 interface Props { params: { token: string } }
 
+// F-09: a proposta pública é autorizada pelo TOKEN secreto (não pelo id). Uma vez
+// que a RLS de public.proposals é restrita a `authenticated`, a leitura/escrita
+// desta rota pública usa `supabaseAdmin` após validar o token — padrão P15.
 export default async function PropostaPublicaPage({ params }: Props) {
-  const supabase = await createClient()
-
-  const { data: proposal } = await supabase
+  const { data: proposal } = await supabaseAdmin
     .from('proposals')
     .select('*')
     .eq('token', params.token)
@@ -20,7 +21,7 @@ export default async function PropostaPublicaPage({ params }: Props) {
   // Fetch development data if linked
   let development = null
   if (proposal.development_id) {
-    const { data: dev } = await supabase
+    const { data: dev } = await supabaseAdmin
       .from('developments')
       .select('name, description, neighborhood, city, state, images, gallery_images, image, area_from, bedrooms, bathrooms, parking_spaces')
       .eq('id', proposal.development_id)
@@ -30,7 +31,7 @@ export default async function PropostaPublicaPage({ params }: Props) {
 
   // Mark as viewed (server-side on first open)
   if (proposal.status === 'sent') {
-    await supabase
+    await supabaseAdmin
       .from('proposals')
       .update({ status: 'viewed' })
       .eq('id', proposal.id)

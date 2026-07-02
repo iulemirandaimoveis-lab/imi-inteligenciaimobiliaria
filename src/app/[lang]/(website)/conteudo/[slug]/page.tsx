@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getLatestPosts, getPostBySlug } from '@/lib/website-data';
 import { generateArticleSchema, generateBreadcrumbSchema } from '@/lib/seo';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { ptBR, enUS } from 'date-fns/locale';
@@ -125,20 +126,9 @@ export default async function BlogPostPage({ params: { lang, slug } }: Props) {
             <div className="container-custom py-16 md:py-24">
                 <div className="max-w-3xl mx-auto">
                     <div className="prose prose-lg prose-slate prose-headings:font-display prose-headings:font-bold prose-headings:text-imi-900 prose-p:text-imi-700 prose-a:text-accent-600 hover:prose-a:text-accent-700 prose-img:rounded-xl prose-img:shadow-lg">
-                        {/* Sanitize content: strip scripts, iframes, event handlers, dangerous URIs */}
+                        {/* T-07: sanitização via DOMPurify (util compartilhado) */}
                         <div dangerouslySetInnerHTML={{
-                            __html: post.content
-                                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                                .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-                                .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
-                                .replace(/<embed\b[^>]*>/gi, '')
-                                .replace(/<link\b[^>]*>/gi, '')
-                                .replace(/on\w+\s*=\s*"[^"]*"/gi, '')
-                                .replace(/on\w+\s*=\s*'[^']*'/gi, '')
-                                .replace(/on\w+\s*=\s*[^\s>]*/gi, '')
-                                .replace(/javascript\s*:/gi, 'nojavascript:')
-                                .replace(/data\s*:\s*text\/html/gi, 'nodata:text/html')
-                                .replace(/\n/g, '<br/>')
+                            __html: sanitizeHtml((post.content || '').replace(/\n/g, '<br/>'))
                         }} />
                     </div>
 

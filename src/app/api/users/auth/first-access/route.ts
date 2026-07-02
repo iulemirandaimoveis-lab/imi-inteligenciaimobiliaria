@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 import { supabaseAdmin } from '@/lib/supabase/admin'
+import { rateLimit, getClientIP } from '@/lib/rate-limit'
 
 /**
  * IMI Console — FIRST ACCESS (primeiro acesso).
@@ -18,6 +19,13 @@ const Schema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Anti brute-force da senha provisória: 5 tentativas/min por IP
+    const ip = getClientIP(req)
+    const rl = await rateLimit(`first-access:${ip}`, { limit: 5, windowMs: 60_000 })
+    if (!rl.success) {
+      return NextResponse.json({ error: 'Muitas tentativas. Aguarde um minuto.' }, { status: 429 })
+    }
+
     const parsed = Schema.safeParse(await req.json())
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message ?? 'Dados inválidos.' }, { status: 400 })

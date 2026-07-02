@@ -515,11 +515,10 @@ export default function LotesPage() {
           line.split(',').map(v => v.replace(/^"|"$/g, '').trim())
         )
       } else if (file.name.match(/\.xlsx?$/)) {
-        const XLSX = await import('xlsx')
+        // T-24: parsing via adapter (ExcelJS) — sem dependência direta de vendor.
+        const { readSpreadsheetRows } = await import('@/lib/spreadsheet')
         const buffer = await file.arrayBuffer()
-        const wb = XLSX.read(buffer, { type: 'array' })
-        const ws = wb.Sheets[wb.SheetNames[0]]
-        rows = XLSX.utils.sheet_to_json(ws, { header: 1 }) as string[][]
+        rows = await readSpreadsheetRows(buffer)
       } else {
         setImportError('Formato não suportado. Use CSV (.csv) ou Excel (.xlsx, .xls).')
         return

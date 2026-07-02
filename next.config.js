@@ -89,6 +89,11 @@ const nextConfig = {
             bodySizeLimit: '2mb',
         },
         optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', 'sonner', 'date-fns'],
+        // isomorphic-dompurify (usado por src/lib/sanitize-html) carrega jsdom no
+        // server; empacotá-lo quebra o build (jsdom lê default-stylesheet.css via
+        // readFileSync, que não é traçado para .next/server). Mantê-lo externo faz
+        // o require resolver de node_modules em runtime, onde o CSS existe. (T-07 fix)
+        serverComponentsExternalPackages: ['isomorphic-dompurify'],
     },
     // Security headers
     async headers() {
@@ -105,11 +110,21 @@ const nextConfig = {
                     { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
                 ],
             },
+            // T-08 — X-Frame-Options ESCOPADO (fonte única; sem duplicação):
+            // Áreas protegidas nunca podem ser emolduradas.
+            {
+                source: '/((?:backoffice|users|api|auth|login|admin|console)(?:/.*)?)',
+                headers: [{ key: 'X-Frame-Options', value: 'DENY' }],
+            },
+            // Público: SAMEORIGIN (negative-lookahead evita casar com as protegidas acima).
+            {
+                source: '/((?!backoffice|users|api|auth|login|admin|console|_next).*)',
+                headers: [{ key: 'X-Frame-Options', value: 'SAMEORIGIN' }],
+            },
             {
                 source: '/(.*)',
                 headers: [
                     { key: 'X-DNS-Prefetch-Control', value: 'on' },
-                    { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
                     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
