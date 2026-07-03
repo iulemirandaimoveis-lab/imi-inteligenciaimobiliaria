@@ -21,6 +21,7 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 ## Trabalho recente (main)
 
 - 2026-07-03 (branch refinement): infra E2E Playwright (fixtures + 5 specs novos, 84 testes), fixes do engine de mapa AB (camadas/fullscreen/erro/leak), sync real do carrinho entre instâncias (useLotCart), Jazz: lang no back-link, unidades hidden fora do DOM, Escape nos painéis, **WhatsApp placeholder da LP corrigido (conversão)**
+- 2026-07-03 (#344, main): Fase 1 mapas — satélite do console unificado no canônico (clamp z≤18), pinch com pivot correto + two-finger pan, status de lotes "ao vivo" real (polling 45s), PropertyMap sem singleton de módulo, touch targets ≥44px
 - #342 fix botão proposta/sticky bar + carrinho entre vistas de mapa
 - #341/#339 proposta no mapa, anexos, satélite
 - #340 APIs brasileiras (ViaCEP, BrasilAPI, ReceitaWS, Brapi)

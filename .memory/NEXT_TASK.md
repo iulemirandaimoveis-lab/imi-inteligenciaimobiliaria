@@ -1,11 +1,20 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-03 (sessão de refinamento — testes + mapa + UX)
+**Atualizado**: 2026-07-03 (duas sessões paralelas: refinamento testes/UX + spatial-intelligence Fase 1)
 
-## Novidades desta sessão que afetam a fila
+## Novidades da sessão de refinamento que afetam a fila
 - E2E agora tem 7 specs/84 testes — candidato natural a job de CI (rodar contra preview do Vercel via `BASE_URL`).
 - Controles mortos no console /users (switcher de empreendimento, sino) — decidir: implementar ou ocultar.
 - Visual regression (`toHaveScreenshot` nos mapas) segue pendente (P2 da TESTING_STRATEGY).
+
+## Spatial Intelligence — próximo passo (Fase 2)
+Fase 1 (estabilização do motor de mapas) entregue. Fase 2 candidatos, em ordem:
+1. Overlay georreferenciado dos lotes sobre o satélite (bloqueado por ≥3 pontos de
+   controle — scripts/cad/geo/); é o desbloqueio das camadas de inteligência no mapa real.
+2. Decidir destino do mapbox-gl (só ativa com NEXT_PUBLIC_MAPBOX_TOKEN 'pk.'; checar
+   Vercel; se nunca configurado, remover dep e simplificar PropertyMap).
+3. Decompor SubdivisionLotMap (1983 l) / AltoBellevueGeoMap (1651 l) antes de
+   adicionar camadas novas (heatmap de preço/m², liquidez) — evitar crescer monólitos.
 
 ## Sem ação pendente do dono no banco
 Verificado em produção (projeto zocffccwjjyelwrgunhu): RLS habilitada em todo o schema public
