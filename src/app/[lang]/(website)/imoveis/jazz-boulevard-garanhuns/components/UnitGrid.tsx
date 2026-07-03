@@ -14,7 +14,10 @@ interface Props {
   compareIds?: Set<string>
 }
 
-export default function UnitGrid({ units, selectedUnitId, onUnitSelect, compareIds }: Props) {
+export default function UnitGrid({ units: allUnits, selectedUnitId, onUnitSelect, compareIds }: Props) {
+  // Unidades "hidden" saem do DOM — antes ficavam com opacity 0, invisíveis
+  // porém clicáveis e focáveis por teclado (fantasmas no grid).
+  const units = allUnits.filter(u => u.status !== 'hidden')
   if (units.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -43,7 +46,6 @@ export default function UnitGrid({ units, selectedUnitId, onUnitSelect, compareI
               border: isCompared ? '2px solid #2563EB' : isSelected ? '2px solid #C8A44A' : '1.5px solid rgba(184,179,168,0.3)',
               background: isCompared ? '#EFF6FF' : isSelected ? '#FFFDF5' : '#fff',
               boxShadow: isCompared ? '0 4px 20px rgba(37,99,235,0.15)' : isSelected ? '0 4px 20px rgba(200,164,74,0.15)' : undefined,
-              opacity: unit.status === 'hidden' ? 0 : 1,
               cursor: unit.status === 'sold' ? 'default' : 'pointer',
             }}
           >

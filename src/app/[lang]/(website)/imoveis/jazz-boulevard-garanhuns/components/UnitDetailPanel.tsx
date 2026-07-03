@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, MessageCircle, BedDouble, Bath, Car, Maximize2, Image as ImageIcon, Compass, Eye } from 'lucide-react'
 import { type IMIProperty, AVAILABILITY_COLORS } from '@/lib/imi-domain/types'
@@ -35,6 +36,13 @@ export default function UnitDetailPanel({ unit, whatsappPhone, onClose }: Props)
 }
 
 function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty; whatsappPhone: string; onClose: () => void }) {
+  // Escape fecha o painel — paridade com os painéis de lote do Alto Bellevue.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
   const cfg = AVAILABILITY_COLORS[unit.status]
   const isAvailable = unit.status === 'available' || unit.status === 'launching'
   const planType = (unit.metadata?.planType as JazzPlanType | undefined) ?? 'Planta Tipo A'
@@ -78,6 +86,7 @@ function UnitPanelContent({ unit, whatsappPhone, onClose }: { unit: IMIProperty;
         </div>
         <button
           onClick={onClose}
+          aria-label="Fechar detalhes da unidade"
           className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors flex-shrink-0"
         >
           <X size={16} />

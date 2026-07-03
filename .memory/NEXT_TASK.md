@@ -1,6 +1,11 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-02 (sessão 5 — verificação de banco via MCP)
+**Atualizado**: 2026-07-03 (sessão de refinamento — testes + mapa + UX)
+
+## Novidades desta sessão que afetam a fila
+- E2E agora tem 7 specs/84 testes — candidato natural a job de CI (rodar contra preview do Vercel via `BASE_URL`).
+- Controles mortos no console /users (switcher de empreendimento, sino) — decidir: implementar ou ocultar.
+- Visual regression (`toHaveScreenshot` nos mapas) segue pendente (P2 da TESTING_STRATEGY).
 
 ## Sem ação pendente do dono no banco
 Verificado em produção (projeto zocffccwjjyelwrgunhu): RLS habilitada em todo o schema public

@@ -1,6 +1,14 @@
 # TESTING_STRATEGY — Estratégia de Testes
 
-> Estado 2026-07-02: 57 suítes Jest, 834 testes (829 ✅, 5 skipped), ~12s. E2E: 2 specs Playwright (fora do CI).
+> Estado 2026-07-03: 60 suítes Jest, 827 testes (822 ✅, 5 skipped), ~6s. E2E: 7 specs Playwright, 84 testes (fora do CI).
+
+## Arquitetura E2E (2026-07-03)
+
+- **Config**: `playwright.config.ts` — projetos `desktop` (Chrome 1440×900, todos os specs) e `mobile` (Pixel 7 touch, specs de página crítica). `PLAYWRIGHT_CHROMIUM_EXECUTABLE` aponta binário pré-instalado em sandboxes.
+- **Fixtures**: `e2e/fixtures.ts` — `consoleErrors` (gate de zero erro de console primeiro-partido, com allowlist de ruído de terceiros), `expectNoHorizontalOverflow`, matriz `VIEWPORTS` (8 tamanhos, phone→ultrawide).
+- **Specs**: `smoke`, `critical-flows` (legado), `alto-bellevue` (engine de mapa + invariante do link do Maps do cliente), `jazz-boulevard` (viewer de unidades, Escape, regressões de link/WhatsApp), `users-console` (fronteiras de auth sem credenciais), `responsive` (matriz viewport×página), `a11y` (nomes acessíveis, alt, rel, lang).
+- **Modos de execução**: local (`npm run test:e2e`, sobe dev server — exige `.env.local`) ou remoto read-only (`npm run test:e2e:prod`). Todos os specs são não-mutantes (nenhum formulário submetido).
+- **Limite conhecido**: fluxos autenticados/RBAC por papel exigem seeds dedicados (Supabase branch ou usuários de teste) — decisão de banco requer aprovação explícita do dono (invariante), então segue no backlog R-05/F-07.
 
 ---
 

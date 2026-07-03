@@ -2,29 +2,23 @@
 
 > Notas da sessão corrente/última. Sobrescreva a cada sessão (histórico durável vai para CHANGE_RECEIPT/LEARNINGS).
 
-**Sessão**: 2026-07-02 · auditoria de inteligência
+**Sessão**: 2026-07-03 · refinamento de sistema (testes + mapa + UX) · branch `claude/imi-system-refinement-ys3w7d`
 
-## Fatos verificados nesta sessão (confiança alta)
+## O que ficou pronto
+- Infra E2E completa (config com projetos desktop/mobile, fixtures, 5 specs novos, 84 testes listados).
+- 12 fixes cirúrgicos: engine de mapa AB (camadas, fullscreen iOS, erro de load, leak WebGL, aria), useLotCart sync entre instâncias, Jazz (lang no back-link, hidden units, Escape, aria, **WhatsApp placeholder da LP**).
+- Jest novo: `use-lot-cart-sync.test.tsx` (6 ✅). Gates: tsc ✅, lint ✅, jest 822 ✅ (60 suítes).
 
-- 1.185 arquivos TS/TSX; 275 route handlers; 65 migrations; 57 suítes de teste.
-- Gates: tsc ✅ / eslint ✅ / jest 829 ✅ 5 skipped.
-- `mapbox-gl`: 0 imports diretos (motor real = maplibre-gl). CSP cita api.mapbox.com — verificar antes de remover.
-- `xlsx/mammoth/pdf-parse`: usados só via dynamic import em `src/lib/document-parser.ts` (+ xlsx em `backoffice/imoveis/[id]/lotes/page.tsx:518`).
-- Cron: 9 rotas, todas com `CRON_SECRET`.
-- Rotas de IA seguem padrão auth→ratelimit→tenant (amostra: `ai/generate-content`).
-- `admin/reset-password`: usa `getSession()` + senha temp de 6 hex — únicos desvios encontrados no padrão de segurança.
-- Middleware: locale geo-IP; `/l/`, `/r/`, `/verificar` públicos; `/{locale}/users` → rewrite.
-- Jest roda em ~12s — barato, rodar sempre.
+## Contexto para a próxima sessão
+- E2E não roda neste sandbox (rede nega produção; sem `.env.local`). Rodar local: `npm run test:e2e` (dev server sobe sozinho). Contra produção: `npm run test:e2e:prod`.
+- Auditoria apontou (NÃO corrigidos, por decisão de escopo): botão "Trocar empreendimento" e sino de notificações no DashboardTopbar são controles mortos (sem onClick); UnitDetailPanel não trava scroll do body no mobile; sem visual regression (`toHaveScreenshot`) ainda.
+- RBAC E2E autenticado precisa de seeds/credenciais de teste → requer aprovação do dono (banco).
 
 ## Comandos que funcionam neste ambiente
-
 ```bash
-npm run type-check        # ~minutos, 0 erros em 2026-07-02
-npm run lint              # limpo
-npx jest --silent         # 12s
+npm run type-check                      # 0 erros em 2026-07-03
+npm run lint                            # limpo
+npx jest --forceExit src/__tests__     # ~6s
+npx playwright test --list             # valida estrutura dos specs
+# Sandbox: PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium
 ```
-
-## Armadilhas encontradas
-
-- grep por "auth check ausente" em rotas dá falso-positivo em massa — as rotas autenticam via `supabase.auth.getUser()` inline; sempre ler a rota antes de acusar.
-- 3 arquivos .tsx citam SUPABASE_SERVICE_ROLE — é texto de UI (checklist), não uso real.
