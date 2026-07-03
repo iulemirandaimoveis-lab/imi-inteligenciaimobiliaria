@@ -53,18 +53,27 @@ como um sistema único.
 
 ### 3.2 Inteligência com dados sintéticos
 - `src/app/[lang]/(website)/inteligencia/brazilIntelligenceFallback.ts` — **todo o "mercado Brasil"
-  é uma tabela estática hardcoded** (27 UFs, preço/m², yield, tendência). É fallback apresentado como inteligência.
+  é uma tabela estática hardcoded** (27 UFs, preço/m², yield, tendência). *Verificado em 2026-07-03:*
+  o `IntelligenceDashboard` **já rotula** a origem via `DataSourceBadge` ("Dados ao vivo" / "Estimativa
+  IMI" / "Dados em expansão") — a lacuna real não é rotulagem, é **fonte de dados de mercado real**
+  alimentando `intelligence/*` (Fase 2).
 - `AdminView.tsx` ainda carrega o botão "Remover TODOS os dados mockados (mock=true)" — dados de
   demonstração convivem com dados reais no console.
 - `api/ai/suggest-reply` tem resposta enlatada de fallback; `api/ai/router` tem stub Kling (vídeo).
 
 ### 3.3 Fragmentação / débito técnico
-- **`mapbox-gl` é dependência morta**: está no `package.json` (+`@types/mapbox-gl`) mas **zero imports**
-  — tudo já roda em MapLibre (`AerialSatelliteMap`, `PropertyMap`, `AltoBellevueGeoMap`, `SatelliteMap`). Remover.
-- **Cópias paralelas divergentes**: `src/modules/imoveis/components/*` vs
-  `src/components/backoffice/imoveis/*` (MediaUploader, BulkActions, TrackingLinkModal, PropertyForm…
-  mesmos nomes, conteúdo diferente). Dois donos para o mesmo domínio = regressões garantidas.
-- **3 MediaUploaders** (`components/ui`, `modules/imoveis`, `backoffice/imoveis`).
+- **Dois engines de mapa em paralelo**: MapLibre é o padrão (`AerialSatelliteMap`, `AltoBellevueGeoMap`,
+  `SatelliteMap`), mas `PropertyMap.tsx` carrega **`mapbox-gl` dinamicamente** (`await import('mapbox-gl')`)
+  quando `NEXT_PUBLIC_MAPBOX_TOKEN` (pk.) está configurado, com CSS global em `globals.css`.
+  *Correção da auditoria inicial (que o marcava como dependência morta por só buscar imports estáticos).*
+  A consolidação num único engine é decisão da Fase 2 (Map Intelligence Layer), não remoção trivial.
+- **Cópias paralelas divergentes**: `src/modules/imoveis/components/*` (usado pelo **site público** —
+  `[lang]/imoveis`, `inteligencia/mapa`, home) vs `src/components/backoffice/imoveis/*` (usado pelo
+  **backoffice**). MediaUploader, BulkActions, TrackingLinkModal, PropertyForm… mesmos nomes, conteúdo
+  diferente. Ambos vivos — a unificação exige extrair o núcleo comum, não deletar um lado.
+- **3 MediaUploaders** distintos e todos em uso (`components/ui` 97L, `modules/imoveis` 314L,
+  `backoffice/imoveis` 394L com ordenação dnd-kit) — consolidar em 1 componente com variantes é
+  refactor com risco de regressão de UI (exige PR dedicado + `UI_REGRESSION_POLICY`).
 - **662 marcadores TODO/FIXME/not-implemented** em `src/` — hotspots em `components/maps/*`,
   `backoffice/*`, `modules/imoveis/*`.
 - **4 mapas satélite/geo separados** implementando padrões próprios de câmera, tiles e georreferência
@@ -81,13 +90,13 @@ como um sistema único.
 ## 5. Plano de execução
 
 ### Fase 1 — Estabilizar e desfragmentar (baixo risco, pode iniciar após aprovação deste doc)
-| # | Ação | Alvos | Risco |
-|---|---|---|---|
-| 1.1 | Remover `mapbox-gl` + `@types/mapbox-gl` (dependência morta) | `package.json` | Mínimo |
-| 1.2 | Unificar domínio imóveis: eleger `src/components/backoffice/imoveis` como fonte única, migrar divergências úteis de `src/modules/imoveis`, deletar a cópia | `src/modules/imoveis/**` | Médio (exige diff cuidadoso) |
-| 1.3 | Consolidar MediaUploader em 1 componente com variantes | `components/ui`, `backoffice/imoveis` | Médio |
-| 1.4 | Triagem dos 662 TODOs → fechar triviais, converter os estruturais em issues | `src/**` | Baixo |
-| 1.5 | Rotular explicitamente dados de fallback ("estimativa IMI") na página `/inteligencia` até haver fonte real | `brazilIntelligenceFallback.ts` + view | Baixo |
+| # | Ação | Alvos | Risco | Status |
+|---|---|---|---|---|
+| 1.1 | ~~Remover `mapbox-gl` (dependência morta)~~ **Invalidado na verificação**: é engine dinâmico opcional do `PropertyMap`. Decisão de engine único movida para a Fase 2 | `PropertyMap.tsx`, `globals.css` | — | Reclassificado |
+| 1.2 | Unificar domínio imóveis: extrair núcleo comum de `src/modules/imoveis` (site público) e `src/components/backoffice/imoveis` (backoffice) — **ambos vivos**, nenhum lado pode ser deletado | `src/modules/imoveis/**`, `src/components/backoffice/imoveis/**` | Médio-alto | Pendente (PR dedicado) |
+| 1.3 | Consolidar os 3 MediaUploaders em 1 componente com variantes (simples / com docs / com ordenação dnd-kit) | `components/ui`, `modules/imoveis`, `backoffice/imoveis` | Médio | Pendente (PR dedicado + UI_REGRESSION_POLICY) |
+| 1.4 | Triagem dos 662 TODOs → fechar triviais, converter os estruturais em issues | `src/**` | Baixo | Pendente |
+| 1.5 | ~~Rotular dados de fallback na página `/inteligencia`~~ **Já implementado**: `DataSourceBadge` exibe "Estimativa IMI" quando `dataSource === 'fallback'` | `IntelligenceDashboard.tsx` | — | Concluído (pré-existente) |
 
 ### Fase 2 — Map Intelligence Layer (upgrade dos mapas)
 - Extrair camada comum `src/lib/map-intelligence/` (câmera, tiles, georef, clustering, camadas) usada pelos 4 mapas MapLibre.
@@ -112,4 +121,13 @@ Alto Bellevue** (`.claude/ALTO_BELLEVUE_LOCATION.md`).
 
 ---
 
-**Próximo passo**: aprovação deste plano → executar Fase 1 (itens 1.1–1.5) em PRs pequenos e verificáveis.
+**Próximo passo**: executar itens 1.2 e 1.3 em PRs dedicados e verificáveis (com screenshots antes/depois
+conforme `UI_REGRESSION_POLICY`), e 1.4 como varredura incremental. Fase 2 inicia pela decisão de engine
+único de mapa + extração da camada `map-intelligence`.
+
+---
+
+**Registro de verificação (2026-07-03)**: os achados da auditoria inicial foram re-verificados antes de
+qualquer alteração de código. Três correções registradas: (a) `mapbox-gl` está vivo via import dinâmico;
+(b) `src/modules/imoveis` é usado pelo site público; (c) a rotulagem de fallback já existia. Nenhuma
+mudança de código destrutiva foi executada com base na auditoria não verificada.
