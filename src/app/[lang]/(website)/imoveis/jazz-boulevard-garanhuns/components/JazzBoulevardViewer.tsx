@@ -283,6 +283,12 @@ const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)
 
 function ComparePanel({ units, whatsappPhone, onClose }: { units: IMIProperty[]; whatsappPhone: string; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
   const [a, b] = units
   const planA = (a.metadata?.planType as string) ?? ''
   const planB = (b.metadata?.planType as string) ?? ''
@@ -316,7 +322,7 @@ function ComparePanel({ units, whatsappPhone, onClose }: { units: IMIProperty[];
               Comparação de Unidades
             </span>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+          <button onClick={onClose} aria-label="Fechar comparação" className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
             <XIcon size={15} style={{ color: '#948F84' }} />
           </button>
         </div>

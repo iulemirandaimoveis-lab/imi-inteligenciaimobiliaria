@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-07-03 · Sessão: Refinamento de sistema — infra de testes + engine de mapa + UX (FABLE SUPREME CTO MODE)
+
+**Branch**: `claude/imi-system-refinement-ys3w7d`
+
+### Código alterado (fixes de auditoria profunda)
+- **AltoBellevueGeoMap**: (1) visibilidade de camadas reaplicada após remount do mapa (toggle claro/escuro dessincronizava painel × mapa); (2) fullscreen agora só via evento `fullscreenchange` (iOS Safari ficava preso em "Minimizar"); (3) `.catch` no init do engine — falha de import do maplibre não deixa mais spinner infinito; (4) captura da instância antes do evento `load` (vazava mapa/WebGL ao desmontar cedo); (5) aria-labels nos botões icon-only (painel de lote ×2, amenity modal, painel de camadas).
+- **useLotCart**: sincronização entre instâncias na mesma página via evento `imi:lot-cart-sync` + `storage` (cross-tab). Corrige FAB de proposta obsoleto entre vistas do explorador (raiz do sintoma tratado no PR #342).
+- **Jazz Boulevard**: back-link com prefixo de idioma (`/${lang}/...`); UnitGrid não renderiza mais unidades `hidden` (eram invisíveis porém clicáveis/focáveis); Escape fecha UnitDetailPanel e ComparePanel; aria-labels nos botões de fechar.
+- **Jazz LP (CONVERSÃO)**: 3 links `wa.me/5581999999999` (placeholder morto) → número real `5581986141487`.
+
+### Infra de testes criada
+- `playwright.config.ts`: projetos desktop (1440×900) + mobile (Pixel 7), modo remoto via `BASE_URL`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE` p/ sandboxes.
+- `e2e/fixtures.ts`: fixture `consoleErrors` (gate zero-erro com allowlist de terceiros), `expectNoHorizontalOverflow`, matriz `VIEWPORTS` (8 tamanhos).
+- Novos specs (84 testes no total): `alto-bellevue` (incl. invariante do link do Maps), `jazz-boulevard` (incl. regressões desta sessão), `users-console` (fronteiras de auth sem credenciais), `responsive` (matriz), `a11y` (nomes acessíveis/alt/rel/lang).
+- Jest: `use-lot-cart-sync.test.tsx` (6 testes — sync entre instâncias, anti-loop, corrupção de storage).
+- Scripts: `test:e2e`, `test:e2e:prod`.
+
+### Validação
+- type-check ✅ · lint ✅ · jest 60 suítes, 822 ✅ / 5 skipped · `playwright test --list` 84 testes ✅.
+- Execução E2E não foi possível neste sandbox (rede nega produção; sem `.env.local` p/ dev server) — specs são read-only e rodam local/CI.
+
+### Risco
+- Baixo. Mudanças cirúrgicas em componentes client; nenhuma mudança de auth/banco/billing. Localização/tour Alto Bellevue intocados (agora com gate E2E).
+
 ## 2026-07-03 · Sessão: Spatial Intelligence Fase 1 — estabilização do motor de mapas
 
 **Branch**: `claude/imi-spatial-intelligence-vision-1ojqvc`
@@ -20,6 +44,8 @@
 
 ### Risco
 - Baixo: sem mudança de arquitetura, sem tocar auth/banco; gestos de toque são a área mais sensível (validar pinch em iOS real).
+
+## 2026-07-02 · Sessão: Auditoria de inteligência de projeto
 
 **Branch**: `claude/project-intelligence-audit-9vzb7e`
 

@@ -26,6 +26,8 @@
 | P16 | Parsing de planilha só via adapter `src/lib/spreadsheet/` (nunca xlsx/exceljs direto) | `src/lib/spreadsheet/index.ts` |
 | P17 | Header de segurança tem fonte única e escopada (X-Frame-Options no next.config, não no middleware) | `next.config.js` / `middleware.ts` (D-12) |
 | P18 | HTML de banco/usuário em `dangerouslySetInnerHTML` só via `sanitizeHtml()` (DOMPurify); nunca regex | `src/lib/sanitize-html.ts` (T-07) |
+| P19 | Estado persistido em localStorage com múltiplas instâncias de hook na mesma página: sincronizar por evento custom + `storage` (nunca confiar só na hidratação do mount) | `src/hooks/useLotCart.ts` |
+| P20 | E2E: specs read-only com fixture `consoleErrors` + `expectNoHorizontalOverflow`; invariantes de cliente (link Maps AB) viram teste | `e2e/fixtures.ts`, `e2e/alto-bellevue.spec.ts` |
 
 ## Anti-Padrões (nunca)
 
@@ -44,6 +46,8 @@
 | A11 | Criar policy RLS sem `ENABLE ROW LEVEL SECURITY` na tabela | policy fica inerte, anon herda GRANT → IDOR (F-09/FX-06) |
 | A12 | Rota pública mutar objeto por UUID cru confiando só na RLS | UUID não é segredo; validar token/ownership no handler (P15) |
 | A13 | Importar pacote baseado em jsdom/canvas/nativo em Server Component sem externalizar | quebra `next build` (asset ENOENT); usar `serverComponentsExternalPackages` (FX-07) |
+| A14 | Esconder elemento interativo com `opacity: 0` (fica clicável/focável) | remover do DOM/filtrar a lista (bug das unidades hidden do Jazz) |
+| A15 | `setState` otimista para estado que o browser controla (fullscreen, permissões) | iOS sem a API deixa a UI presa; ler só do evento nativo (`fullscreenchange`) |
 
 ---
 **Atualizado**: 2026-07-02

@@ -46,6 +46,22 @@
 - **Prevenção (A13)**: pacotes baseados em jsdom/canvas/nativos usados em Server Components devem ir em `serverComponentsExternalPackages`. Ao adicionar dep server-side pesada, rodar `next build` (tsc/jest não pegam erro de bundling).
 - **Confiança**: alta (erro e fix documentados do Next; CSS confirmado em node_modules).
 
+## FX-08 · LP do Jazz Boulevard com WhatsApp placeholder (leads perdidos)
+- **Sintoma**: 3 CTAs da LP de investimento abriam `wa.me/5581999999999` — número inexistente; todo lead da LP morria em silêncio.
+- **Causa-raiz**: placeholder de desenvolvimento nunca substituído; nenhum teste/grep guardava o número real (`5581986141487`).
+- **Afetou**: conversão da LP `/imoveis/jazz-boulevard-garanhuns/lp` desde o lançamento da página.
+- **Solução**: número real nos 3 links (sessão 2026-07-03); teste E2E `jazz-boulevard.spec.ts` falha se `5581999999999` reaparecer em qualquer uma das duas páginas.
+- **Prevenção**: contatos/URLs de cliente viram constante única + gate E2E (mesmo padrão do link do Maps do AB).
+- **Confiança**: alta (grep confirmou que o número real é o usado em todo o resto do site).
+
+## FX-09 · Estado dessincronizado entre instâncias do carrinho de lotes
+- **Sintoma**: adicionar lote na vista "Satélite + Lotes" não atualizava o FAB de proposta da vista "Satélite" (e vice-versa) até remontar.
+- **Causa-raiz**: `useLotCart` hidratava do localStorage só no mount; múltiplas instâncias no mesmo page tree nunca se falavam (o PR #342 compartilhou a CHAVE, não o ESTADO).
+- **Afetou**: fluxo de proposta no explorador do Alto Bellevue.
+- **Solução**: evento custom `imi:lot-cart-sync` + listener `storage` (cross-tab) com corte de eco por serialização (P19); 6 testes jest.
+- **Prevenção**: P19 em KNOWN_PATTERNS.
+- **Confiança**: alta (testes reproduzem o bug e o anti-loop).
+
 ---
 **Template para nova entrada**: sintoma / causa-raiz / afetou / solução / prevenção / confiança.
-**Atualizado**: 2026-07-02
+**Atualizado**: 2026-07-03

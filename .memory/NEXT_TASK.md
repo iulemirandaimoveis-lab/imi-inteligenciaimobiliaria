@@ -1,6 +1,11 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-03 (sessão spatial-intelligence Fase 1)
+**Atualizado**: 2026-07-03 (duas sessões paralelas: refinamento testes/UX + spatial-intelligence Fase 1)
+
+## Novidades da sessão de refinamento que afetam a fila
+- E2E agora tem 7 specs/84 testes — candidato natural a job de CI (rodar contra preview do Vercel via `BASE_URL`).
+- Controles mortos no console /users (switcher de empreendimento, sino) — decidir: implementar ou ocultar.
+- Visual regression (`toHaveScreenshot` nos mapas) segue pendente (P2 da TESTING_STRATEGY).
 
 ## Spatial Intelligence — próximo passo (Fase 2)
 Fase 1 (estabilização do motor de mapas) entregue. Fase 2 candidatos, em ordem:

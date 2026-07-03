@@ -641,6 +641,7 @@ function LotDetailPanel({
           </div>
           <button
             onClick={onClose}
+            aria-label="Fechar detalhes do lote"
             className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors flex-shrink-0"
             style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.50)' }}
           >
@@ -791,7 +792,7 @@ function LotDetailPanel({
         </div>
         {/* Close */}
         <div className="absolute top-3 right-4">
-          <button onClick={onClose} className="w-7 h-7 flex items-center justify-center rounded-full" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.50)' }}>
+          <button onClick={onClose} aria-label="Fechar detalhes do lote" className="w-7 h-7 flex items-center justify-center rounded-full" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.50)' }}>
             <X size={13} />
           </button>
         </div>
@@ -946,7 +947,7 @@ function AmenityModal({ amenity, amenityOverrides, onClose }: {
               <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(200,164,74,0.80)', textTransform: 'uppercase', letterSpacing: '0.2em', margin: '0 0 4px' }}>Área Comum</p>
               <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'Outfit', sans-serif" }}>{title}</h3>
             </div>
-            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.50)' }}>
+            <button onClick={onClose} aria-label="Fechar área comum" className="w-10 h-10 flex items-center justify-center rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.50)' }}>
               <X size={14} />
             </button>
           </div>
@@ -1032,7 +1033,7 @@ function LayerPanel({
     >
       <div className="flex items-center justify-between px-3 py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         <span style={{ fontSize: 9, fontWeight: 800, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.2em' }}>Camadas</span>
-        <button onClick={onClose} style={{ color: 'rgba(255,255,255,0.40)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}><X size={12} /></button>
+        <button onClick={onClose} aria-label="Fechar painel de camadas" style={{ color: 'rgba(255,255,255,0.40)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex' }}><X size={12} /></button>
       </div>
       {ALL_LAYER_GROUPS.map(group => {
         const on = active.has(group.id);
@@ -1210,6 +1211,11 @@ export default function AltoBellevueGeoMap({
   const [activeLayers, setActiveLayers] = useState<Set<LayerGroupId>>(
     new Set(['lots', 'streets', 'perimeter', 'amenities', 'green', 'labels'])
   );
+  // Ref espelho para reaplicar a visibilidade quando o mapa remonta (toggle
+  // claro/escuro) — sem ele, as camadas voltavam todas visíveis com o painel
+  // de camadas ainda marcando "off" (estado dessincronizado).
+  const activeLayersRef = useRef(activeLayers);
+  useEffect(() => { activeLayersRef.current = activeLayers; }, [activeLayers]);
 
   // ── Carrinho de lotes / proposta (compartilhado com a vista "Plano") ───────
   const devSlug = 'alto-bellevue';
@@ -1286,6 +1292,14 @@ export default function AltoBellevueGeoMap({
 
       addABLayers(map, mapData, mergedDbLots, darkMode);
 
+      // Reaplica a visibilidade escolhida pelo usuário (sobrevive ao remount).
+      for (const group of ALL_LAYER_GROUPS) {
+        if (activeLayersRef.current.has(group.id)) continue;
+        for (const layerId of LAYER_GROUP_MAP[group.id]) {
+          if (map.getLayer(layerId)) map.setLayoutProperty(layerId, 'visibility', 'none');
+        }
+      }
+
       // Abre já enquadrado no empreendimento inteiro (todas as telas).
       fitMapToDev(map, mapData, 0);
 
@@ -1337,6 +1351,15 @@ export default function AltoBellevueGeoMap({
 
       setMapReady(true);
       mapRef.current = map;
+    }).then((map) => {
+      // Captura a instância assim que criada (antes do evento 'load') — sem
+      // isso, desmontar durante o carregamento do estilo vazava o mapa/WebGL.
+      if (cancelled) { map.remove(); return; }
+      mapInst = map;
+    }).catch(() => {
+      // Falha ao carregar o engine (import dinâmico do maplibre-gl offline/CDN)
+      // — sem isso o overlay de loading giraria para sempre.
+      if (!cancelled) setDataError('Não foi possível carregar o mapa.');
     });
 
     return () => {
@@ -1433,14 +1456,13 @@ export default function AltoBellevueGeoMap({
     return () => { clearTimeout(t); window.removeEventListener('resize', onResize); };
   }, [mapReady, mapData, selectedLot, selectedAmenity]);
 
+  // O estado vem só do evento 'fullscreenchange' — setar otimista aqui deixava
+  // o botão preso em "Minimizar" no iPhone (Safari iOS não tem requestFullscreen).
   const toggleFullscreen = useCallback(() => {
-    const el = document.documentElement;
     if (!document.fullscreenElement) {
-      el.requestFullscreen?.();
-      setIsFullscreen(true);
+      document.documentElement.requestFullscreen?.()?.catch(() => {});
     } else {
-      document.exitFullscreen?.();
-      setIsFullscreen(false);
+      document.exitFullscreen?.()?.catch(() => {});
     }
   }, []);
 

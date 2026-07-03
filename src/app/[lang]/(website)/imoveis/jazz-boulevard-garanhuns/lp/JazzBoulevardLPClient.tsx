@@ -120,7 +120,7 @@ export default function JazzBoulevardLPClient() {
       yield: calc.yieldAnual,
       created_at: new Date().toISOString()
     })
-    window.open('https://wa.me/5581999999999?text=Quero%20uma%20simula%C3%A7%C3%A3o%20completa%20do%20Jazz%20Boulevard', '_blank')
+    window.open('https://wa.me/5581986141487?text=Quero%20uma%20simula%C3%A7%C3%A3o%20completa%20do%20Jazz%20Boulevard', '_blank')
   }
 
   const scrollToCalc = () => {
@@ -185,7 +185,7 @@ export default function JazzBoulevardLPClient() {
               Simular meu investimento →
             </button>
             <a
-              href="https://wa.me/5581999999999"
+              href="https://wa.me/5581986141487"
               target="_blank"
               rel="noreferrer"
               className="rounded-full border px-7 py-3.5 text-sm text-white/80 backdrop-blur-sm transition hover:bg-white/10"
@@ -576,7 +576,7 @@ export default function JazzBoulevardLPClient() {
               Simular agora
             </button>
             <a
-              href="https://wa.me/5581999999999?text=Quero%20investir%20no%20Jazz%20Boulevard%20Garanhuns"
+              href="https://wa.me/5581986141487?text=Quero%20investir%20no%20Jazz%20Boulevard%20Garanhuns"
               target="_blank"
               rel="noreferrer"
               className="rounded-full border px-8 py-3.5 text-sm text-white/80 hover:bg-white/10 transition"

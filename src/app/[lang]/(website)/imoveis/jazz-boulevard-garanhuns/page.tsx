@@ -33,7 +33,7 @@ export default async function JazzBoulevardPage({
 }: {
   params: Promise<{ lang: string }>
 }) {
-  const { lang: _lang } = await params
+  const { lang } = await params
 
   return (
     <main className="bg-[#F5F0EA]">
@@ -60,7 +60,7 @@ export default async function JazzBoulevardPage({
         {/* Back link */}
         <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10">
           <Link
-            href="/imoveis/jazz-boulevard-garanhuns/lp"
+            href={`/${lang}/imoveis/jazz-boulevard-garanhuns/lp`}
             className="inline-flex items-center gap-1.5 text-white/60 hover:text-white transition-colors"
             style={{ fontSize: 13, fontWeight: 500, textDecoration: 'none' }}
           >
