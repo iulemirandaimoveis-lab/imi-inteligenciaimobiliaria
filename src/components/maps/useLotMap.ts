@@ -151,6 +151,9 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
 
   // Load static JSON (polygons from DWG/DXF)
   useEffect(() => {
+    // Flag de cancelamento: sem ela, trocar de empreendimento rapidamente deixa
+    // o fetch antigo resolver por último e sobrescrever o mapa do novo.
+    let cancelled = false;
     setIsLoading(true);
     setFetchError(null);
     fetch(jsonUrl)
@@ -159,38 +162,46 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
         return r.json();
       })
       .then((data: LotMapData) => {
+        if (cancelled) return;
         setStaticData(data);
         setRawLots(data.lots);
         setIsLoading(false);
       })
       .catch((err: Error) => {
+        if (cancelled) return;
         setFetchError(err.message ?? 'Erro ao carregar mapa de lotes.');
         setIsLoading(false);
       });
+    return () => { cancelled = true; };
   }, [jsonUrl]);
 
-  // Enrich with live Supabase data — overwrites status and dbId; price comes from static JSON
+  // Enrich with live Supabase data — overwrites status and dbId; price comes
+  // from static JSON. Depois da carga inicial, ressincroniza periodicamente
+  // (só com a aba visível) — é isto que honra o "status ao vivo" prometido na UI.
   useEffect(() => {
     if (!staticData || !developmentId) return;
 
     const supabase = createClient();
-    supabase
-      .from('subdivision_lots')
-      .select('id, quadra, lot_number, status, price')
-      .eq('development_id', developmentId)
-      .then(({ data }: { data: Array<{ id: string; quadra: string; lot_number: number; status: string; price: number | null }> | null }) => {
-        if (!data || data.length === 0) {
-          setIsLoading(false);
-          return;
-        }
+    let cancelled = false;
 
-        // Lookup: "QUADRA-LOTNUMBER" → db row
-        const byKey = new Map(
-          data.map(u => [`${String(u.quadra).toUpperCase()}-${u.lot_number}`, u]),
-        );
+    const sync = (initial: boolean) => {
+      supabase
+        .from('subdivision_lots')
+        .select('id, quadra, lot_number, status, price')
+        .eq('development_id', developmentId)
+        .then(({ data }: { data: Array<{ id: string; quadra: string; lot_number: number; status: string; price: number | null }> | null }) => {
+          if (cancelled) return;
+          if (!data || data.length === 0) {
+            if (initial) setIsLoading(false);
+            return;
+          }
 
-        setRawLots(prev =>
-          prev.map(lot => {
+          // Lookup: "QUADRA-LOTNUMBER" → db row
+          const byKey = new Map(
+            data.map(u => [`${String(u.quadra).toUpperCase()}-${u.lot_number}`, u]),
+          );
+
+          const enrich = (lot: LotMapEntry): LotMapEntry => {
             const db = byKey.get(`${lot.quadra.toUpperCase()}-${parseInt(lot.lote, 10)}`);
             if (!db) return lot;
             return {
@@ -199,10 +210,29 @@ export function useLotMap(developmentId: string, jsonUrl: string): UseLotMapResu
               price: db.price ?? lot.price,
               dbId: db.id,
             };
-          }),
-        );
-        setIsLoading(false);
-      });
+          };
+
+          setRawLots(prev => prev.map(enrich));
+          setSelectedLot(prev => (prev ? enrich(prev) : prev));
+          if (initial) setIsLoading(false);
+        });
+    };
+
+    sync(true);
+
+    const REFRESH_MS = 45_000;
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible') sync(false);
+    }, REFRESH_MS);
+    // Voltou para a aba → ressincroniza na hora, sem esperar o próximo tick
+    const onVisible = () => { if (document.visibilityState === 'visible') sync(false); };
+    document.addEventListener('visibilitychange', onVisible);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, [staticData, developmentId]);
 
   // Detecta se o usuário logado é corretor/gestor

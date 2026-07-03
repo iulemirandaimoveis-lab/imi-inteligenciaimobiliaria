@@ -4,7 +4,22 @@
 
 ---
 
-## 2026-07-02 · Sessão: Auditoria de inteligência de projeto
+## 2026-07-03 · Sessão: Spatial Intelligence Fase 1 — estabilização do motor de mapas
+
+**Branch**: `claude/imi-spatial-intelligence-vision-1ojqvc`
+
+### O que foi feito (auditoria profunda + fixes)
+- `src/features/users/map/SatelliteMap.tsx`: reescrito como casca fina sobre o canônico `AerialSatelliteMap` — o console herdava o bug de tiles vazios (z>18, Esri) que o #339 só corrigiu numa das duas cópias; remove ~90 linhas duplicadas.
+- `src/components/maps/InteractiveLotMap.tsx`: pinch-zoom agora ancora no centro do pinch (antes `lastTouchCenter` era declarado e nunca usado → mapa "escorregava" dos dedos); two-finger pan; handoff pinch→pan sem salto; cancelamento do rAF de animação no unmount; alvos de toque ≥44px via `HitArea` invisível (chips 32–36px, botões 40px — sem mudança visual).
+- `src/components/maps/useLotMap.ts`: sync periódico de status (45s, só com aba visível + resync ao voltar à aba) — honra o "status ao vivo" prometido na UI, que só buscava 1×; flag de cancelamento nos fetches (race ao trocar de empreendimento); `selectedLot` também é atualizado no sync.
+- `src/components/maps/PropertyMap.tsx`: `mapLib` deixou de ser singleton de módulo anulado no unmount (quebrava 2ª instância viva) → `mapLibRef` por instância; `darkMode` adicionado aos deps de `addMarkers` (cor de pin ficava stale).
+- `src/features/users/map/MapMirrorView.tsx`: alvos de toque ≥44px nas tabs Satélite/Lotes e no seletor de projeto.
+
+### Validação
+- type-check ✅ · lint ✅ · jest map/lot suites 88/88 ✅ · suíte completa rodada na sessão.
+
+### Risco
+- Baixo: sem mudança de arquitetura, sem tocar auth/banco; gestos de toque são a área mais sensível (validar pinch em iOS real).
 
 **Branch**: `claude/project-intelligence-audit-9vzb7e`
 
