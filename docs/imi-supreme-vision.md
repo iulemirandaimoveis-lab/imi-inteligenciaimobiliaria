@@ -74,8 +74,13 @@ como um sistema único.
 - **3 MediaUploaders** distintos e todos em uso (`components/ui` 97L, `modules/imoveis` 314L,
   `backoffice/imoveis` 394L com ordenação dnd-kit) — consolidar em 1 componente com variantes é
   refactor com risco de regressão de UI (exige PR dedicado + `UI_REGRESSION_POLICY`).
-- **662 marcadores TODO/FIXME/not-implemented** em `src/` — hotspots em `components/maps/*`,
-  `backoffice/*`, `modules/imoveis/*`.
+- ~~662 marcadores TODO/FIXME~~ **Corrigido na triagem (2026-07-03)**: o número vinha de regex
+  case-insensitive capturando a palavra pt-BR "todos" e placeholders de formulário. O débito real é:
+  **3 comentários TODO** (`api/analytics/vitals` persistência; `app/layout.tsx` migração Next 15;
+  `lib/supabase/middleware.ts` gate de billing), **~8 aliases `@deprecated`** (o mais relevante:
+  `formatBRL` em `lib/commission.ts`, usado em 17 arquivos — migrar para `formatCurrency` de
+  `@/lib/format` é tarefa incremental) e **3 stubs de integração** documentados (Kling video em
+  `api/ai/router`; Google Ads e Meta Ads sync em `lib/ads/executor.ts`).
 - **4 mapas satélite/geo separados** implementando padrões próprios de câmera, tiles e georreferência
   — sem camada comum de "Map Intelligence".
 
@@ -95,7 +100,7 @@ como um sistema único.
 | 1.1 | ~~Remover `mapbox-gl` (dependência morta)~~ **Invalidado na verificação**: é engine dinâmico opcional do `PropertyMap`. Decisão de engine único movida para a Fase 2 | `PropertyMap.tsx`, `globals.css` | — | Reclassificado |
 | 1.2 | Unificar domínio imóveis: extrair núcleo comum de `src/modules/imoveis` (site público) e `src/components/backoffice/imoveis` (backoffice) — **ambos vivos**, nenhum lado pode ser deletado | `src/modules/imoveis/**`, `src/components/backoffice/imoveis/**` | Médio-alto | Pendente (PR dedicado) |
 | 1.3 | Consolidar os 3 MediaUploaders em 1 componente com variantes (simples / com docs / com ordenação dnd-kit) | `components/ui`, `modules/imoveis`, `backoffice/imoveis` | Médio | Pendente (PR dedicado + UI_REGRESSION_POLICY) |
-| 1.4 | Triagem dos 662 TODOs → fechar triviais, converter os estruturais em issues | `src/**` | Baixo | Pendente |
+| 1.4 | Triagem de TODOs/débito → inventário real (3 TODOs + 8 `@deprecated` + 3 stubs; "662" era falso positivo) e remoção dos shims deprecated sem uso (`lib/supabase.ts`, `lib/send-notification.ts`, `lib/design-system/tokens.ts`) | `src/lib/**` | Baixo | **Concluído** (restam: migração `formatBRL`→`formatCurrency` em 17 arquivos, incremental) |
 | 1.5 | ~~Rotular dados de fallback na página `/inteligencia`~~ **Já implementado**: `DataSourceBadge` exibe "Estimativa IMI" quando `dataSource === 'fallback'` | `IntelligenceDashboard.tsx` | — | Concluído (pré-existente) |
 
 ### Fase 2 — Map Intelligence Layer (upgrade dos mapas)
