@@ -55,6 +55,11 @@ test.describe('Flow 2: Login funciona', () => {
     })
 })
 
+// Alvo remoto (BASE_URL ≠ localhost) = produção/preview: testes MUTANTES não
+// podem rodar — criariam dados reais (lead de contato, e-mail).
+const E2E_BASE = process.env.BASE_URL || 'http://localhost:3000'
+const isRemoteTarget = !E2E_BASE.includes('localhost') && !E2E_BASE.includes('127.0.0.1')
+
 test.describe('Flow 3: API routes respond', () => {
     test('GET /api/tracking/analytics returns data', async ({ request }) => {
         const response = await request.get('/api/tracking/analytics')
@@ -68,6 +73,7 @@ test.describe('Flow 3: API routes respond', () => {
     })
 
     test('POST /api/contact accepts form data', async ({ request }) => {
+        test.skip(isRemoteTarget, 'mutante — cria lead real; só roda contra dev server local')
         const response = await request.post('/api/contact', {
             data: {
                 name: 'Playwright Test',
