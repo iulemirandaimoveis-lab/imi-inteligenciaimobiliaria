@@ -2,10 +2,6 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { Development } from '@/app/[lang]/(website)/imoveis/types/development'
 
-// Lazy-loaded map library singleton (maplibre-gl) — cached across renders
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let mapLib: any = null
-
 const CARTO_DARK  = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
 const CARTO_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 
@@ -132,6 +128,11 @@ export default function PropertyMap({
     const mapContainer = useRef<HTMLDivElement>(null)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const map = useRef<any>(null)
+    // Biblioteca GL carregada sob demanda, escopada à instância — um singleton
+    // de módulo aqui quebraria a segunda instância viva quando a primeira
+    // desmontasse (o cleanup anulava a referência compartilhada).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mapLibRef = useRef<any>(null)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const markersOnMap = useRef<Map<string, any>>(new Map())
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -192,6 +193,7 @@ export default function PropertyMap({
     }, [])
 
     const addMarkers = useCallback((devs: Development[]) => {
+        const mapLib = mapLibRef.current
         if (!map.current || !mapLib) return
         clearMarkers()
 
@@ -367,9 +369,10 @@ export default function PropertyMap({
                 m.getElement().style.display = showClusters ? 'none' : ''
             })
         }
-    }, [clearMarkers, lang])
+    }, [clearMarkers, lang, darkMode])
 
     const fitToDevs = useCallback((devs: Development[], animate = true) => {
+        const mapLib = mapLibRef.current
         if (!map.current || !mapLib || devs.length === 0) return
 
         if (devs.length === 1) {
@@ -415,6 +418,7 @@ export default function PropertyMap({
     // ─── One-time cluster layer setup (called inside 'load' event) ────────────
 
     const setupClusterLayers = useCallback(() => {
+        const mapLib = mapLibRef.current
         if (!map.current || !mapLib || clusterReady.current) return
 
         map.current.addSource('imi-properties', {
@@ -509,9 +513,9 @@ export default function PropertyMap({
                 const provider = getMapProvider()
                 if (provider.engine === 'mapbox') {
                     const mod = await import('mapbox-gl')
-                    mapLib = mod.default
-                    mapLib.accessToken = provider.token
-                    map.current = new mapLib.Map({
+                    mapLibRef.current = mod.default
+                    mapLibRef.current.accessToken = provider.token
+                    map.current = new mapLibRef.current.Map({
                         container: mapContainer.current!,
                         style: darkMode
                             ? 'mapbox://styles/mapbox/dark-v11'
@@ -522,8 +526,8 @@ export default function PropertyMap({
                     })
                 } else {
                     const mod = await import('maplibre-gl')
-                    mapLib = mod.default
-                    map.current = new mapLib.Map({
+                    mapLibRef.current = mod.default
+                    map.current = new mapLibRef.current.Map({
                         container: mapContainer.current!,
                         style: darkMode ? CARTO_DARK : CARTO_LIGHT,
                         center: REGIONS[0].center,
@@ -533,7 +537,7 @@ export default function PropertyMap({
                 }
 
                 map.current.addControl(
-                    new mapLib.NavigationControl({ showCompass: false }),
+                    new mapLibRef.current.NavigationControl({ showCompass: false }),
                     'bottom-right'
                 )
 
@@ -555,7 +559,7 @@ export default function PropertyMap({
             if (map.current) {
                 map.current.remove()
                 map.current = null
-                mapLib = null
+                mapLibRef.current = null
             }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps

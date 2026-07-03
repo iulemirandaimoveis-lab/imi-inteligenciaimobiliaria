@@ -117,12 +117,14 @@ export function MapMirrorView({
                 type="button"
                 onClick={() => setActiveId(p.projectId)}
                 style={{
+                  position: 'relative',
                   display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
                   fontFamily: T.fSans, fontSize: 12.5, fontWeight: 600,
                   color: activeId === p.projectId ? '#1A1206' : T.t2,
                   background: activeId === p.projectId ? T.gold : 'transparent',
                 }}
               >
+                <HitArea vertical={7} />
                 <Building2 size={13} /> {p.name}
               </button>
             ))}
@@ -191,6 +193,12 @@ export function MapMirrorView({
   )
 }
 
+/** Área de toque invisível — leva alvos visualmente compactos ao mínimo de
+ *  44px (Apple HIG) sem alterar o desenho; o toque borbulha para o botão pai. */
+function HitArea({ vertical }: { vertical: number }) {
+  return <span aria-hidden style={{ position: 'absolute', top: -vertical, bottom: -vertical, left: 0, right: 0 }} />
+}
+
 function ViewTab({
   active,
   disabled,
@@ -211,12 +219,14 @@ function ViewTab({
       disabled={disabled}
       title={disabled ? 'Sem âncora geográfica para este empreendimento' : label}
       style={{
+        position: 'relative',
         display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', borderRadius: 9, border: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.4 : 1,
         fontFamily: T.fSans, fontSize: 13, fontWeight: 600,
         color: active ? '#1A1206' : T.t2, background: active ? T.gold : 'transparent',
       }}
     >
+      <HitArea vertical={5} />
       {icon} {label}
     </button>
   )

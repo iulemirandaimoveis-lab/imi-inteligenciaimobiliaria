@@ -238,6 +238,10 @@ export default function InteractiveLotMap({
     animRef.current = requestAnimationFrame(tick);
   }, []);
 
+  useEffect(() => () => {
+    if (animRef.current !== null) cancelAnimationFrame(animRef.current);
+  }, []);
+
   // ─── Zoom ────────────────────────────────────────────────────────────────────
   const zoom = useCallback((factor: number, pivotX?: number, pivotY?: number) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
@@ -337,17 +341,38 @@ export default function InteractiveLotMap({
   }, [vb]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+
     if (e.touches.length === 2) {
       const dx = e.touches[0].clientX - e.touches[1].clientX;
       const dy = e.touches[0].clientY - e.touches[1].clientY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (lastDist.current !== null) zoom(lastDist.current / dist);
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      // Pivot no ponto do mapa sob o centro do pinch — sem isto o zoom ancora
+      // no centro do viewport e o mapa "escorrega" para longe dos dedos.
+      const px = vbLive.current.x + (cx - rect.left) / rect.width * vbLive.current.w;
+      const py = vbLive.current.y + (cy - rect.top) / rect.height * vbLive.current.h;
+      if (lastDist.current !== null) zoom(lastDist.current / dist, px, py);
+      // Two-finger pan: acompanha o deslocamento do centro do pinch
+      if (lastTouchCenter.current) {
+        const mdx = -(cx - lastTouchCenter.current.x) / rect.width * vbLive.current.w;
+        const mdy = -(cy - lastTouchCenter.current.y) / rect.height * vbLive.current.h;
+        setVb((prev: ViewBox) => ({ ...prev, x: prev.x + mdx, y: prev.y + mdy }));
+      }
       lastDist.current = dist;
+      lastTouchCenter.current = { x: cx, y: cy };
       dragStart.current = null;
-    } else if (e.touches.length === 1 && dragStart.current) {
-      const svg = svgRef.current;
-      if (!svg) return;
-      const rect = svg.getBoundingClientRect();
+    } else if (e.touches.length === 1) {
+      if (!dragStart.current) {
+        // Dedo que sobrou de um pinch — re-ancora para o pan continuar sem salto
+        dragStart.current = { mx: e.touches[0].clientX, my: e.touches[0].clientY, vx: vbLive.current.x, vy: vbLive.current.y };
+        lastDist.current = null;
+        lastTouchCenter.current = null;
+        return;
+      }
       const ddx = -(e.touches[0].clientX - dragStart.current.mx) / rect.width * vb.w;
       const ddy = -(e.touches[0].clientY - dragStart.current.my) / rect.height * vb.h;
       setVb((prev: ViewBox) => ({ ...prev, x: dragStart.current!.vx + ddx, y: dragStart.current!.vy + ddy }));
@@ -802,6 +827,13 @@ export default function InteractiveLotMap({
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+/** Área de toque invisível — leva alvos visualmente compactos ao mínimo de
+ *  44px (Apple HIG) sem alterar o desenho. O span é filho do botão, então o
+ *  toque borbulha para o onClick normalmente. */
+function HitArea({ vertical }: { vertical: number }) {
+  return <span aria-hidden style={{ position: 'absolute', top: -vertical, bottom: -vertical, left: 0, right: 0 }} />;
+}
+
 function StatusChip({
   label, active, activeColor, onClick,
 }: {
@@ -813,7 +845,7 @@ function StatusChip({
   return (
     <button
       onClick={onClick}
-      className="shrink-0 flex items-center gap-1.5 px-3.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
+      className="relative shrink-0 flex items-center gap-1.5 px-3.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
       style={{
         height: 36,
         minHeight: 36,
@@ -822,6 +854,7 @@ function StatusChip({
         border: active ? `1.5px solid ${activeColor}44` : '1.5px solid rgba(255,255,255,0.08)',
       }}
     >
+      <HitArea vertical={4} />
       {active && (
         <span
           className="inline-block w-1.5 h-1.5 rounded-full shrink-0"
@@ -844,7 +877,7 @@ function QuadraChip({
   return (
     <button
       onClick={onClick}
-      className="shrink-0 flex items-center gap-1.5 px-3 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
+      className="relative shrink-0 flex items-center gap-1.5 px-3 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A44A]"
       style={{
         height: 32,
         minHeight: 32,
@@ -853,6 +886,7 @@ function QuadraChip({
         border: active ? `1.5px solid rgba(200,164,74,0.35)` : '1.5px solid rgba(255,255,255,0.08)',
       }}
     >
+      <HitArea vertical={6} />
       {label}
       {count !== undefined && count > 0 && (
         <span
@@ -881,7 +915,7 @@ function MapCtrlBtn({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="w-10 h-10 flex items-center justify-center rounded-xl text-white transition-all active:scale-95"
+      className="relative w-10 h-10 flex items-center justify-center rounded-xl text-white transition-all active:scale-95"
       style={{
         background: 'rgba(11,25,40,0.90)',
         backdropFilter: 'blur(10px)',
@@ -891,6 +925,7 @@ function MapCtrlBtn({
         color: '#8E99AB',
       }}
     >
+      <HitArea vertical={2} />
       {children}
     </button>
   );
