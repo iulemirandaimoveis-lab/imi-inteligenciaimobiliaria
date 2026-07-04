@@ -18,6 +18,8 @@
 | D-12 | X-Frame-Options fonte única escopada no next.config | middleware não define header de frame |
 | D-13 | Planilha via adapter (ExcelJS), xlsx removido | importar só de src/lib/spreadsheet (P16) |
 
+- **D-14** Descoberta por Intenção client-side (`intentEngine.ts`) — dataset injetável para Fase 2.
+
 ## Suposições críticas (se quebrarem, muita coisa quebra)
 
 1. Vercel popula `x-vercel-ip-country` (locale) e roda em gru1.

@@ -207,3 +207,11 @@ usa service_role+token, funciona sob a RLS real).
 - Fix: next.config.js experimental.serverComponentsExternalPackages: ['isomorphic-dompurify'].
 - VERIFICADO com next build local: passou de "Collecting page data" para "Generating static pages (0/454)". Fix confirmado.
 - FAILURES FX-07, LEARNINGS L-16, KNOWN_PATTERNS A13.
+
+## 2026-07-04 · Sessão Supreme Vision: plano + Fase 1 executável + flagship Descoberta por Intenção
+- #346 (merged): docs/imi-supreme-vision.md — auditoria (com 3 correções pós re-verificação) + roadmap 4 fases.
+- #347 (merged): triagem real de TODOs ("662" era a palavra pt-BR "todos" em regex -i) + remoção de 3 shims @deprecated sem uso (−279 linhas; lib/supabase.ts instanciava browser client em module scope).
+- #349 (merged): JSDoc de formatBRL corrigido (formatCurrency NÃO é equivalente: 0 casas vs centavos) + item 1.6 no plano.
+- Flagship: intentEngine.ts (puro, D-14) + IntentDiscovery.tsx na /inteligencia + 10 testes.
+- Verificação visual SEM .env real: next dev com Supabase stub + Playwright/chromium — página cai no fallback por design. Screenshots desktop/mobile/query conferidos; 2 bugs pegos no visual (vírgula pt-BR; empate ordenado por fit arredondado — sort por exactFit).
+- Gates: tsc ok, lint ok, jest 869/874 (62 suítes).

@@ -2,7 +2,7 @@
 
 > LEIA PRIMEIRO em toda sessão. Atualize ao final de toda sessão. Máx ~60 linhas.
 
-**Atualizado**: 2026-07-03 · **Branch base**: main @ 67982a5
+**Atualizado**: 2026-07-04 · **Branch base**: main @ a3dba7d
 
 ## Saúde (última medição 2026-07-03)
 
@@ -10,7 +10,7 @@
 |---|---|
 | type-check (`tsc --noEmit`) | ✅ limpo |
 | lint (`next lint --quiet`) | ✅ limpo |
-| jest | ✅ 822/827 (5 skipped, 60 suítes) |
+| jest | ✅ 869/874 (5 skipped, 62 suítes) |
 | e2e | ✅ 7 specs / 84 testes (local/CI; fora do gate) |
 | build Vercel | ✅ (tipos ignorados por design — D-07) |
 
@@ -19,6 +19,8 @@
 Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n (`/[lang]`), backoffice admin (`/backoffice`), console de corretores IMI (`/users`, schema `imi`). 275 rotas de API. Empreendimentos-chave: Alto Bellevue, Miguel Marques, Jazz Boulevard.
 
 ## Trabalho recente (main)
+
+- 2026-07-04 (Supreme Vision): **Descoberta por Intenção** na /inteligencia — motor client-side `intentEngine.ts` (parser pt-BR + ranking nacional + explicação com percentil), seção `IntentDiscovery` no dashboard, 10 testes, verificação visual Playwright (desktop/mobile). #346 plano 4 fases merged; #347 triagem TODOs ("662" era falso positivo; −279 linhas de shims mortos) merged; #349 fix @deprecated formatBRL merged.
 
 - 2026-07-03 (branch refinement): infra E2E Playwright (fixtures + 5 specs novos, 84 testes), fixes do engine de mapa AB (camadas/fullscreen/erro/leak), sync real do carrinho entre instâncias (useLotCart), Jazz: lang no back-link, unidades hidden fora do DOM, Escape nos painéis, **WhatsApp placeholder da LP corrigido (conversão)**
 - 2026-07-03 (#344, main): Fase 1 mapas — satélite do console unificado no canônico (clamp z≤18), pinch com pivot correto + two-finger pan, status de lotes "ao vivo" real (polling 45s), PropertyMap sem singleton de módulo, touch targets ≥44px

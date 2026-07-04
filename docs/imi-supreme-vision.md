@@ -111,7 +111,10 @@ como um sistema único.
 - Explicação de bairro por IA no clique (rota nova `intelligence/neighborhood/explain` reutilizando o provider de `ai/analyze`).
 
 ### Fase 3 — Experiências proprietárias
-- **Busca por intenção**: entrada em linguagem natural no site e no console → tradução para `lots/recommend` + `intelligence/simulate` (o backend já existe; falta a experiência).
+- **Busca por intenção**: ✅ **Entregue em 2026-07-04 (primeira encarnação)** — seção "Descoberta por
+  Intenção" na `/inteligencia`: linguagem natural pt-BR + chips → ranking nacional com explicação e
+  percentil (`intentEngine.ts` client-side, D-14). Evolução: plugar dados reais (Fase 2) e estender
+  ao console (`lots/recommend` + `intelligence/simulate`).
 - **Promover o Digital Twin** do Alto Bellevue (tirar da flag após homologação) e generalizar o padrão para Jazz Boulevard.
 - **Modo comparação de investimento** ampliado (base: `lotmap/compare.ts` + `invest/simulate`).
 - **Storytelling espacial**: reutilizar o scrollytelling do Jazz como componente de plataforma.

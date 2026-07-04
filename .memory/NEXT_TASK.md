@@ -7,6 +7,10 @@
 - Controles mortos no console /users (switcher de empreendimento, sino) — decidir: implementar ou ocultar.
 - Visual regression (`toHaveScreenshot` nos mapas) segue pendente (P2 da TESTING_STRATEGY).
 
+## Supreme Vision — próximos passos (plano em docs/imi-supreme-vision.md)
+1. Plugar dados reais no motor de intenção (Fase 2): `rankByIntent(intents, dataset)` já aceita dataset externo — alimentar via `intelligence/*` quando houver fonte real.
+2. Itens 1.2 (unificar domínio imóveis), 1.3 (3 MediaUploaders) e 1.6 (formatadores BRL divergentes) — UI-visíveis, exigem UI_REGRESSION_POLICY (agora viável: dev server + Playwright com env stub, padrão validado em 2026-07-04).
+
 ## Spatial Intelligence — estado
 Fase 1 (estabilização) ✅ em main (#344). Fase 2 em curso:
 - ✅ Vista "Sat. + Lotes" espelhada no console (/users/map) — reusa AltoBellevueGeoMap.
