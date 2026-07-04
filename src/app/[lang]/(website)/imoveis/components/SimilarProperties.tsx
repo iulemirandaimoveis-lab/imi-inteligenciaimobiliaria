@@ -24,7 +24,7 @@ export default function SimilarProperties({ developments, lang }: SimilarPropert
     if (!developments.length) return null;
 
     return (
-        <section className="py-14 md:py-20" style={{ background: '#0B1928', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
+        <section className="py-9 sm:py-11 md:py-20" style={{ background: '#0B1928', borderTop: '1px solid rgba(200,164,74,0.08)' }}>
             <div className="container-custom">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />

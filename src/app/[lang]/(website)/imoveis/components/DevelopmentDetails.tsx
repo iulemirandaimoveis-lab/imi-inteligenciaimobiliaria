@@ -55,7 +55,7 @@ export default function DevelopmentDetails({ development, financingEnabled = tru
             variants={staggerContainer}
         >
             {/* Section heading — premium style */}
-            <motion.div variants={slideUp} className="mb-10">
+            <motion.div variants={slideUp} className="mb-6 sm:mb-8 md:mb-10">
                 <div className="flex items-center gap-3 mb-3">
                     <div className="w-8 h-[2px] rounded-full" style={{ background: '#B8B3A8' }} />
                     <span className="text-[10px] uppercase tracking-[0.25em] font-bold" style={{ color: '#948F84', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>Sobre</span>
@@ -84,7 +84,7 @@ export default function DevelopmentDetails({ development, financingEnabled = tru
             )}
 
             {/* Description */}
-            <motion.div variants={slideUp} className="mb-12">
+            <motion.div variants={slideUp} className="mb-7 sm:mb-9 md:mb-12">
                 <p className="leading-[1.9] text-[15px] md:text-base max-w-2xl"
                    style={{ fontFamily: "var(--fu, 'Outfit', sans-serif)", color: '#2D3748' }}>
                     {development.description}
@@ -122,7 +122,7 @@ export default function DevelopmentDetails({ development, financingEnabled = tru
             )}
 
             {/* Developer — elevated card */}
-            <motion.div variants={slideUp} className="mt-12 pt-10 border-t border-gray-100">
+            <motion.div variants={slideUp} className="mt-6 pt-6 sm:mt-8 sm:pt-8 md:mt-12 md:pt-10 border-t border-gray-100">
                 <div className="flex items-center gap-4 p-4 rounded-[10px]" style={{ background: 'rgba(11,25,40,0.03)', border: '1px solid rgba(11,25,40,0.06)' }}>
                     {development.developerLogo ? (
                         <div className="flex-shrink-0">
