@@ -2,7 +2,7 @@
 
 > LEIA PRIMEIRO em toda sessão. Atualize ao final de toda sessão. Máx ~60 linhas.
 
-**Atualizado**: 2026-07-03 · **Branch base**: main @ 67982a5
+**Atualizado**: 2026-07-04 · **Branch base**: main @ 67982a5
 
 ## Saúde (última medição 2026-07-03)
 

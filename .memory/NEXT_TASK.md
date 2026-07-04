@@ -1,6 +1,10 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-03 (duas sessões paralelas: refinamento testes/UX + spatial-intelligence Fase 1)
+**Atualizado**: 2026-07-04 (Correção: card no desktop)
+
+## Sessão de hoje
+- ✅ **Corrigido**: Card não abria no desktop — adicionado threshold de 3px no drag
+- ✅ PR #350 criada (em monitoramento de CI)
 
 ## Novidades da sessão de refinamento que afetam a fila
 - E2E agora tem 7 specs/84 testes — candidato natural a job de CI (rodar contra preview do Vercel via `BASE_URL`).
