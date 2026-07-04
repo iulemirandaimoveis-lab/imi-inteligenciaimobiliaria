@@ -2,6 +2,7 @@ import {
   parseIntent,
   rankByIntent,
   explainFit,
+  intentsToProfile,
   nationalDataset,
   DEFAULT_INTENTS,
   INTENTS,
@@ -77,6 +78,24 @@ describe('explainFit', () => {
     expect(text).toContain('valoriza +12,0% em 12m')
     expect(text).toContain('vende em ~40 dias')
     expect(text).toMatch(/à frente de \d+% do Brasil\./)
+  })
+})
+
+describe('intentsToProfile', () => {
+  it('renda/valorização sem sinal de moradia → investor', () => {
+    expect(intentsToProfile(['rental'])).toBe('investor')
+    expect(intentsToProfile(['appreciation', 'liquidity'])).toBe('investor')
+  })
+
+  it('moradia (padrão/entrada) sem sinal de investimento → resident', () => {
+    expect(intentsToProfile(['premium'])).toBe('resident')
+    expect(intentsToProfile(['affordable', 'liquidity'])).toBe('resident')
+  })
+
+  it('misto, só liquidez ou vazio → all', () => {
+    expect(intentsToProfile(['rental', 'premium'])).toBe('all')
+    expect(intentsToProfile(['liquidity'])).toBe('all')
+    expect(intentsToProfile([])).toBe('all')
   })
 })
 

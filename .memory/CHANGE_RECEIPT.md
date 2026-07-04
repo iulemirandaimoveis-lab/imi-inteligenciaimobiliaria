@@ -225,3 +225,12 @@ usa service_role+token, funciona sob a RLS real).
   `imoveis/page.tsx` (query com colunas históricas se o select completo falhar).
 - Verificação: select completo reproduzido via SQL retorna 7 empreendimentos; FK do embed
   `developers(name,logo_url)` confirmada; tsc ok, lint ok.
+
+## 2026-07-04 · Sessão Supreme Vision (cont.): ponte inteligência→inventário
+- IntentDiscovery ganha sub-seção "Do insight ao inventário": consome a rota pública
+  /api/intelligence/lots/recommend (antes sem NENHUM consumidor de UI) com perfil derivado
+  das intenções via intentsToProfile() (rental/appreciation→investor; premium/affordable→resident; misto→all).
+- Top-3 lotes reais do Alto Bellevue com IMI Score, preço/área e razão; CTA para o explorador /imoveis.
+- Falha/vazio da API → seção não renderiza (nunca estado quebrado); verificado visualmente com
+  Playwright (mock de rota para o estado com dados + estado oculto sem API).
+- Gates: tsc ok, jest 872/877 (+3 testes de intentsToProfile), lint ok, next build exit 0.

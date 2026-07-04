@@ -21,3 +21,10 @@
 ## Follow-ups
 - Fase 2: alimentar `rankByIntent(intents, dataset)` com dados reais de mercado.
 - Parser pode evoluir para IA mantendo o contrato `parseIntent()`.
+
+## Adendo (mesma data): ponte inteligência → inventário
+- `intentsToProfile()` no motor (+3 testes) traduz intenções para o perfil do ranking de lotes.
+- `MatchingLots` no IntentDiscovery: top-3 lotes reais do Alto Bellevue via
+  `/api/intelligence/lots/recommend` (rota pública que não tinha consumidor de UI),
+  com IMI Score, razões e CTA ao explorador. Oculta-se graciosamente sem dados.
+- Verificação visual com Playwright: estado com dados (mock de rota) e estado oculto.
