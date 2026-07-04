@@ -7,14 +7,17 @@
 - Controles mortos no console /users (switcher de empreendimento, sino) — decidir: implementar ou ocultar.
 - Visual regression (`toHaveScreenshot` nos mapas) segue pendente (P2 da TESTING_STRATEGY).
 
-## Spatial Intelligence — próximo passo (Fase 2)
-Fase 1 (estabilização do motor de mapas) entregue. Fase 2 candidatos, em ordem:
-1. Overlay georreferenciado dos lotes sobre o satélite (bloqueado por ≥3 pontos de
-   controle — scripts/cad/geo/); é o desbloqueio das camadas de inteligência no mapa real.
-2. Decidir destino do mapbox-gl (só ativa com NEXT_PUBLIC_MAPBOX_TOKEN 'pk.'; checar
-   Vercel; se nunca configurado, remover dep e simplificar PropertyMap).
-3. Decompor SubdivisionLotMap (1983 l) / AltoBellevueGeoMap (1651 l) antes de
-   adicionar camadas novas (heatmap de preço/m², liquidez) — evitar crescer monólitos.
+## Spatial Intelligence — estado
+Fase 1 (estabilização) ✅ em main (#344). Fase 2 em curso:
+- ✅ Vista "Sat. + Lotes" espelhada no console (/users/map) — reusa AltoBellevueGeoMap.
+- ⏳ **AÇÃO DO DONO**: preencher `scripts/cad/geo/control-points.json` (≥3 GCPs do
+  levantamento) e rodar `npm run geo:solve` — desbloqueia o ajuste fino do georef
+  (hoje caixa aproximada norte-acima + calibração manual ?calibrar=1).
+- Próximos (ordem): decidir destino do mapbox-gl (checar NEXT_PUBLIC_MAPBOX_TOKEN na
+  Vercel; sem token 'pk.' a dep é peso morto); decompor SubdivisionLotMap (1983 l) /
+  AltoBellevueGeoMap (1651 l) ANTES das camadas de inteligência (preço/m², liquidez);
+  Fase 3 = camadas de inteligência sobre o geo map (heatmap preço/m² já tem dados em
+  subdivision_lots.price + area_m2).
 
 ## Sem ação pendente do dono no banco
 Verificado em produção (projeto zocffccwjjyelwrgunhu): RLS habilitada em todo o schema public

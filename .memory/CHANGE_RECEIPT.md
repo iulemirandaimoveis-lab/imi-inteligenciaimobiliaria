@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-07-03 · Sessão: Spatial Intelligence Fase 2 — vista "Sat. + Lotes" no console
+
+**Branch**: `claude/imi-spatial-intelligence-vision-1ojqvc` (recomeçada de main @ eae934c após merge do #344)
+
+### O que foi feito
+- `src/features/users/map/MapMirrorView.tsx`: terceira vista **"Sat. + Lotes"** no espelho
+  do console (/users/map) reusando o componente canônico `AltoBellevueGeoMap` do site
+  público (mesmo padrão do JazzBoulevardViewer) — lotes georreferenciados clicáveis sobre
+  satélite real com status ao vivo, antes exclusivos do site público.
+  - Vista renderizada FORA do GlassCard: o backdrop-filter do card cria containing block
+    e cliparia o bottom-sheet/modal `position:fixed` do geo map no mobile.
+  - Default inteligente: satlotes (AB) → satélite (âncora) → lotes; fallback por projeto.
+  - Nota do satélite atualizada (aponta para a nova vista em vez de dizer "em andamento").
+- Descoberta de investigação: a infra de georef já existe (`alto-bellevue-geojson.ts`,
+  caixa aproximada + calibração de similaridade); os GCPs (`scripts/cad/geo/control-points.json`)
+  seguem PENDING e o arquivo proíbe inventá-los — o ajuste fino continua bloqueado no dono.
+
+### Validação
+- type-check ✅ · lint ✅ · jest 62 suítes, 859 ✅ / 5 skipped.
+
+### Risco
+- Baixo: aditivo (vista nova), componente canônico já em produção no site público.
+  Sensível: comportamento do bottom-sheet fixo no mobile dentro do console (validar em aparelho).
+
 ## 2026-07-03 · Sessão: Refinamento de sistema — infra de testes + engine de mapa + UX (FABLE SUPREME CTO MODE)
 
 **Branch**: `claude/imi-system-refinement-ys3w7d`
