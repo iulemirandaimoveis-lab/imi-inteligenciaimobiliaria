@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import PriceHeatmap from '@/components/intelligence/PriceHeatmap'
 import { LocationSearchPanel } from '@/components/intelligence/LocationSearchPanel'
+import IntentDiscovery from './IntentDiscovery'
 import { BRAZIL_FALLBACK_CITIES } from './brazilIntelligenceFallback'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -410,6 +411,9 @@ export default function IntelligenceDashboard({
           </div>
         </div>
       </section>
+
+      {/* ─── INTENT DISCOVERY (escopo nacional) ────────────────────── */}
+      <IntentDiscovery lang={lang} />
 
       {/* ─── NEIGHBORHOOD CARDS ────────────────────────────────────── */}
       <section className="py-10 md:py-14">

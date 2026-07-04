@@ -5,6 +5,10 @@
 
 ---
 
+## D-14 · 2026-07-04 — Motor de Descoberta por Intenção 100% client-side
+- **Decisão**: o ranking por intenção da `/inteligencia` (`intentEngine.ts`) roda no cliente sobre o dataset nacional (Estimativa IMI): parser pt-BR por regex + normalização min-max + score ponderado. Sem API nova, sem custo por consulta, funciona em preview/offline.
+- **Consequência**: quando houver fonte de dados de mercado real (Fase 2), o motor recebe o dataset por props/fetch sem mudar a interface (`rankByIntent(intents, dataset)`); o parser pode ser trocado por IA mantendo `parseIntent()` como contrato.
+
 ## D-13 · 2026-07-02 — Migração de parsing de planilha para adapter (xlsx→ExcelJS)
 - **Contexto**: `xlsx` (SheetJS) com prototype pollution + ReDoS **sem patch** (F-08/T-24).
 - **Decisão**: interface `SpreadsheetParser` (`src/lib/spreadsheet/`) com implementação ExcelJS; consumidores importam do índice, nunca do vendor. Limites anti-DoS (10MB, 100k linhas). `xlsx` removido.
