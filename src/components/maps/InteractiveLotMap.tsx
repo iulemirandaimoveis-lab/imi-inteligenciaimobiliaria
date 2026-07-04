@@ -312,10 +312,12 @@ export default function InteractiveLotMap({
 
   // ─── Pan (drag) ──────────────────────────────────────────────────────────────
   const dragStart = useRef<{ mx: number; my: number; vx: number; vy: number } | null>(null);
+  const dragMoved = useRef(false);
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if (e.button !== 0) return;
     dragStart.current = { mx: e.clientX, my: e.clientY, vx: vb.x, vy: vb.y };
+    dragMoved.current = false;
   }, [vb]);
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
@@ -323,12 +325,19 @@ export default function InteractiveLotMap({
     const svg = svgRef.current;
     if (!svg) return;
     const rect = svg.getBoundingClientRect();
-    const dx = -(e.clientX - dragStart.current.mx) / rect.width * vb.w;
-    const dy = -(e.clientY - dragStart.current.my) / rect.height * vb.h;
-    setVb((prev: ViewBox) => ({ ...prev, x: dragStart.current!.vx + dx, y: dragStart.current!.vy + dy }));
+    const dx = e.clientX - dragStart.current.mx;
+    const dy = e.clientY - dragStart.current.my;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist > 3) {
+      dragMoved.current = true;
+      const mapDx = -dx / rect.width * vb.w;
+      const mapDy = -dy / rect.height * vb.h;
+      setVb((prev: ViewBox) => ({ ...prev, x: dragStart.current!.vx + mapDx, y: dragStart.current!.vy + mapDy }));
+    }
   }, [vb]);
 
-  const onMouseUp = useCallback(() => { dragStart.current = null; }, []);
+  const onMouseUp = useCallback(() => { dragStart.current = null; dragMoved.current = false; }, []);
 
   // ─── Touch pinch-to-zoom & single-finger pan ─────────────────────────────────
   const lastDist = useRef<number | null>(null);
@@ -532,7 +541,7 @@ export default function InteractiveLotMap({
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
-          onClick={() => setSelectedLot(null)}
+          onClick={() => { if (!dragMoved.current) setSelectedLot(null); }}
           aria-label="Mapa interativo de lotes do empreendimento"
           role="application"
         >
