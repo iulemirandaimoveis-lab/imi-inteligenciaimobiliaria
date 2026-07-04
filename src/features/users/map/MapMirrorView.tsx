@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { Building2, MapPinned, RefreshCw, Satellite, LayoutGrid } from 'lucide-react'
+import { Building2, MapPinned, RefreshCw, Satellite, LayoutGrid, Layers } from 'lucide-react'
 import { tokens as T } from '../ui/tokens'
 import { GlassCard, Eyebrow, Spinner } from '../ui/primitives'
 
@@ -22,6 +22,14 @@ const SatelliteMap = dynamic(() => import('./SatelliteMap').then((m) => m.Satell
   ssr: false,
   loading: () => mapLoader,
 })
+
+// Lotes GEORREFERENCIADOS clicáveis sobre satélite real (WebGL) — reusa o
+// componente canônico do site público (mesma fonte de dados/status ao vivo);
+// hoje só o Alto Bellevue tem georreferenciamento resolvido.
+const AltoBellevueGeoMap = dynamic(
+  () => import('@/app/[lang]/(website)/imoveis/components/AltoBellevueGeoMap'),
+  { ssr: false, loading: () => mapLoader },
+)
 
 // Viewer de empreendimento VERTICAL (prédio) — torres/andares/unidades.
 // Reusa o componente canônico do site público (mesma fonte de dados); aqui é
@@ -46,7 +54,11 @@ export interface MapProject {
   geoAnchor: { lng: number; lat: number; zoom?: number } | null
 }
 
-type ViewMode = 'lotes' | 'satelite'
+type ViewMode = 'lotes' | 'satelite' | 'satlotes'
+
+/** Slug do único empreendimento com lotes georreferenciados sobre satélite hoje.
+ *  Quando outros ganharem transform SVG↔WGS84, promover isto a config. */
+const GEO_LOTS_SLUG = 'alto-bellevue'
 
 const LEGEND: { label: string; color: string }[] = [
   { label: 'Disponível', color: '#4ADE80' },
@@ -72,9 +84,14 @@ export function MapMirrorView({
   const isVertical = active?.kind === 'vertical'
   const hasMap = !!(active && active.developmentId && active.mapJsonUrl)
   const anchor = active?.geoAnchor ?? null
-  // Satélite é o destaque quando há âncora; senão cai no mapa de lotes.
-  const [view, setView] = useState<ViewMode>(anchor ? 'satelite' : 'lotes')
-  const mode: ViewMode = view === 'satelite' && !anchor ? 'lotes' : view
+  // Lotes georreferenciados sobre satélite (WebGL) — só onde o transform
+  // SVG↔WGS84 está resolvido (hoje: Alto Bellevue).
+  const hasGeoLots = active?.slug === GEO_LOTS_SLUG && !!active?.developmentId
+  // Destaque: satélite+lotes quando existe; senão satélite (âncora); senão lotes.
+  const [view, setView] = useState<ViewMode>(hasGeoLots ? 'satlotes' : anchor ? 'satelite' : 'lotes')
+  let mode: ViewMode = view
+  if (mode === 'satlotes' && !hasGeoLots) mode = anchor ? 'satelite' : 'lotes'
+  if (mode === 'satelite' && !anchor) mode = 'lotes'
 
   useEffect(() => {
     if (active?.name) onActiveProjectChange?.(active.name)
@@ -93,6 +110,8 @@ export function MapMirrorView({
             <span style={{ fontFamily: T.fSans, fontSize: 12 }}>
               {isVertical
                 ? 'Disponibilidade por torre, andar e unidade — status ao vivo.'
+                : mode === 'satlotes'
+                ? 'Lotes georreferenciados sobre satélite real — status ao vivo.'
                 : mode === 'satelite'
                 ? 'Vista de satélite real — Esri World Imagery.'
                 : 'Espelho do mapa oficial — status atualizado ao vivo a cada mudança.'}
@@ -103,7 +122,15 @@ export function MapMirrorView({
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           {/* View toggle: Lotes ↔ Satélite (só para loteamentos) */}
           {!isVertical && (
-            <div style={{ display: 'flex', gap: 4, padding: 4, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.glassBorder}` }}>
+            <div style={{ display: 'flex', gap: 4, padding: 4, borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.glassBorder}`, flexWrap: 'wrap' }}>
+              <ViewTab
+                active={mode === 'satlotes'}
+                disabled={!hasGeoLots}
+                disabledTitle="Lotes georreferenciados ainda não disponíveis para este empreendimento"
+                onClick={() => setView('satlotes')}
+                icon={<Layers size={15} />}
+                label="Sat. + Lotes"
+              />
               <ViewTab active={mode === 'satelite'} disabled={!anchor} onClick={() => setView('satelite')} icon={<Satellite size={15} />} label="Satélite" />
               <ViewTab active={mode === 'lotes'} onClick={() => setView('lotes')} icon={<LayoutGrid size={15} />} label="Lotes" />
             </div>
@@ -146,6 +173,20 @@ export function MapMirrorView({
       )}
 
       {/* Map */}
+      {!isVertical && mode === 'satlotes' && hasGeoLots ? (
+        // Fora do GlassCard de propósito: o backdrop-filter do card vira
+        // containing block e clipa o bottom-sheet/modal `position:fixed` do
+        // geo map no mobile. Container simples reproduz o mesmo enquadramento.
+        <div style={{ borderRadius: T.rLg, overflow: 'hidden', border: `1px solid ${T.glassBorder}`, boxShadow: T.shadowCard }}>
+          <AltoBellevueGeoMap
+            key={`geo-${active!.projectId}`}
+            developmentId={active!.developmentId!}
+            developmentName={active!.name}
+            whatsappPhone={active!.whatsappContact ?? undefined}
+            height="72vh"
+          />
+        </div>
+      ) : (
       <GlassCard padding={0} style={{ overflow: 'hidden' }}>
         {isVertical ? (
           <div style={{ background: '#F7F5F0' }}>
@@ -182,11 +223,21 @@ export function MapMirrorView({
           </div>
         )}
       </GlassCard>
+      )}
 
       {mode === 'satelite' && !isVertical && (
         <p style={{ fontFamily: T.fSans, fontSize: 11, color: T.t4, margin: '10px 2px 0' }}>
-          Âncora: {anchor?.lat.toFixed(6)}, {anchor?.lng.toFixed(6)}. O overlay georreferenciado
-          dos lotes sobre o satélite requer pontos de controle (≥3) — em andamento.
+          Âncora: {anchor?.lat.toFixed(6)}, {anchor?.lng.toFixed(6)}.
+          {hasGeoLots
+            ? ' Para ver os lotes sobre o satélite, use a vista "Sat. + Lotes".'
+            : ' O overlay georreferenciado dos lotes sobre o satélite requer pontos de controle (≥3) — em andamento.'}
+        </p>
+      )}
+      {mode === 'satlotes' && !isVertical && (
+        <p style={{ fontFamily: T.fSans, fontSize: 11, color: T.t4, margin: '10px 2px 0' }}>
+          Lotes georreferenciados clicáveis sobre satélite real (WebGL), com status ao vivo —
+          mesma fonte do site público. Posicionamento aproximado norte-acima; o ajuste fino
+          (rotação/escala) sairá dos pontos de controle do levantamento.
         </p>
       )}
     </div>
@@ -202,12 +253,15 @@ function HitArea({ vertical }: { vertical: number }) {
 function ViewTab({
   active,
   disabled,
+  disabledTitle,
   onClick,
   icon,
   label,
 }: {
   active: boolean
   disabled?: boolean
+  /** Tooltip específico quando desabilitado (default: sem âncora geográfica). */
+  disabledTitle?: string
   onClick: () => void
   icon: React.ReactNode
   label: string
@@ -217,7 +271,7 @@ function ViewTab({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      title={disabled ? 'Sem âncora geográfica para este empreendimento' : label}
+      title={disabled ? (disabledTitle ?? 'Sem âncora geográfica para este empreendimento') : label}
       style={{
         position: 'relative',
         display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', borderRadius: 9, border: 'none',
