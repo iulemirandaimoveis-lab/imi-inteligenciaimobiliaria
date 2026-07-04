@@ -40,7 +40,12 @@ export function calculateCommission(params: {
     }
 }
 
-/** @deprecated Use formatCurrency from @/lib/format instead */
+/**
+ * @deprecated Prefira formatCurrency de @/lib/format — mas a saída NÃO é idêntica:
+ * formatBRL emite centavos ("R$ 1.234,56") enquanto formatCurrency usa 0 casas por
+ * padrão ("R$ 1.235") e retorna "—" para null. Para paridade visual, migre com
+ * formatCurrency(v, { decimals: 2 }) e valide a tela afetada (UI_REGRESSION_POLICY).
+ */
 export function formatBRL(value: number): string {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
 }
