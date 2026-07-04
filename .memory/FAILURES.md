@@ -65,3 +65,18 @@
 ---
 **Template para nova entrada**: sintoma / causa-raiz / afetou / solução / prevenção / confiança.
 **Atualizado**: 2026-07-03
+
+## FX-10 · Catálogo público /imoveis 100% vazio ("Portfólio em Curadoria")
+- **Sintoma**: produção mostrava só o estado vazio; banco tinha 7 empreendimentos publicados.
+- **Causa-raiz**: PR #334 adicionou `cover_video_url` ao select, mas a coluna só existia na
+  migration manual `jazz_boulevard_EXECUTAR_NO_SUPABASE.sql` — executada em produção **parcialmente**
+  (todas as outras colunas existiam, essa não). PostgREST → 42703 → query inteira falha → `data=null`
+  → ImoveisClient cai no empty state. Sem alerta: só `console.error` no server.
+- **Afetou**: vitrine pública inteira (todas as línguas), desde o deploy do #334.
+- **Solução** (2026-07-04): coluna aplicada via MCP (`add_cover_video_url_to_developments`) +
+  migration versionada `20260704_add_cover_video_url.sql` + fallback `CORE_SELECT` em
+  `imoveis/page.tsx` (se o select completo falhar, refaz com colunas históricas — catálogo nunca zera).
+- **Prevenção**: coluna nova em select de página pública ⇒ confirmar coluna em produção ANTES do deploy
+  (via MCP `information_schema.columns`); migrations "EXECUTAR_NO_SUPABASE" são armadilha — versionar
+  sempre em `YYYYMMDD_*.sql` e aplicar de imediato.
+- **Confiança**: alta (reproduzido via SQL: select falhava antes, retorna 7 linhas depois).

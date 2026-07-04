@@ -1,13 +1,19 @@
 # SESSION_MEMORY (sobrescrita por sessão)
 
-**Sessão**: 2026-07-04 · Supreme Vision (CTO mode autorizado pelo dono)
+**Sessão**: 2026-07-04 · Hotfix produção — /imoveis vazio ("Portfólio em Curadoria")
 
 ## Contexto vivo
-- Dono opera em ciclo rápido: revisa e faz merge em minutos; PRs pequenos e verificáveis funcionam bem.
-- Branch designado desta linha de trabalho: `claude/imi-intelligence-platform-l1t53q` (reiniciar de origin/main após cada merge).
-- Verificação visual sem credenciais FUNCIONA: `NEXT_PUBLIC_SUPABASE_URL/ANON_KEY` stub + `next dev` + Playwright (`/opt/pw-browsers/chromium`, `--no-sandbox`). A /inteligencia cai no fallback por design. Isso desbloqueia itens 1.2/1.3/1.6.
-- Armadilhas descobertas: regex -i pega "todos" pt-BR; formatCurrency ≠ formatBRL (casas decimais); mapbox-gl é import dinâmico (grep estático não vê); npx tsc sem node_modules "passa" silenciosamente — sempre `npm ci` antes.
+- Dono reportou via screenshot mobile: `iulemirandaimoveis.com.br/pt/imoveis` só mostrava o empty state.
+- Diagnóstico: coluna `cover_video_url` do select (PR #334) não existia em produção — a migration
+  manual `jazz_boulevard_EXECUTAR_NO_SUPABASE.sql` foi aplicada parcialmente (só essa coluna faltava).
+  PostgREST 42703 derruba a query inteira → `data=null` → empty state. 0 rentals ativos → página 100% vazia.
+- Fix em 2 camadas: (1) coluna aplicada em produção via MCP (site voltou imediatamente, page é
+  force-dynamic); (2) código: migration versionada + fallback `CORE_SELECT` no `imoveis/page.tsx`.
+- Branch designado: `claude/website-correction-ihsy4p`.
+- Armadilha reconfirmada: `npx tsc` sem node_modules "passa" — sempre `npm ci` antes dos gates.
+- Proxy deste ambiente bloqueia fetch do site em produção (403) — verificação foi via SQL (reproduz
+  o select exato) + FK do embed confirmada no pg_constraint.
 
 ## Estado ao fim da sessão
-- Descoberta por Intenção pronta e verificada; PR a criar/mergear (ver git log do branch).
-- Pendências Fase 1: 1.2, 1.3, 1.6 (UI-visíveis). Fase 2 mapas: overlay georref + decisão mapbox (checar token no Vercel).
+- Produção corrigida (DB). PR com migration + hardening + memória aguardando merge.
+- Follow-up sugerido: varrer outros selects públicos por colunas ausentes em produção (mesma classe FX-10).

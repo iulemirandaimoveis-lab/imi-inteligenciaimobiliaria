@@ -12,6 +12,25 @@ export async function generateMetadata({ params }: { params: { lang: string } })
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
+const FULL_SELECT = 'id,slug,name,developer,status,status_commercial,type,tags,description,neighborhood,city,state,country,region,address,lat,lng,price_from,price_to,price_min,price_max,area_from,area_to,bedrooms,bathrooms,parking_spaces,delivery_date,registration_number,is_highlighted,display_order,created_at,updated_at,images,gallery_images,image,videos,floor_plans,features,selling_points,video_url,video_short_url,virtual_tour_url,cover_video_url,brochure_url,developer_logo,scrollytelling_enabled,concept_description,towers,floor_plan_types,developers(name,logo_url)'
+// Fallback: só colunas históricas da tabela — se o FULL_SELECT falhar (ex.: coluna nova
+// ainda não migrada em produção, como cover_video_url em 2026-07-04), o catálogo público
+// não pode cair no estado vazio "Portfólio em Curadoria".
+const CORE_SELECT = 'id,slug,name,developer,status,status_commercial,type,tags,description,neighborhood,city,state,country,region,address,lat,lng,price_from,price_to,price_min,price_max,area_from,area_to,bedrooms,bathrooms,parking_spaces,delivery_date,is_highlighted,display_order,created_at,updated_at,images,gallery_images,image,features,video_url,virtual_tour_url,developer_logo'
+
+function buildDevelopmentsQuery(select: string, developerId?: string) {
+    let query = supabaseAdmin
+        .from('developments')
+        .select(select)
+        .in('status_commercial', ['published', 'campaign', 'available'])
+        .order('is_highlighted', { ascending: false })
+        .order('created_at', { ascending: false })
+    if (developerId) {
+        query = query.eq('developer_id', developerId)
+    }
+    return query
+}
+
 export default async function ImoveisPage({
     params,
     searchParams,
@@ -19,33 +38,31 @@ export default async function ImoveisPage({
     params: { lang: string }
     searchParams: { construtora?: string }
 }) {
-    let query = supabaseAdmin
-        .from('developments')
-        .select('id,slug,name,developer,status,status_commercial,type,tags,description,neighborhood,city,state,country,region,address,lat,lng,price_from,price_to,price_min,price_max,area_from,area_to,bedrooms,bathrooms,parking_spaces,delivery_date,registration_number,is_highlighted,display_order,created_at,updated_at,images,gallery_images,image,videos,floor_plans,features,selling_points,video_url,video_short_url,virtual_tour_url,cover_video_url,brochure_url,developer_logo,scrollytelling_enabled,concept_description,towers,floor_plan_types,developers(name,logo_url)')
-        .in('status_commercial', ['published', 'campaign', 'available'])
-        .order('is_highlighted', { ascending: false })
-        .order('created_at', { ascending: false })
-
+    let developerId: string | undefined
     if (searchParams.construtora) {
         const { data: dev } = await supabaseAdmin
             .from('developers')
             .select('id')
             .eq('slug', searchParams.construtora)
             .single()
-        if (dev?.id) {
-            query = query.eq('developer_id', dev.id)
-        }
+        developerId = dev?.id
     }
-    const [{ data, error }, { data: rentals, error: rentalError }] = await Promise.all([
-        query,
+    const [saleResult, { data: rentals, error: rentalError }] = await Promise.all([
+        buildDevelopmentsQuery(FULL_SELECT, developerId),
         supabaseAdmin
             .from('rental_properties')
             .select('*')
             .eq('status', 'active')
             .order('created_at', { ascending: false }),
     ])
+    let { data, error } = saleResult as { data: Record<string, any>[] | null; error: any }
     if (error) {
         console.error('[ImoveisPage] Query error:', error.message, error.code, error.details)
+        const retry = await buildDevelopmentsQuery(CORE_SELECT, developerId)
+        data = retry.data as Record<string, any>[] | null
+        if (retry.error) {
+            console.error('[ImoveisPage] Fallback query error:', retry.error.message, retry.error.code)
+        }
     }
     if (rentalError) {
         console.error('[ImoveisPage] Rental query error:', rentalError.message)
