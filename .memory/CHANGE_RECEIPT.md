@@ -215,3 +215,13 @@ usa service_role+token, funciona sob a RLS real).
 - Flagship: intentEngine.ts (puro, D-14) + IntentDiscovery.tsx na /inteligencia + 10 testes.
 - Verificação visual SEM .env real: next dev com Supabase stub + Playwright/chromium — página cai no fallback por design. Screenshots desktop/mobile/query conferidos; 2 bugs pegos no visual (vírgula pt-BR; empate ordenado por fit arredondado — sort por exactFit).
 - Gates: tsc ok, lint ok, jest 869/874 (62 suítes).
+
+## 2026-07-04 · Hotfix: /imoveis vazio em produção ("Portfólio em Curadoria") — FX-10
+- Causa: select do #334 pedia `cover_video_url`, coluna nunca aplicada em produção (migration
+  manual jazz_boulevard executada parcialmente) → 42703 → catálogo público inteiro vazio.
+- DB (produção, via MCP): `ALTER TABLE developments ADD COLUMN IF NOT EXISTS cover_video_url TEXT`
+  — aditiva, idempotente, já prevista em migration commitada. Site voltou na hora (page é force-dynamic).
+- Código: migration versionada `20260704_add_cover_video_url.sql` + fallback `CORE_SELECT` em
+  `imoveis/page.tsx` (query com colunas históricas se o select completo falhar).
+- Verificação: select completo reproduzido via SQL retorna 7 empreendimentos; FK do embed
+  `developers(name,logo_url)` confirmada; tsc ok, lint ok.

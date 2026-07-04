@@ -20,6 +20,7 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-04 (hotfix produção, FX-10): **/imoveis vazio corrigido** — select do #334 pedia `cover_video_url`, coluna nunca aplicada em produção (migration manual jazz executada parcialmente) → 42703 → catálogo público inteiro no empty state "Portfólio em Curadoria". Coluna aplicada via MCP (site voltou na hora) + migration versionada `20260704_add_cover_video_url.sql` + fallback `CORE_SELECT` na página.
 - 2026-07-04 (Supreme Vision): **Descoberta por Intenção** na /inteligencia — motor client-side `intentEngine.ts` (parser pt-BR + ranking nacional + explicação com percentil), seção `IntentDiscovery` no dashboard, 10 testes, verificação visual Playwright (desktop/mobile). #346 plano 4 fases merged; #347 triagem TODOs ("662" era falso positivo; −279 linhas de shims mortos) merged; #349 fix @deprecated formatBRL merged.
 
 - 2026-07-03 (branch refinement): infra E2E Playwright (fixtures + 5 specs novos, 84 testes), fixes do engine de mapa AB (camadas/fullscreen/erro/leak), sync real do carrinho entre instâncias (useLotCart), Jazz: lang no back-link, unidades hidden fora do DOM, Escape nos painéis, **WhatsApp placeholder da LP corrigido (conversão)**
