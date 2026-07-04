@@ -1,15 +1,105 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { Sparkles, MapPin, ChevronRight, Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { Sparkles, MapPin, ChevronRight, Search, LandPlot } from 'lucide-react'
+import { getDevelopmentBySlug } from '@/lib/lotmap/engine'
 import {
   INTENTS,
   DEFAULT_INTENTS,
   parseIntent,
   rankByIntent,
   explainFit,
+  intentsToProfile,
   type IntentKey,
 } from './intentEngine'
+
+// ─── Lotes reais que combinam (ponte inteligência → inventário) ──────────────
+
+interface RecommendedLot {
+  id: string
+  quadra: string
+  lot_number: number
+  area_m2: number
+  price: number
+  scores: { imiScore: number }
+  reasons: string[]
+}
+
+/**
+ * Consome a rota pública /api/intelligence/lots/recommend com o perfil
+ * derivado das intenções. Sem dados (dev/stub, DB vazio ou erro) a seção
+ * simplesmente não renderiza — nunca um estado quebrado.
+ */
+function MatchingLots({ intents, lang }: { intents: IntentKey[]; lang: string }) {
+  const [lots, setLots] = useState<RecommendedLot[]>([])
+  const profile = intentsToProfile(intents)
+  const development = getDevelopmentBySlug('alto-bellevue')
+
+  useEffect(() => {
+    if (!development) return
+    const controller = new AbortController()
+    fetch(
+      `/api/intelligence/lots/recommend?development_id=${development.id}&profile=${profile}&limit=3`,
+      { signal: controller.signal },
+    )
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((data) => setLots(Array.isArray(data?.recommendations) ? data.recommendations : []))
+      .catch(() => setLots([]))
+    return () => controller.abort()
+  }, [profile, development])
+
+  if (!development || lots.length === 0) return null
+
+  return (
+    <div className="mt-8 pt-8 border-t border-white/[0.05]" aria-label="Lotes que combinam com sua intenção">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <p className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-[#7A8FA6]">
+          <LandPlot className="w-3.5 h-3.5 text-[#C8A44A] flex-shrink-0" aria-hidden="true" />
+          Do insight ao inventário · lotes reais no {development.name}
+        </p>
+        <span className="text-[10px] text-[#556170] font-medium">
+          perfil {profile === 'investor' ? 'investidor' : profile === 'resident' ? 'moradia' : 'equilibrado'}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {lots.map((lot) => (
+          <a
+            key={lot.id}
+            href={`/${lang}/imoveis`}
+            className="group flex flex-col h-full gap-2 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-[#C8A44A]/35 transition-all duration-200"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-white text-sm font-semibold truncate">
+                Lote {lot.quadra}-{lot.lot_number}
+              </p>
+              <span
+                className="text-[13px] font-bold flex-shrink-0"
+                style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: '#C8A44A' }}
+              >
+                {lot.scores.imiScore}
+              </span>
+            </div>
+            <p
+              className="text-[12px] text-[#7A8FA6]"
+              style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}
+            >
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(lot.price)}
+              <span className="text-[#556170]"> · {Math.round(lot.area_m2)} m²</span>
+            </p>
+            {lot.reasons[0] && (
+              <p className="text-[11px] text-[#556170] leading-relaxed">{lot.reasons[0]}</p>
+            )}
+            <span className="flex items-center gap-1 mt-auto pt-1 text-[10px] font-bold uppercase tracking-wider text-[#556170] group-hover:text-[#C8A44A] transition-all duration-200">
+              Ver no explorador
+              <ChevronRight className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 const slugify = (s: string) =>
   s
@@ -180,6 +270,8 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
             ))}
           </ol>
         )}
+
+        {selected.length > 0 && <MatchingLots intents={selected} lang={lang} />}
       </div>
     </section>
   )

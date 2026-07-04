@@ -177,3 +177,21 @@ export function explainFit(n: RankedNeighborhood): string {
   const suffix = best ? ` — à frente de ${best.percentile}% do Brasil` : ''
   return `${phrases.join(' e ')}${suffix}.`
 }
+
+// ─── Ponte para o inventário (lots/recommend) ─────────────────────────────────
+
+export type BuyerProfile = 'investor' | 'resident' | 'all'
+
+/**
+ * Traduz as intenções de mercado para o perfil de comprador usado pelo
+ * ranking de lotes (`/api/intelligence/lots/recommend`).
+ * Renda/valorização dominam → investor; morar (padrão/entrada) sem sinal de
+ * investimento → resident; misto ou vazio → all.
+ */
+export function intentsToProfile(intents: IntentKey[]): BuyerProfile {
+  const investor = intents.some((k) => k === 'rental' || k === 'appreciation')
+  const resident = intents.some((k) => k === 'premium' || k === 'affordable')
+  if (investor && !resident) return 'investor'
+  if (resident && !investor) return 'resident'
+  return 'all'
+}
