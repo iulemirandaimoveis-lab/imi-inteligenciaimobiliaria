@@ -1,14 +1,45 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Edit, BarChart2, Layers, Clock, Share2, CheckSquare, QrCode, X, Download } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Edit, BarChart2, Layers, Clock, Share2, CheckSquare, QrCode, X, Download, Archive, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export function FloatingActions({ id }: { id: string }) {
+  const router = useRouter()
   const [copied, setCopied] = useState(false)
   const [qrOpen, setQrOpen] = useState(false)
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [qrLoading, setQrLoading] = useState(false)
   const dialogRef = useRef<HTMLDivElement>(null)
+
+  const handleArchive = async () => {
+    if (!confirm('Arquivar este imóvel? Ele deixará de aparecer na listagem pública.')) return
+    try {
+      const res = await fetch('/api/developments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'arquivado' }),
+      })
+      if (!res.ok) throw new Error('Falha ao arquivar')
+      toast.success('Imóvel arquivado')
+      router.push('/backoffice/imoveis')
+    } catch {
+      toast.error('Erro ao arquivar imóvel')
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!confirm('Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.')) return
+    try {
+      const res = await fetch(`/api/developments?id=${id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Falha ao excluir')
+      toast.success('Imóvel excluído')
+      router.push('/backoffice/imoveis')
+    } catch {
+      toast.error('Erro ao excluir imóvel')
+    }
+  }
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -105,6 +136,32 @@ export function FloatingActions({ id }: { id: string }) {
         onMouseLeave={e => { if (!qrOpen) { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}}
         >
           <QrCode size={16} />
+        </button>
+
+        {/* Archive button */}
+        <button
+          onClick={handleArchive}
+          title="Arquivar imóvel"
+          style={{
+            ...actionBtnStyle,
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,164,74,0.5)'; (e.currentTarget as HTMLElement).style.color = '#C8A44A' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
+        >
+          <Archive size={16} />
+        </button>
+
+        {/* Delete button */}
+        <button
+          onClick={handleDelete}
+          title="Excluir imóvel"
+          style={{
+            ...actionBtnStyle,
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(224,107,107,0.5)'; (e.currentTarget as HTMLElement).style.color = '#E06B6B' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(61,111,255,0.18)'; (e.currentTarget as HTMLElement).style.color = '#9FAAB8' }}
+        >
+          <Trash2 size={16} />
         </button>
 
         {/* Share button */}

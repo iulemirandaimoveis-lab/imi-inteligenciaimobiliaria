@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera, User, Archive, Trash2 } from 'lucide-react'
+import { Bed, Bath, Car, Ruler, MapPin, TrendingUp, TrendingDown, Eye, BarChart2, Heart, Scale, ExternalLink, QrCode, Sparkles, Camera, User, Archive, Trash2, MoreVertical, X } from 'lucide-react'
 import { IMIScoreBadge } from './IMIScoreBadge'
 import { getMainImage } from '@/utils/propertyImages'
 import type { IMIProperty } from '../types'
@@ -515,7 +515,10 @@ export function PropertyListRow({
   property,
   onCompare,
   isComparing,
+  onArchive,
+  onDelete,
 }: Omit<PropertyCardProps, 'size'>) {
+  const [menuOpen, setMenuOpen] = useState(false)
   const p = property
   const score = p.imi_score ?? 0
 
@@ -634,7 +637,7 @@ export function PropertyListRow({
       </Link>
 
       {/* Quick action buttons column */}
-      <div style={{ display: 'flex', gap: 4, padding: '0 8px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 4, padding: '0 8px', alignItems: 'center', position: 'relative' }}>
         <Link
           href={`/backoffice/imoveis/${p.id}`}
           title="Ver detalhes"
@@ -649,34 +652,107 @@ export function PropertyListRow({
         >
           <ExternalLink size={11} style={{ color: '#C8A44A' }} />
         </Link>
-        <Link
-          href={`/backoffice/tracking/qr?property=${p.id}`}
-          title="Gerar QR Code"
-          aria-label="Gerar QR Code do imóvel"
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: 28, height: 28, borderRadius: 6,
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            cursor: 'pointer', textDecoration: 'none',
-          }}
-        >
-          <QrCode size={11} style={{ color: '#9FAAB8' }} />
-        </Link>
-        <Link
-          href={`/backoffice/conteudo/criador?property=${p.id}`}
-          title="Gerar Conteúdo"
-          aria-label="Gerar conteúdo para o imóvel"
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: 28, height: 28, borderRadius: 6,
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            cursor: 'pointer', textDecoration: 'none',
-          }}
-        >
-          <Sparkles size={11} style={{ color: '#9FAAB8' }} />
-        </Link>
+        {(onArchive || onDelete) ? (
+          <>
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              title="Mais ações"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 28, height: 28, borderRadius: 6,
+                background: menuOpen ? 'rgba(61,111,255,0.12)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${menuOpen ? 'rgba(61,111,255,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                cursor: 'pointer', color: menuOpen ? 'var(--accent-400)' : '#9FAAB8',
+              }}
+            >
+              <MoreVertical size={11} />
+            </button>
+            {menuOpen && (
+              <>
+                {/* Backdrop */}
+                <div
+                  style={{ position: 'fixed', inset: 0, zIndex: 49 }}
+                  onClick={() => setMenuOpen(false)}
+                />
+                {/* Dropdown menu */}
+                <div style={{
+                  position: 'absolute', right: 0, top: '100%', marginTop: 4,
+                  zIndex: 50,
+                  background: 'var(--bg-elevated, #0E1C30)',
+                  border: '1px solid rgba(61,111,255,0.22)',
+                  borderRadius: 8, padding: 4, minWidth: 160,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                }}>
+                  {onArchive && (
+                    <button
+                      onClick={() => { setMenuOpen(false); onArchive(p.id) }}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '8px 10px', borderRadius: 6, border: 'none',
+                        background: 'transparent', cursor: 'pointer',
+                        color: '#9FAAB8', fontSize: 12,
+                        fontFamily: 'var(--font-outfit, sans-serif)',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+                    >
+                      <Archive size={13} style={{ color: '#C8A44A', flexShrink: 0 }} />
+                      Arquivar imóvel
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => { setMenuOpen(false); onDelete(p.id) }}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '8px 10px', borderRadius: 6, border: 'none',
+                        background: 'transparent', cursor: 'pointer',
+                        color: '#E06B6B', fontSize: 12,
+                        fontFamily: 'var(--font-outfit, sans-serif)',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(224,107,107,0.10)' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+                    >
+                      <Trash2 size={13} style={{ color: '#E06B6B', flexShrink: 0 }} />
+                      Excluir imóvel
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            <Link
+              href={`/backoffice/tracking/qr?property=${p.id}`}
+              title="Gerar QR Code"
+              aria-label="Gerar QR Code do imóvel"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 28, height: 28, borderRadius: 6,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                cursor: 'pointer', textDecoration: 'none',
+              }}
+            >
+              <QrCode size={11} style={{ color: '#9FAAB8' }} />
+            </Link>
+            <Link
+              href={`/backoffice/conteudo/criador?property=${p.id}`}
+              title="Gerar Conteúdo"
+              aria-label="Gerar conteúdo para o imóvel"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 28, height: 28, borderRadius: 6,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                cursor: 'pointer', textDecoration: 'none',
+              }}
+            >
+              <Sparkles size={11} style={{ color: '#9FAAB8' }} />
+            </Link>
+          </>
+        )}
       </div>
     </div>
   )
