@@ -234,3 +234,14 @@ usa service_role+token, funciona sob a RLS real).
 - Falha/vazio da API → seção não renderiza (nunca estado quebrado); verificado visualmente com
   Playwright (mock de rota para o estado com dados + estado oculto sem API).
 - Gates: tsc ok, jest 872/877 (+3 testes de intentsToProfile), lint ok, next build exit 0.
+
+## 2026-07-05 · Sessão Supreme Vision (cont. 2): motor híbrido — dados reais no ranking nacional
+- Descoberta: neighborhood_intelligence tem 36 bairros reais curados (6 cidades, data_source imi_internal)
+  servidos por /api/intelligence/neighborhood — mas nenhum consumidor nacional.
+- API: novo modo ?scope=national (aditivo, cache 1h, filtra UFs BR — exclui Dubai/UAE).
+- Motor: mergeDatasets() — linha real sobrepõe fallback por chave cidade+bairro normalizada,
+  bairros novos entram, linhas incompletas são descartadas; source: 'live'|'estimate'.
+- UI: badge vira "Dados IMI + Estimativa" (verde) quando há dado real; dot verde por linha live.
+- Visual verificado (Playwright + mock): Cabo Branco reordenado ao topo com números reais;
+  Balneário Camboriú (inexistente no fallback) entrou no ranking.
+- Gates: tsc ok, jest 875/880 (+3 testes mergeDatasets), lint ok, build exit 0.

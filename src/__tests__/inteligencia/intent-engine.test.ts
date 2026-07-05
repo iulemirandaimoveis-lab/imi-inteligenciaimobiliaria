@@ -3,6 +3,7 @@ import {
   rankByIntent,
   explainFit,
   intentsToProfile,
+  mergeDatasets,
   nationalDataset,
   DEFAULT_INTENTS,
   INTENTS,
@@ -96,6 +97,36 @@ describe('intentsToProfile', () => {
     expect(intentsToProfile(['rental', 'premium'])).toBe('all')
     expect(intentsToProfile(['liquidity'])).toBe('all')
     expect(intentsToProfile([])).toBe('all')
+  })
+})
+
+describe('mergeDatasets', () => {
+  const fallback = nationalDataset()
+
+  it('linha real sobrepõe o fallback do mesmo bairro (sem acento/caixa) e marca source live', () => {
+    const merged = mergeDatasets(fallback, [
+      { neighborhood: 'cabo branco', city: 'JOÃO PESSOA', state: 'PB', median_price_sqm: '8500', price_trend_12m: '15.8', avg_days_on_market: 38, avg_rental_yield: '5.8' },
+    ])
+    expect(merged).toHaveLength(fallback.length)
+    const row = merged.find((n) => n.neighborhood === 'cabo branco')
+    expect(row).toMatchObject({ median_price_sqm: 8500, source: 'live' })
+    expect(merged.filter((n) => /cabo branco/i.test(n.neighborhood))).toHaveLength(1)
+  })
+
+  it('bairro novo é adicionado; linha incompleta é descartada', () => {
+    const merged = mergeDatasets(fallback, [
+      { neighborhood: 'Barra Sul', city: 'Balneário Camboriú', state: 'SC', median_price_sqm: 22000, price_trend_12m: 20.2, avg_days_on_market: 30, avg_rental_yield: 4.2 },
+      { neighborhood: 'Quebrado', city: 'Nulópolis', state: 'XX', median_price_sqm: null, price_trend_12m: 1, avg_days_on_market: 10, avg_rental_yield: 5 },
+    ])
+    expect(merged).toHaveLength(fallback.length + 1)
+    expect(merged.find((n) => n.city === 'Balneário Camboriú')?.source).toBe('live')
+    expect(merged.find((n) => n.city === 'Nulópolis')).toBeUndefined()
+  })
+
+  it('sem dados reais, retorna o fallback intacto e ranqueável', () => {
+    const merged = mergeDatasets(fallback, [])
+    expect(merged).toHaveLength(fallback.length)
+    expect(rankByIntent(DEFAULT_INTENTS, merged).length).toBeGreaterThan(0)
   })
 })
 
