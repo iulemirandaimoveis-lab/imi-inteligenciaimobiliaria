@@ -14,6 +14,7 @@
 | Cron | `Authorization: Bearer ${CRON_SECRET}` | `cron/*` (todas as 9) |
 | Pública | sem auth (por design) | `contact`, `cep/[cep]`, `cnpj/[cnpj]`, webhooks |
 | Webhook | validação de assinatura/secret do provedor | `abacate-pay/webhook` |
+| **Parceiro (v1)** | `Authorization: Bearer imi_pk_…` → hash SHA-256 vs `partner_api_keys` + escopos + RL 120/min por chave (`withPartnerAuth`, `src/lib/partner-api/`) | `v1/developments`, `v1/availability` |
 
 **Wrapper centralizado**: `apiHandler` (`src/lib/api-helpers.ts`) — auth (`getUser`) + rate limit + audit por padrão (`auth: true`, RL `'auth'`/`'public'`). Usado por avaliacoes, pix, plantao/*, frota/*, developments, financeiro… **Rotas novas devem usá-lo** em vez de repetir o boilerplate.
 

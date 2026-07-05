@@ -2,13 +2,14 @@
 
 **Atualizado**: 2026-07-05 (sessão CTO: decisão Partner API v1 — D-15)
 
-## Partner API v1 (D-15) — bloqueada em decisão do dono
-- Design pronto: `docs/PARTNER_API_V1_DESIGN.md`. Se o dono aprovar, ordem de execução da Fase 1:
-  1. Migration `YYYYMMDD_partner_api_keys.sql` (RLS on, sem policy anon/authenticated) — **verificar estado real do banco via MCP antes** (L-15/FX-10).
-  2. `withPartnerAuth()` (hash SHA-256 da chave, escopos, `last_used_at`) + `limiters.partner` por chave.
-  3. `/api/v1/developments` (+ detalhe) com mapper `toPartnerDevelopment()` — nunca coluna crua.
-  4. Demais endpoints (lots, map GeoJSON, availability com ETag) + OpenAPI + testes de contrato.
-- NÃO fazer sem aprovação: é auth + banco (invariante). NÃO expandir escopo além da tabela §3.2 sem novo ADR.
+## Partner API v1 (D-15) — Fase 1 ✅ IMPLEMENTADA (2026-07-05, aprovada pelo dono)
+- Entregue: migration aplicada em produção + `src/lib/partner-api/` + 6 rotas `/api/v1/*` + OpenAPI
+  (`docs/api/openapi-partner-v1.yaml`) + guia (`docs/api/PARTNER_API_GUIDE.md`) + 14 testes de contrato.
+- **AÇÃO DO DONO**: emitir a chave da Mano Imóveis localmente (script em `scripts/partner/`,
+  instruções no topo do PROJECT_STATE) e enviar por canal seguro. A chave só aparece uma vez.
+- Fase 2 (gatilho: piloto consumindo de verdade): webhooks assinados de saída (reserva/venda/
+  preço/disponibilidade, retry + DLQ em tabela), SDK TS **gerado** da spec, coleção Postman, Redoc.
+- NÃO expandir além da tabela §3.2 do design sem novo ADR (gatilhos explícitos).
 
 ## Novidades da sessão de refinamento que afetam a fila
 - E2E agora tem 7 specs/84 testes — candidato natural a job de CI (rodar contra preview do Vercel via `BASE_URL`).

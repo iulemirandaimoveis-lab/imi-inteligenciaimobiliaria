@@ -1,0 +1,397 @@
+openapi: 3.1.0
+info:
+  title: IMI Partner API
+  version: "1.0.0"
+  description: |
+    API B2B read-only da IMI (Iule Miranda Imóveis) para imobiliárias parceiras (D-15).
+
+    - Autenticação: `Authorization: Bearer imi_pk_...` (API key com escopos).
+    - Todos os endpoints são GET e suportam revalidação condicional via
+      `ETag` / `If-None-Match` (304) — obrigatório para polling de `/availability`.
+    - Rate limit: 120 req/min por chave (429 + `Retry-After` ao exceder).
+    - Erros: `{ "error": { "code": string, "message": string } }`.
+    - Versionamento por URL: mudanças incompatíveis nascem em `/api/v2`.
+servers:
+  - url: https://www.iulemirandaimoveis.com.br/api/v1
+security:
+  - partnerKey: []
+tags:
+  - name: developments
+  - name: lots
+  - name: availability
+  - name: maps
+
+paths:
+  /developments:
+    get:
+      tags: [developments]
+      summary: Lista empreendimentos publicados (paginação por cursor)
+      description: Requer escopo `developments:read`. `price_range` presente somente com escopo `prices:read`.
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+        - name: cursor
+          in: query
+          schema: { type: string }
+          description: Valor de `pagination.next_cursor` da página anterior.
+        - $ref: "#/components/parameters/IfNoneMatch"
+      responses:
+        "200":
+          description: Página de empreendimentos
+          headers: { ETag: { $ref: "#/components/headers/ETag" } }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Development" }
+                  pagination:
+                    type: object
+                    properties:
+                      limit: { type: integer }
+                      next_cursor: { type: [string, "null"] }
+        "304": { description: Não modificado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /developments/{id}:
+    get:
+      tags: [developments]
+      summary: Detalhe de empreendimento (UUID ou slug)
+      description: Requer escopo `developments:read`.
+      parameters:
+        - $ref: "#/components/parameters/DevelopmentId"
+        - $ref: "#/components/parameters/IfNoneMatch"
+      responses:
+        "200":
+          description: Empreendimento
+          headers: { ETag: { $ref: "#/components/headers/ETag" } }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/Development" }
+        "304": { description: Não modificado }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /developments/{id}/lots:
+    get:
+      tags: [lots]
+      summary: Lotes de um empreendimento
+      description: Requer escopo `lots:read`. `price` presente somente com escopo `prices:read`.
+      parameters:
+        - $ref: "#/components/parameters/DevelopmentId"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [disponivel, reservado, vendido, em_negociacao, bloqueado]
+        - $ref: "#/components/parameters/IfNoneMatch"
+      responses:
+        "200":
+          description: Lotes
+          headers: { ETag: { $ref: "#/components/headers/ETag" } }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Lot" }
+                  meta:
+                    type: object
+                    properties:
+                      development_id: { type: string, format: uuid }
+                      development_slug: { type: string }
+                      total: { type: integer }
+        "304": { description: Não modificado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /developments/{id}/map:
+    get:
+      tags: [maps]
+      summary: Módulo cartográfico (GeoJSON WGS84 por camadas)
+      description: |
+        Requer escopo `maps:read`. Disponível hoje para `alto-bellevue`
+        (demais empreendimentos: 404 `map_not_available`). Camadas: lots,
+        streets, perimeter, green_areas, amenities, street_labels — todas
+        FeatureCollection EPSG:4326, renderizáveis em MapLibre/Mapbox/Leaflet.
+        `georeference: approximate` até o ajuste fino por pontos de controle.
+      parameters:
+        - $ref: "#/components/parameters/DevelopmentId"
+        - $ref: "#/components/parameters/IfNoneMatch"
+      responses:
+        "200":
+          description: Mapa por camadas
+          headers: { ETag: { $ref: "#/components/headers/ETag" } }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/DevelopmentMap" }
+        "304": { description: Não modificado }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /lots/{id}:
+    get:
+      tags: [lots]
+      summary: Detalhe de lote (UUID)
+      description: Requer escopo `lots:read`. `price` somente com `prices:read`.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+        - $ref: "#/components/parameters/IfNoneMatch"
+      responses:
+        "200":
+          description: Lote
+          headers: { ETag: { $ref: "#/components/headers/ETag" } }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: "#/components/schemas/Lot" }
+        "304": { description: Não modificado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /availability:
+    get:
+      tags: [availability]
+      summary: Snapshot de disponibilidade (endpoint de polling)
+      description: |
+        Requer escopo `lots:read`. Retorna status por lote + contagens por
+        empreendimento. Faça polling a cada 30–60s SEMPRE com `If-None-Match`:
+        enquanto nada mudar a resposta é 304 sem corpo. Para o Alto Bellevue o
+        status combina banco + planilha comercial ao vivo (`source: db+live_sheet`).
+      parameters:
+        - name: development
+          in: query
+          schema: { type: string }
+          description: UUID ou slug; omita para todos os empreendimentos com lotes.
+        - $ref: "#/components/parameters/IfNoneMatch"
+      responses:
+        "200":
+          description: Disponibilidade
+          headers: { ETag: { $ref: "#/components/headers/ETag" } }
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/DevelopmentAvailability" }
+        "304": { description: Não modificado }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+components:
+  securitySchemes:
+    partnerKey:
+      type: http
+      scheme: bearer
+      bearerFormat: "imi_pk_..."
+      description: API key de parceiro. Escopos: developments:read, lots:read, maps:read, prices:read.
+
+  parameters:
+    DevelopmentId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+      description: UUID ou slug do empreendimento (ex. `alto-bellevue`).
+    IfNoneMatch:
+      name: If-None-Match
+      in: header
+      schema: { type: string }
+      description: ETag da última resposta — retorna 304 se nada mudou.
+
+  headers:
+    ETag:
+      schema: { type: string }
+      description: Use no If-None-Match da próxima requisição.
+
+  responses:
+    BadRequest:
+      description: Parâmetro inválido
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    Unauthorized:
+      description: Chave ausente, inválida ou revogada
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    Forbidden:
+      description: Escopo insuficiente
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    NotFound:
+      description: Recurso não encontrado
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+    RateLimited:
+      description: Limite de requisições excedido (ver Retry-After)
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+
+    Development:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        name: { type: string }
+        developer:
+          type: object
+          properties:
+            name: { type: [string, "null"] }
+            logo_url: { type: [string, "null"] }
+        status: { type: [string, "null"] }
+        type: { type: [string, "null"] }
+        description: { type: [string, "null"] }
+        short_description: { type: [string, "null"] }
+        location:
+          type: object
+          properties:
+            address: { type: [string, "null"] }
+            neighborhood: { type: [string, "null"] }
+            city: { type: [string, "null"] }
+            state: { type: [string, "null"] }
+            country: { type: [string, "null"] }
+            lat: { type: [number, "null"] }
+            lng: { type: [number, "null"] }
+        delivery_date: { type: [string, "null"] }
+        units:
+          type: object
+          properties:
+            total: { type: [integer, "null"] }
+            available: { type: [integer, "null"] }
+        area_m2:
+          type: object
+          properties:
+            from: { type: [number, "null"] }
+            to: { type: [number, "null"] }
+        media:
+          type: object
+          properties:
+            cover_image: { type: [string, "null"] }
+            gallery: { type: array, items: { type: string } }
+            floor_plans: { type: array, items: { type: string } }
+            videos: { type: array, items: { type: string } }
+            cover_video_url: { type: [string, "null"] }
+            virtual_tour_url: { type: [string, "null"] }
+            brochure_url: { type: [string, "null"] }
+        features: { type: array }
+        price_range:
+          type: object
+          description: Presente apenas com escopo prices:read.
+          properties:
+            min: { type: [number, "null"] }
+            max: { type: [number, "null"] }
+            currency: { type: string, const: BRL }
+        map_available: { type: boolean }
+        created_at: { type: [string, "null"], format: date-time }
+        updated_at: { type: [string, "null"], format: date-time }
+
+    Lot:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        development_id: { type: string, format: uuid }
+        code: { type: string, description: "Código canônico QUADRA-LOTE, ex. A-01" }
+        quadra: { type: string }
+        lot_number: { type: integer }
+        area_m2: { type: [number, "null"] }
+        status:
+          type: string
+          enum: [disponivel, reservado, vendido, em_negociacao, bloqueado]
+        special_type: { type: [string, "null"] }
+        price:
+          type: [number, "null"]
+          description: Presente apenas com escopo prices:read.
+        updated_at: { type: [string, "null"], format: date-time }
+
+    DevelopmentAvailability:
+      type: object
+      properties:
+        development_id: { type: string, format: uuid }
+        development_slug: { type: string }
+        development_name: { type: string }
+        source: { type: string, enum: [db, db+live_sheet] }
+        counts:
+          type: object
+          properties:
+            disponivel: { type: integer }
+            reservado: { type: integer }
+            vendido: { type: integer }
+            em_negociacao: { type: integer }
+            bloqueado: { type: integer }
+        lots:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              code: { type: string }
+              status:
+                type: string
+                enum: [disponivel, reservado, vendido, em_negociacao, bloqueado]
+
+    DevelopmentMap:
+      type: object
+      properties:
+        development_id: { type: string, format: uuid }
+        development_slug: { type: string }
+        crs: { type: string, const: "EPSG:4326" }
+        georeference: { type: string, enum: [approximate, surveyed] }
+        center:
+          type: object
+          properties:
+            lng: { type: number }
+            lat: { type: number }
+        bounds:
+          type: object
+          properties:
+            west: { type: number }
+            south: { type: number }
+            east: { type: number }
+            north: { type: number }
+        layers:
+          type: object
+          description: Cada camada é uma GeoJSON FeatureCollection (EPSG:4326).
+          properties:
+            lots: { type: object }
+            streets: { type: object }
+            perimeter: { type: object }
+            green_areas: { type: object }
+            amenities: { type: object }
+            street_labels: { type: object }
