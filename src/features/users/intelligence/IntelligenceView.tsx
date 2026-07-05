@@ -19,12 +19,14 @@ import {
   Brain,
   Gauge,
   Sparkles,
+  Target,
   TrendingUp,
   Trophy,
 } from 'lucide-react'
 import { tokens as T } from '../ui/tokens'
 import { GlassCard, Eyebrow } from '../ui/primitives'
 import { AnimatedNumber, Reveal, Stagger, StaggerItem, ActivityPulse } from './motion'
+import { ClientMatchPanel } from './ClientMatchPanel'
 import type { IntelligenceModel } from '@/lib/imi-intelligence/service'
 
 const SEV: Record<string, { color: string; soft: string }> = {
@@ -59,6 +61,17 @@ export function IntelligenceView({ model }: { model: IntelligenceModel }) {
             </Reveal>
           ))}
         </div>
+      </Section>
+
+      {/* 2b — Match de Cliente (motor de intenção sobre o inventário real) */}
+      <Section
+        icon={<Target size={15} />}
+        title="Match de Cliente"
+        subtitle="Descreva o que o cliente procura — o IMI devolve os lotes certos"
+      >
+        <Reveal>
+          <ClientMatchPanel />
+        </Reveal>
       </Section>
 
       <div className="imi-intel-grid">

@@ -280,3 +280,13 @@ usa service_role+token, funciona sob a RLS real).
 - Gates: tsc ok, lint ok, jest 64 suítes / 889 passed (14 novos testes de contrato).
 - Armadilha registrada: corpo de resposta com timestamp quebra ETag/304 — availability não tem
   timestamp no corpo por design.
+
+## 2026-07-05 · Sessão Supreme Vision (cont. 4): Match de Cliente no console
+- Motor de intenção promovido para src/lib/intelligence/ (intent-engine.ts + brazil-fallback.ts);
+  todos os importadores atualizados (dashboard público, services, testes) — sem shims.
+- ClientMatchPanel em /users/intelligence: corretor descreve o cliente em linguagem natural →
+  chips de intenção detectados → perfil → lots/recommend → top-5 com teto de preço opcional
+  (filtro client-side) e deep-link ?lote= em nova aba. Sem dependência de sessão.
+- Verificação isolada (página temporária removida) com Playwright: chips/perfil/lotes/filtro de
+  teto conferidos. Aprendizado: no dev mode, interagir só APÓS a hidratação (fill antes = DOM
+  muda sem estado React). Gates: tsc ok, jest 889/894, lint ok, build exit 0.

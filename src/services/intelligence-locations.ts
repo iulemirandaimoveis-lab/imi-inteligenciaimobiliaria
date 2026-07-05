@@ -3,7 +3,7 @@ import type {
   IntelligenceNeighborhood,
   IntelligenceState,
 } from '@/types/intelligence-location'
-import { BRAZIL_FALLBACK_CITIES } from '@/app/[lang]/(website)/inteligencia/brazilIntelligenceFallback'
+import { BRAZIL_FALLBACK_CITIES } from '@/lib/intelligence/brazil-fallback'
 
 const IBGE_BASE_URL = 'https://servicodados.ibge.gov.br/api/v1/localidades'
 

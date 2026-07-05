@@ -10,7 +10,7 @@ import {
 import PriceHeatmap from '@/components/intelligence/PriceHeatmap'
 import { LocationSearchPanel } from '@/components/intelligence/LocationSearchPanel'
 import IntentDiscovery from './IntentDiscovery'
-import { BRAZIL_FALLBACK_CITIES } from './brazilIntelligenceFallback'
+import { BRAZIL_FALLBACK_CITIES } from '@/lib/intelligence/brazil-fallback'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
