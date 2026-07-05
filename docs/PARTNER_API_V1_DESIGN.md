@@ -1,6 +1,6 @@
 # PARTNER API v1 — Análise Crítica e Decisão de Arquitetura
 
-> **Status**: decisão aprovada como direção (D-15); implementação da Fase 1 **aguarda aprovação do dono** (toca auth + banco — invariante do projeto).
+> **Status**: D-15 aprovada pelo dono em 2026-07-05 · **Fase 1 IMPLEMENTADA** (migration aplicada em produção, 6 endpoints, OpenAPI, testes). Piloto: Mano Imóveis. Guia de integração: `docs/api/PARTNER_API_GUIDE.md`.
 > **Data**: 2026-07-05 · **Autor**: sessão CTO (análise do prompt "IMI API Platform")
 > **Contexto de origem**: prompt externo propondo transformar a IMI em plataforma de inteligência imobiliária servindo parceiros (Mano Imóveis etc.) via API.
 

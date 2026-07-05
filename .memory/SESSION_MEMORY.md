@@ -1,20 +1,22 @@
 # SESSION_MEMORY (sobrescrita por sessão)
 
-**Sessão**: 2026-07-05 · Decisão CTO — Partner API v1 (análise do prompt "IMI API Platform")
+**Sessão**: 2026-07-05 · Partner API v1 — Fase 1 implementada (D-15 aprovada; piloto Mano Imóveis)
 
 ## Contexto vivo
-- Dono trouxe prompt externo pedindo plataforma completa de inteligência imobiliária para servir
-  imobiliárias parceiras (Mano Imóveis etc.) — GraphQL, WebSocket, 18 motores, multi-tenant com
-  domínio/branding, OAuth2, PostGIS/vector tiles/Cesium, marketplace/ERP — e pediu decisão como CTO,
-  sem tomar o prompt como verdade.
-- Fatos que decidiram: repo é monólito de produção single-tenant (F-11 sem tenant_id), sem PostGIS
-  (geo = GeoJSON + motor CAD próprio), 275 rotas internas que NÃO podem virar superfície de parceiro,
-  drift de migration já causou incidente (FX-10), time de 1, zero parceiros integrados hoje.
-- **Decisão (D-15)**: Partner API v1 — superfície nova `/api/v1/*`, REST-only, read-only,
-  API key com escopos (hash, prefixo `imi_pk_`), rate limit por chave, ETag+CDN. Todo o resto
-  adiado com gatilhos explícitos (tabela §3.2 do design). SDK/docs gerados da spec OpenAPI.
-- Design completo: `docs/PARTNER_API_V1_DESIGN.md`. Fase 1 = 1 migration (`partner_api_keys`)
-  + 6 endpoints GET + OpenAPI + testes de contrato. Piloto: Mano Imóveis.
-- **GATE**: nada implementado nesta sessão — auth/banco exigem aprovação explícita do dono.
-  Se o dono aprovar, a Fase 1 começa pela migration + `withPartnerAuth()` + `/api/v1/developments`.
-- Branch: `claude/imi-saas-platform-design-el33oi` (PR draft, só documentação).
+- Dono aprovou a Fase 1 da D-15 e definiu a Mano Imóveis (repo iulemirandaimoveis-lab/ManoImoveis-MI.Tech)
+  como primeiro parceiro a receber chave.
+- Implementado: `partner_api_keys` (migration versionada + aplicada em produção; RLS on+forced,
+  0 policies), `withPartnerAuth` (Bearer imi_pk_ → SHA-256 → escopos → RL 120/min por chave →
+  last_used_at fire-and-forget), mappers coluna a coluna (colunas verificadas em produção via MCP),
+  6 rotas GET `/api/v1/*`, OpenAPI 3.1, guia de integração, script de emissão de chave, 14 testes.
+- Decisões de implementação que se perdem fácil:
+  - ETag é função SÓ dos dados — nunca pôr timestamp no corpo de resposta com ETag (mata o 304).
+  - supabase-js: `.or()` tem que vir ANTES de `.order()/.limit()` (transform builder não tem .or).
+  - Select dinâmico (string) → supabase não infere tipo; cast `any[]` + mapper tipa a saída.
+  - Availability do AB: overlay da planilha (fetch revalidate 60) por cima do banco, código "A-01"
+    via `lotCode(quadra, lot_number)`; falha da planilha degrada para o status do banco.
+  - Mapa v1: só alto-bellevue (import estático do JSON canônico + builders geojson existentes);
+    MM retorna 404 map_not_available até ter transform geo.
+- **Pendente do dono**: emitir a chave da Mano localmente (script) — nunca em chat/CI.
+- Fase 2 (gatilho: piloto consumindo): webhooks assinados de saída + SDK gerado da spec + Postman.
+- Branch: `claude/imi-saas-platform-design-el33oi` (recriado do main pós-merge do PR #358).

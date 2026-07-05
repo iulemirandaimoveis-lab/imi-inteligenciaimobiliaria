@@ -264,3 +264,19 @@ usa service_role+token, funciona sob a RLS real).
   /imoveis/{slug}?lote={quadra}-{numero} — o funil intenção→lote abre direto no lote.
 - Verificação: página temporária isolada (removida) + Playwright — painel do Lote 04/Quadra C
   abriu via ?lote=C-4; controle negativo sem param ok. Jest 875/880, lint ok, build exit 0.
+
+## 2026-07-05 · Partner API v1 — Fase 1 implementada (D-15 aprovada pelo dono; piloto Mano Imóveis)
+- Banco: migration `20260705_partner_api_keys.sql` versionada E aplicada em produção via MCP
+  (verificado pós-aplicação: RLS on + forced, 0 policies — acesso só service_role, padrão P15/D-11).
+  Estado real verificado ANTES (L-15): tabela não existia; subdivision_lots completo (AB 383 + MM 1045, com preço).
+- Código novo: `src/lib/partner-api/` (auth com SHA-256+escopos+RL 120/min por chave, mappers coluna a
+  coluna, ETag/304, queries curadas, builder GeoJSON do AB) + 6 rotas GET em `src/app/api/v1/`
+  (developments list/detail, lots por empreendimento, lot detail, map, availability com overlay da
+  planilha ao vivo do AB). Zero coluna crua exposta; preço gated por escopo prices:read.
+- Docs: OpenAPI 3.1 (`docs/api/openapi-partner-v1.yaml`), guia de integração
+  (`docs/api/PARTNER_API_GUIDE.md`), API_MAP com a classe "Parceiro (v1)".
+- Emissão de chave: `scripts/partner/create-partner-key.mjs` — chave exibida uma única vez na
+  máquina do dono; banco guarda só o hash. NUNCA gerar chave em CI/chat.
+- Gates: tsc ok, lint ok, jest 64 suítes / 889 passed (14 novos testes de contrato).
+- Armadilha registrada: corpo de resposta com timestamp quebra ETag/304 — availability não tem
+  timestamp no corpo por design.
