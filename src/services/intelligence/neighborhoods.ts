@@ -1,5 +1,5 @@
 import type { Neighborhood } from '@/types/location'
-import { BRAZIL_FALLBACK_CITIES } from '@/app/[lang]/(website)/inteligencia/brazilIntelligenceFallback'
+import { BRAZIL_FALLBACK_CITIES } from '@/lib/intelligence/brazil-fallback'
 import { slugify } from '@/services/locations/ibge'
 
 const getNeighborhoodsByCitySlug = (citySlug: string): Neighborhood[] => {

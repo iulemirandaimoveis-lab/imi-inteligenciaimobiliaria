@@ -8,7 +8,7 @@ import {
   DEFAULT_INTENTS,
   INTENTS,
   type NationalNeighborhood,
-} from '@/app/[lang]/(website)/inteligencia/intentEngine'
+} from '@/lib/intelligence/intent-engine'
 
 const dataset: NationalNeighborhood[] = [
   // Valoriza muito, vende rápido, yield alto, m² médio.

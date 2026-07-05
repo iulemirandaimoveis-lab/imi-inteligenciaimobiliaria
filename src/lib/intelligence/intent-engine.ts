@@ -2,7 +2,7 @@
 // de bairros sobre o dataset nacional. Puro e determinístico: sem IO, sem
 // dependências — testável em unidade e executável no cliente.
 
-import { BRAZIL_FALLBACK_CITIES } from './brazilIntelligenceFallback'
+import { BRAZIL_FALLBACK_CITIES } from './brazil-fallback'
 
 // ─── Intenções ────────────────────────────────────────────────────────────────
 

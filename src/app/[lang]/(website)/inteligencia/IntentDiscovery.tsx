@@ -14,7 +14,7 @@ import {
   mergeDatasets,
   type IntentKey,
   type LiveNeighborhoodRow,
-} from './intentEngine'
+} from '@/lib/intelligence/intent-engine'
 
 // ─── Lotes reais que combinam (ponte inteligência → inventário) ──────────────
 

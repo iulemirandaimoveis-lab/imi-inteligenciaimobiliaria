@@ -17,8 +17,10 @@
 - Visual regression (`toHaveScreenshot` nos mapas) segue pendente (P2 da TESTING_STRATEGY).
 
 ## Supreme Vision — próximos passos (plano em docs/imi-supreme-vision.md)
-1. Plugar dados reais no motor de intenção (Fase 2): `rankByIntent(intents, dataset)` já aceita dataset externo — alimentar via `intelligence/*` quando houver fonte real.
-2. Itens 1.2 (unificar domínio imóveis), 1.3 (3 MediaUploaders) e 1.6 (formatadores BRL divergentes) — UI-visíveis, exigem UI_REGRESSION_POLICY (agora viável: dev server + Playwright com env stub, padrão validado em 2026-07-04).
+1. ✅ Dados reais no motor (#356: ?scope=national + mergeDatasets) · ✅ funil intenção→lote (#352/#354/#359) · ✅ console Match de Cliente (/users/intelligence).
+2. Curar mais linhas na neighborhood_intelligence (cada linha melhora o ranking sem deploy) — alavanca de DADOS, ação do dono/cron.
+3. Itens 1.2 (unificar domínio imóveis), 1.3 (3 MediaUploaders) e 1.6 (formatadores BRL divergentes) — UI-visíveis, exigem UI_REGRESSION_POLICY (viável: dev server + Playwright com env stub).
+4. Motor de intenção agora vive em src/lib/intelligence/ (intent-engine.ts + brazil-fallback.ts) — reutilizável em qualquer superfície.
 
 ## Spatial Intelligence — estado
 Fase 1 (estabilização) ✅ em main (#344). Fase 2 em curso:
