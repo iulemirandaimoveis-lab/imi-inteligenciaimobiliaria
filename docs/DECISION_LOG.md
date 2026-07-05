@@ -5,6 +5,11 @@
 
 ---
 
+## D-15 · 2026-07-05 — Partner API v1: REST read-only mínima, em vez de plataforma completa
+- **Contexto**: prompt externo propôs transformar a IMI em "API Platform" completa (GraphQL + WebSocket + SSE, 18 motores, multi-tenant com domínio/branding, OAuth2, PostGIS/vector tiles/Cesium, marketplace/ERP). Realidade do repo: monólito de produção single-tenant (F-11), sem PostGIS, time de 1, incidente recente de drift de migration (FX-10), zero parceiros integrados hoje.
+- **Decisão**: aceitar a tese (API-first, parceiro nunca toca o banco, IMI = fonte única da verdade) e rejeitar a arquitetura maximalista. Construir **Partner API v1**: superfície nova `/api/v1/*`, REST-only, read-only, API key com escopos (hash no banco, prefixo `imi_pk_…`), rate limit por chave (reusa D-09), ETag + CDN. GraphQL, realtime, multi-tenant, OAuth2, PostGIS/tiles: **adiados com gatilhos explícitos** de reavaliação. SDK/Redoc/Postman sempre **gerados** da spec OpenAPI. Design completo + fases: `docs/PARTNER_API_V1_DESIGN.md`.
+- **Consequências**: Fase 1 exige 1 migration (`partner_api_keys`) e ~6 endpoints GET; **implementação gated em aprovação do dono** (auth/banco = aprovação explícita). Contrato público nunca expõe coluna crua (mappers `toPartner*()`). Piloto: Mano Imóveis. Expansão além da Fase 1 exige gatilho atingido + novo ADR.
+
 ## D-14 · 2026-07-04 — Motor de Descoberta por Intenção 100% client-side
 - **Decisão**: o ranking por intenção da `/inteligencia` (`intentEngine.ts`) roda no cliente sobre o dataset nacional (Estimativa IMI): parser pt-BR por regex + normalização min-max + score ponderado. Sem API nova, sem custo por consulta, funciona em preview/offline.
 - **Consequência**: quando houver fonte de dados de mercado real (Fase 2), o motor recebe o dataset por props/fetch sem mudar a interface (`rankByIntent(intents, dataset)`); o parser pode ser trocado por IA mantendo `parseIntent()` como contrato.

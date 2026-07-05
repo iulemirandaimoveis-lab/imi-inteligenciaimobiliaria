@@ -20,6 +20,7 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-05 (branch `claude/imi-saas-platform-design-el33oi`, só docs): **Decisão CTO D-15 — Partner API v1**. Prompt externo de "API Platform" completa foi analisado e recusado no maximalismo; aprovada direção REST read-only + API key/escopos com evolução por gatilhos. Design: `docs/PARTNER_API_V1_DESIGN.md`. **Implementação aguarda aprovação do dono** (migration `partner_api_keys` + modelo comercial).
 - 2026-07-04 (hotfix produção, FX-10): **/imoveis vazio corrigido** — select do #334 pedia `cover_video_url`, coluna nunca aplicada em produção (migration manual jazz executada parcialmente) → 42703 → catálogo público inteiro no empty state "Portfólio em Curadoria". Coluna aplicada via MCP (site voltou na hora) + migration versionada `20260704_add_cover_video_url.sql` + fallback `CORE_SELECT` na página.
 - 2026-07-04 (Supreme Vision): **Descoberta por Intenção** na /inteligencia — motor client-side `intentEngine.ts` (parser pt-BR + ranking nacional + explicação com percentil), seção `IntentDiscovery` no dashboard, 10 testes, verificação visual Playwright (desktop/mobile). #346 plano 4 fases merged; #347 triagem TODOs ("662" era falso positivo; −279 linhas de shims mortos) merged; #349 fix @deprecated formatBRL merged.
 
@@ -37,6 +38,7 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 - Migration segura APLICADA (`proposal_events` + colunas de tracking). A versão que reescrevia policies foi descartada (proposals não tem `tenant_id`).
 
 ## Pendências quentes (topo da fila)
+0. **AÇÃO DO DONO — D-15**: aprovar (ou não) a Fase 1 da Partner API v1 (`docs/PARTNER_API_V1_DESIGN.md`): migration `partner_api_keys` + auth por chave + quem recebe chave (piloto Mano Imóveis).
 1. **T-07**: DOMPurify nos 13 `dangerouslySetInnerHTML` (verificação por uso).
 2. Upgrade Next/next-pwa (altas de `npm audit` de produção) → depois subir gate do CI para `high`.
 3. **F-11 (informativo)**: policies de proposals são org-wide (sem tenant). By-design hoje; revisitar se virar multi-tenant.

@@ -245,3 +245,14 @@ usa service_role+token, funciona sob a RLS real).
 - Visual verificado (Playwright + mock): Cabo Branco reordenado ao topo com números reais;
   Balneário Camboriú (inexistente no fallback) entrou no ranking.
 - Gates: tsc ok, jest 875/880 (+3 testes mergeDatasets), lint ok, build exit 0.
+
+## 2026-07-05 · Sessão CTO: decisão Partner API v1 (D-15) — análise crítica do prompt "IMI API Platform"
+- Prompt externo pedia plataforma completa (GraphQL/WS/SSE, 18 motores, multi-tenant com domínio,
+  OAuth2, PostGIS/tiles/Cesium, marketplace). Decisão CTO: aceitar a tese API-first, rejeitar o
+  maximalismo — Partner API v1 REST read-only com API key/escopos, evolução por gatilhos de tração.
+- Entregas (só docs, zero código de runtime): docs/PARTNER_API_V1_DESIGN.md (análise ponto a ponto,
+  arquitetura Fase 1, superfície de 6 endpoints, roadmap por gatilhos, riscos), D-15 no
+  DECISION_LOG + índice .memory/ARCHITECTURE_DECISIONS.md, memória atualizada.
+- Implementação da Fase 1 GATED: exige aprovação do dono (migration partner_api_keys + modelo de
+  auth por chave + definição comercial). Invariante "auth/banco só com aprovação" respeitada.
+- Branch: claude/imi-saas-platform-design-el33oi (PR draft).
