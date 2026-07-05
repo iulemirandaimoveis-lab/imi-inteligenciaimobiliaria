@@ -19,6 +19,7 @@
 | D-13 | Planilha via adapter (ExcelJS), xlsx removido | importar só de src/lib/spreadsheet (P16) |
 
 - **D-14** Descoberta por Intenção client-side (`intentEngine.ts`) — dataset injetável para Fase 2.
+- **D-15** Partner API v1 = REST read-only + API key/escopos; plataforma completa (GraphQL/realtime/multi-tenant/PostGIS) **adiada com gatilhos**. Implementação só com aprovação do dono. Design: `docs/PARTNER_API_V1_DESIGN.md`.
 
 ## Suposições críticas (se quebrarem, muita coisa quebra)
 

@@ -1,6 +1,14 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-03 (duas sessões paralelas: refinamento testes/UX + spatial-intelligence Fase 1)
+**Atualizado**: 2026-07-05 (sessão CTO: decisão Partner API v1 — D-15)
+
+## Partner API v1 (D-15) — bloqueada em decisão do dono
+- Design pronto: `docs/PARTNER_API_V1_DESIGN.md`. Se o dono aprovar, ordem de execução da Fase 1:
+  1. Migration `YYYYMMDD_partner_api_keys.sql` (RLS on, sem policy anon/authenticated) — **verificar estado real do banco via MCP antes** (L-15/FX-10).
+  2. `withPartnerAuth()` (hash SHA-256 da chave, escopos, `last_used_at`) + `limiters.partner` por chave.
+  3. `/api/v1/developments` (+ detalhe) com mapper `toPartnerDevelopment()` — nunca coluna crua.
+  4. Demais endpoints (lots, map GeoJSON, availability com ETag) + OpenAPI + testes de contrato.
+- NÃO fazer sem aprovação: é auth + banco (invariante). NÃO expandir escopo além da tabela §3.2 sem novo ADR.
 
 ## Novidades da sessão de refinamento que afetam a fila
 - E2E agora tem 7 specs/84 testes — candidato natural a job de CI (rodar contra preview do Vercel via `BASE_URL`).

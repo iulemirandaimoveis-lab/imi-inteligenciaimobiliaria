@@ -1,19 +1,20 @@
 # SESSION_MEMORY (sobrescrita por sessão)
 
-**Sessão**: 2026-07-04 · Hotfix produção — /imoveis vazio ("Portfólio em Curadoria")
+**Sessão**: 2026-07-05 · Decisão CTO — Partner API v1 (análise do prompt "IMI API Platform")
 
 ## Contexto vivo
-- Dono reportou via screenshot mobile: `iulemirandaimoveis.com.br/pt/imoveis` só mostrava o empty state.
-- Diagnóstico: coluna `cover_video_url` do select (PR #334) não existia em produção — a migration
-  manual `jazz_boulevard_EXECUTAR_NO_SUPABASE.sql` foi aplicada parcialmente (só essa coluna faltava).
-  PostgREST 42703 derruba a query inteira → `data=null` → empty state. 0 rentals ativos → página 100% vazia.
-- Fix em 2 camadas: (1) coluna aplicada em produção via MCP (site voltou imediatamente, page é
-  force-dynamic); (2) código: migration versionada + fallback `CORE_SELECT` no `imoveis/page.tsx`.
-- Branch designado: `claude/website-correction-ihsy4p`.
-- Armadilha reconfirmada: `npx tsc` sem node_modules "passa" — sempre `npm ci` antes dos gates.
-- Proxy deste ambiente bloqueia fetch do site em produção (403) — verificação foi via SQL (reproduz
-  o select exato) + FK do embed confirmada no pg_constraint.
-
-## Estado ao fim da sessão
-- Produção corrigida (DB). PR com migration + hardening + memória aguardando merge.
-- Follow-up sugerido: varrer outros selects públicos por colunas ausentes em produção (mesma classe FX-10).
+- Dono trouxe prompt externo pedindo plataforma completa de inteligência imobiliária para servir
+  imobiliárias parceiras (Mano Imóveis etc.) — GraphQL, WebSocket, 18 motores, multi-tenant com
+  domínio/branding, OAuth2, PostGIS/vector tiles/Cesium, marketplace/ERP — e pediu decisão como CTO,
+  sem tomar o prompt como verdade.
+- Fatos que decidiram: repo é monólito de produção single-tenant (F-11 sem tenant_id), sem PostGIS
+  (geo = GeoJSON + motor CAD próprio), 275 rotas internas que NÃO podem virar superfície de parceiro,
+  drift de migration já causou incidente (FX-10), time de 1, zero parceiros integrados hoje.
+- **Decisão (D-15)**: Partner API v1 — superfície nova `/api/v1/*`, REST-only, read-only,
+  API key com escopos (hash, prefixo `imi_pk_`), rate limit por chave, ETag+CDN. Todo o resto
+  adiado com gatilhos explícitos (tabela §3.2 do design). SDK/docs gerados da spec OpenAPI.
+- Design completo: `docs/PARTNER_API_V1_DESIGN.md`. Fase 1 = 1 migration (`partner_api_keys`)
+  + 6 endpoints GET + OpenAPI + testes de contrato. Piloto: Mano Imóveis.
+- **GATE**: nada implementado nesta sessão — auth/banco exigem aprovação explícita do dono.
+  Se o dono aprovar, a Fase 1 começa pela migration + `withPartnerAuth()` + `/api/v1/developments`.
+- Branch: `claude/imi-saas-platform-design-el33oi` (PR draft, só documentação).
