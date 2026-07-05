@@ -132,6 +132,26 @@ export default function InteractiveLotMap({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Deep-link ?lote=QUADRA-LOTE (ex.: C-14 ou C-04) — vindo da Descoberta por
+  // Intenção. Seleciona o lote quando os dados carregam e centraliza o mapa.
+  // Matching tolerante a zero à esquerda ('C-4' casa com id 'C-04'). Uma vez só.
+  const deepLinkDone = useRef(false);
+  useEffect(() => {
+    if (deepLinkDone.current || allLots.length === 0) return;
+    const param = new URLSearchParams(window.location.search).get('lote');
+    deepLinkDone.current = true;
+    if (!param) return;
+    const norm = (s: string) => {
+      const [q, ...rest] = s.trim().toLowerCase().split('-');
+      return `${q}-${rest.join('-').replace(/^0+(?=\d)/, '')}`;
+    };
+    const target = allLots.find((l) => norm(`${l.quadra}-${l.lote}`) === norm(param));
+    if (!target) return;
+    setSelectedQuadra(null);
+    setSelectedLot(target);
+    wrapperRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [allLots, setSelectedLot, setSelectedQuadra]);
+
   // Amenity media — editorial content (photos/videos) fetched from DB
   const [amenityMedia, setAmenityMedia] = useState<Record<string, AmenityMediaData>>({});
   const [selectedAmenityId, setSelectedAmenityId] = useState<string | null>(null);

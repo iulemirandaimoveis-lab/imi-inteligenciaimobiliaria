@@ -256,3 +256,11 @@ usa service_role+token, funciona sob a RLS real).
 - Implementação da Fase 1 GATED: exige aprovação do dono (migration partner_api_keys + modelo de
   auth por chave + definição comercial). Invariante "auth/banco só com aprovação" respeitada.
 - Branch: claude/imi-saas-platform-design-el33oi (PR draft).
+
+## 2026-07-05 · Sessão Supreme Vision (cont. 3): deep-link de lote — funil completo
+- InteractiveLotMap: efeito de deep-link ?lote=QUADRA-LOTE (matching tolerante a zero à
+  esquerda: C-4 casa com id C-04), consumido uma vez, seleciona o lote e centraliza o mapa.
+- MatchingLots (Descoberta por Intenção): CTA agora aponta para
+  /imoveis/{slug}?lote={quadra}-{numero} — o funil intenção→lote abre direto no lote.
+- Verificação: página temporária isolada (removida) + Playwright — painel do Lote 04/Quadra C
+  abriu via ?lote=C-4; controle negativo sem param ok. Jest 875/880, lint ok, build exit 0.

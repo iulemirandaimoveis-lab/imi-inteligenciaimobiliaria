@@ -69,7 +69,7 @@ function MatchingLots({ intents, lang }: { intents: IntentKey[]; lang: string })
         {lots.map((lot) => (
           <a
             key={lot.id}
-            href={`/${lang}/imoveis`}
+            href={`/${lang}/imoveis/${development.slug}?lote=${encodeURIComponent(`${lot.quadra}-${lot.lot_number}`)}`}
             className="group flex flex-col h-full gap-2 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-[#C8A44A]/35 transition-all duration-200"
           >
             <div className="flex items-start justify-between gap-2">
