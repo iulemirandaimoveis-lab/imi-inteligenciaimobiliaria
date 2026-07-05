@@ -2,7 +2,7 @@
 
 > LEIA PRIMEIRO em toda sessão. Atualize ao final de toda sessão. Máx ~60 linhas.
 
-**Atualizado**: 2026-07-04 · **Branch base**: main @ a3dba7d
+**Atualizado**: 2026-07-05 · **Branch base**: main @ b283291
 
 ## Saúde (última medição 2026-07-03)
 
@@ -10,7 +10,7 @@
 |---|---|
 | type-check (`tsc --noEmit`) | ✅ limpo |
 | lint (`next lint --quiet`) | ✅ limpo |
-| jest | ✅ 869/874 (5 skipped, 62 suítes) |
+| jest | ✅ 889/894 (5 skipped, 64 suítes) |
 | e2e | ✅ 7 specs / 84 testes (local/CI; fora do gate) |
 | build Vercel | ✅ (tipos ignorados por design — D-07) |
 
@@ -19,6 +19,12 @@
 Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n (`/[lang]`), backoffice admin (`/backoffice`), console de corretores IMI (`/users`, schema `imi`). 275 rotas de API. Empreendimentos-chave: Alto Bellevue, Miguel Marques, Jazz Boulevard.
 
 ## Trabalho recente (main)
+
+- 2026-07-05 (Supreme Vision, 7 PRs em produção): funil proprietário completo — Descoberta por
+  Intenção (#352), lotes reais por perfil (#354), motor híbrido com dados reais da
+  neighborhood_intelligence (#356), deep-link ?lote= no explorador (#359), Match de Cliente no
+  console /users/intelligence (#361). Motor em src/lib/intelligence/ (intent-engine + brazil-fallback).
+  Padrão de verificação visual sem credenciais: dev server com env stub + Playwright (pegou 3 bugs).
 
 - 2026-07-05 (D-15 aprovada pelo dono → **Fase 1 da Partner API v1 IMPLEMENTADA**): migration `partner_api_keys` aplicada em produção (RLS on+forced, 0 policies — verificado via MCP), `withPartnerAuth` (SHA-256 + escopos + RL 120/min por chave), 6 endpoints GET `/api/v1/*` (developments, lots, map GeoJSON do AB, availability com ETag/304 + overlay da planilha), OpenAPI 3.1, guia de integração, script de emissão de chave, 14 testes de contrato. Piloto: Mano Imóveis. Docs: `docs/PARTNER_API_V1_DESIGN.md` + `docs/api/`.
 - 2026-07-04 (hotfix produção, FX-10): **/imoveis vazio corrigido** — select do #334 pedia `cover_video_url`, coluna nunca aplicada em produção (migration manual jazz executada parcialmente) → 42703 → catálogo público inteiro no empty state "Portfólio em Curadoria". Coluna aplicada via MCP (site voltou na hora) + migration versionada `20260704_add_cover_video_url.sql` + fallback `CORE_SELECT` na página.
