@@ -547,6 +547,8 @@ function DesktopImoveisList(props: SharedProps) {
                   property={p}
                   onCompare={toggleCompare}
                   isComparing={compareIds.has(p.id)}
+                  onArchive={onArchive}
+                  onDelete={onDelete}
                 />
               ))}
             </div>
@@ -1484,12 +1486,15 @@ export default function ImoveisPage() {
 
   const handleArchive = useCallback(async (id: string) => {
     try {
-      const supabase = createClient()
-      const { error } = await supabase
-        .from('developments')
-        .update({ status: 'arquivado' })
-        .eq('id', id)
-      if (error) throw error
+      const res = await fetch('/api/developments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: 'arquivado' }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error || 'Falha ao arquivar imóvel')
+      }
       toast.success('Imóvel arquivado')
       await fetchProperties()
     } catch {
