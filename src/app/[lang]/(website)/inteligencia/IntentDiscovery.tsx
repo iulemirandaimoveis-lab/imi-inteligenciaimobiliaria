@@ -10,7 +10,10 @@ import {
   rankByIntent,
   explainFit,
   intentsToProfile,
+  nationalDataset,
+  mergeDatasets,
   type IntentKey,
+  type LiveNeighborhoodRow,
 } from './intentEngine'
 
 // ─── Lotes reais que combinam (ponte inteligência → inventário) ──────────────
@@ -118,6 +121,18 @@ const fmtBRL = (v: number) =>
 export default function IntentDiscovery({ lang }: { lang: string }) {
   const [selected, setSelected] = useState<IntentKey[]>(DEFAULT_INTENTS)
   const [query, setQuery] = useState('')
+  const [liveRows, setLiveRows] = useState<LiveNeighborhoodRow[]>([])
+
+  // Dados reais (neighborhood_intelligence) sobrepõem a estimativa nacional.
+  // Falha da API → segue 100% na estimativa, sem estado quebrado.
+  useEffect(() => {
+    const controller = new AbortController()
+    fetch('/api/intelligence/neighborhood?scope=national', { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
+      .then((data) => setLiveRows(Array.isArray(data?.neighborhoods) ? data.neighborhoods : []))
+      .catch(() => setLiveRows([]))
+    return () => controller.abort()
+  }, [])
 
   const toggle = (key: IntentKey) =>
     setSelected((prev) =>
@@ -130,8 +145,10 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
     if (parsed.length > 0) setSelected(parsed)
   }
 
-  const results = useMemo(() => rankByIntent(selected), [selected])
+  const dataset = useMemo(() => mergeDatasets(nationalDataset(), liveRows), [liveRows])
+  const results = useMemo(() => rankByIntent(selected, dataset), [selected, dataset])
   const topFit = results[0]?.fit ?? 0
+  const hasLive = liveRows.length > 0
 
   return (
     <section className="py-10 md:py-14 border-b border-white/[0.05]" aria-label="Descoberta por intenção">
@@ -150,10 +167,14 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
           </h2>
           <span
             className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shrink-0"
-            style={{ color: '#C8A44A', background: 'rgba(200,164,74,0.08)', borderColor: 'rgba(200,164,74,0.2)' }}
+            style={
+              hasLive
+                ? { color: '#4ADE80', background: 'rgba(74,222,128,0.08)', borderColor: 'rgba(74,222,128,0.2)' }
+                : { color: '#C8A44A', background: 'rgba(200,164,74,0.08)', borderColor: 'rgba(200,164,74,0.2)' }
+            }
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C8A44A]" />
-            Estimativa IMI
+            <span className={`w-1.5 h-1.5 rounded-full ${hasLive ? 'bg-[#4ADE80]' : 'bg-[#C8A44A]'}`} />
+            {hasLive ? 'Dados IMI + Estimativa' : 'Estimativa IMI'}
           </span>
         </div>
 
@@ -226,6 +247,13 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
                         <p className="flex items-center gap-1 text-[11px] text-[#556170]">
                           <MapPin className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                           <span className="truncate">{r.city} · {r.state}</span>
+                          {r.source === 'live' && (
+                            <span
+                              className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] flex-shrink-0"
+                              title="Dado real IMI"
+                              aria-label="Dado real IMI"
+                            />
+                          )}
                         </p>
                       </div>
                     </div>

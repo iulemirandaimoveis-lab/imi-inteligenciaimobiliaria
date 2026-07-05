@@ -59,6 +59,8 @@ export interface NationalNeighborhood {
   price_trend_12m: number
   avg_days_on_market: number
   avg_rental_yield: number
+  /** 'live' = linha real (neighborhood_intelligence); 'estimate' = fallback IMI. */
+  source?: 'live' | 'estimate'
 }
 
 export function nationalDataset(): NationalNeighborhood[] {
@@ -71,8 +73,57 @@ export function nationalDataset(): NationalNeighborhood[] {
       price_trend_12m: n.price_trend_12m,
       avg_days_on_market: n.avg_days_on_market,
       avg_rental_yield: n.avg_rental_yield,
+      source: 'estimate' as const,
     })),
   )
+}
+
+/** Linha crua vinda de /api/intelligence/neighborhood?scope=national. */
+export interface LiveNeighborhoodRow {
+  neighborhood: string
+  city: string
+  state: string
+  median_price_sqm: number | string | null
+  price_trend_12m: number | string | null
+  avg_days_on_market: number | string | null
+  avg_rental_yield: number | string | null
+}
+
+const datasetKey = (n: { neighborhood: string; city: string }) =>
+  `${normalize(n.city)}|${normalize(n.neighborhood)}`
+
+/**
+ * Mescla dados reais sobre a estimativa nacional: linhas reais SOBREPÕEM o
+ * fallback do mesmo bairro (chave cidade+bairro, sem acento/caixa) e bairros
+ * novos são adicionados. Linhas reais incompletas (métrica nula/NaN) são
+ * descartadas — o motor exige as 4 métricas.
+ */
+export function mergeDatasets(
+  fallback: NationalNeighborhood[],
+  live: LiveNeighborhoodRow[],
+): NationalNeighborhood[] {
+  const merged = new Map(fallback.map((n) => [datasetKey(n), n]))
+  for (const row of live) {
+    const parsed: NationalNeighborhood = {
+      neighborhood: row.neighborhood,
+      city: row.city,
+      state: row.state,
+      median_price_sqm: Number(row.median_price_sqm),
+      price_trend_12m: Number(row.price_trend_12m),
+      avg_days_on_market: Number(row.avg_days_on_market),
+      avg_rental_yield: Number(row.avg_rental_yield),
+      source: 'live',
+    }
+    const complete =
+      Number.isFinite(parsed.median_price_sqm) &&
+      parsed.median_price_sqm > 0 &&
+      Number.isFinite(parsed.price_trend_12m) &&
+      Number.isFinite(parsed.avg_days_on_market) &&
+      parsed.avg_days_on_market > 0 &&
+      Number.isFinite(parsed.avg_rental_yield)
+    if (complete) merged.set(datasetKey(parsed), parsed)
+  }
+  return Array.from(merged.values())
 }
 
 // ─── Scoring ──────────────────────────────────────────────────────────────────

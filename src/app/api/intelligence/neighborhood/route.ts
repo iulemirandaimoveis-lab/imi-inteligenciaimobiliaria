@@ -12,6 +12,28 @@ export const GET = apiHandler(null, async (request: NextRequest, _body: unknown,
     const city = searchParams.get('city')
     const neighborhood = searchParams.get('neighborhood')
 
+    // Escopo nacional — todos os bairros BR com dados reais (alimenta o motor
+    // de Descoberta por Intenção). UFs têm 2 letras; exclui mercados externos (ex.: UAE).
+    if (searchParams.get('scope') === 'national') {
+        const { data, error } = await supabase
+            .from('neighborhood_intelligence')
+            .select('neighborhood, city, state, median_price_sqm, price_trend_12m, avg_days_on_market, avg_rental_yield, data_source')
+            .order('city')
+
+        if (error) {
+            return NextResponse.json({ error: error.message }, { status: 500 })
+        }
+
+        const brazilian = (data || []).filter(
+            (row) => typeof row.state === 'string' && /^[A-Z]{2}$/.test(row.state),
+        )
+
+        return NextResponse.json(
+            { neighborhoods: brazilian, scope: 'national' },
+            { headers: { 'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400' } },
+        )
+    }
+
     if ((!city || !city.trim()) && (!neighborhood || !neighborhood.trim())) {
         return NextResponse.json(
             { error: 'Parametro "city" ou "neighborhood" obrigatorio' },
