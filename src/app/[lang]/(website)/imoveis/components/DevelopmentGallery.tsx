@@ -112,7 +112,7 @@ export default function DevelopmentGallery({ development, lotMapAmenities }: Dev
 
     return (
         <>
-            <div className="space-y-14">
+            <div className="space-y-8 sm:space-y-10 md:space-y-14">
                 {/* Image Gallery */}
                 <div>
                     <SectionTitle label="Galeria" />
