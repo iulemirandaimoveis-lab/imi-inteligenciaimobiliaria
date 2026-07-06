@@ -40,6 +40,15 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
   `imi.users`. Migration idempotente `20260706_owner_master_admin.sql` consolida `iule@imi.com`
   como admin máster dos dois sistemas + propaga a foto; foto copiada p/ a conta profissional.
   Aplicada em produção via MCP. Detalhe em FAILURES FX-11.
+- 2026-07-06 (branch claude/imi-geo-intelligence-engine-vyix5f, PR draft): **IMI Geo
+  Intelligence Engine v1 (fundação)** — módulo aditivo `src/geo/` (types, catálogo de 20
+  camadas parametrizado, providers OSM/Google/Mapbox atrás de `GeoProvider` + registry com
+  fallback e observabilidade, orquestrador `getGeoIntelligence`, cache em memória TTL/LRU,
+  isócronas radiais, geocoding, `usePOIs` SWR). Rotas novas `GET /api/geo/pois` (zod + RL +
+  chaves só server-side) e `/api/geo/health`. 14 testes (sem rede), type-check/lint limpos.
+  ZERO regressão: nenhuma rota/componente de mapa existente tocado. Doc completa em
+  `docs/GEO_INTELLIGENCE_ENGINE.md` (arquitetura, roadmap F2–F10, rollback, migração das 3
+  rotas de POI legadas). Fragmentação identificada: 3 rotas POI + 2 tabelas de cache a unificar (F10).
 - 2026-07-06 (branch claude/frontend-refactor-design-gubdfu, PR draft): refino front-end
   "Apple/iOS" — mapa AB com gesto em GPU + momentum + hover tooltip + spotlight; console
   dashboard (fonte serif corrigida, safe-area, loading/error, a11y); backoffice (KPICard 10px,
