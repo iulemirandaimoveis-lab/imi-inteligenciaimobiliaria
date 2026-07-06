@@ -274,7 +274,7 @@ export function DesktopSidebar() {
                 <span
                     className="leading-none select-none"
                     style={{
-                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontFamily: "var(--font-serif, 'Playfair Display', Georgia, serif)",
                         fontSize: 20,
                         fontWeight: 700,
                         letterSpacing: '2px',

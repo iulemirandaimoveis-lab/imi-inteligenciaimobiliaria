@@ -115,8 +115,11 @@ export function DataTable<T extends Record<string, unknown>>({
   /* ── Styles ── */
   const tableWrapperStyle: React.CSSProperties = {
     width: '100%',
+    // overflowX auto (rolagem horizontal no mobile) + Y hidden (cantos arredondados).
+    // Nunca usar `overflow: hidden` aqui — ele anula o eixo X e trava a tabela.
     overflowX: 'auto',
-    overflow: 'hidden',
+    overflowY: 'hidden',
+    WebkitOverflowScrolling: 'touch',
     borderRadius: T.radius.xl,
     border: `1px solid ${T.borderSubtle}`,
     background: T.surface,
@@ -183,10 +186,37 @@ export function DataTable<T extends Record<string, unknown>>({
                 <th
                   key={col.key}
                   style={thStyle(col)}
-                  onClick={col.sortable ? () => handleSort(col.key) : undefined}
+                  aria-sort={
+                    col.sortable && sortKey === col.key && sortDir
+                      ? sortDir === 'asc' ? 'ascending' : 'descending'
+                      : undefined
+                  }
                 >
-                  {col.label}
-                  {col.sortable && renderSortIcon(col.key)}
+                  {col.sortable ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSort(col.key)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        margin: 0,
+                        cursor: 'pointer',
+                        font: 'inherit',
+                        color: 'inherit',
+                        textTransform: 'inherit',
+                        letterSpacing: 'inherit',
+                      }}
+                      aria-label={`Ordenar por ${col.label}`}
+                    >
+                      {col.label}
+                      {renderSortIcon(col.key)}
+                    </button>
+                  ) : (
+                    col.label
+                  )}
                 </th>
               ))}
             </tr>

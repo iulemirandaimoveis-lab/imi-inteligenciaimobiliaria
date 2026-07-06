@@ -2,7 +2,7 @@
 
 > LEIA PRIMEIRO em toda sessão. Atualize ao final de toda sessão. Máx ~60 linhas.
 
-**Atualizado**: 2026-07-05 · **Branch base**: main @ b283291
+**Atualizado**: 2026-07-06 · **Branch base**: main @ b55d863
 
 ## Saúde (última medição 2026-07-03)
 
@@ -20,6 +20,11 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-06 (branch claude/frontend-refactor-design-gubdfu, PR draft): refino front-end
+  "Apple/iOS" — mapa AB com gesto em GPU + momentum + hover tooltip + spotlight; console
+  dashboard (fonte serif corrigida, safe-area, loading/error, a11y); backoffice (KPICard 10px,
+  DataTable overflow-x consertado + sort por teclado); prefers-reduced-motion global.
+  Pós-merge: validar pinch/pan em iPhone real.
 - 2026-07-05 (Supreme Vision, 7 PRs em produção): funil proprietário completo — Descoberta por
   Intenção (#352), lotes reais por perfil (#354), motor híbrido com dados reais da
   neighborhood_intelligence (#356), deep-link ?lote= no explorador (#359), Match de Cliente no

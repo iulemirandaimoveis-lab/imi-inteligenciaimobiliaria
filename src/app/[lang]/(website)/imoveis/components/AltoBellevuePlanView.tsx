@@ -438,12 +438,14 @@ interface MapInnerProps {
   context: ABMapData | null;
   showTechLayer: boolean;
   selectedId: string | null;
+  hoverId: string | null;
   compareIds: Set<string>;
   multiSelectMode: boolean;
   vb: ViewBox;
   isDragging: boolean;
   activeQuadra: string;
   onLotClick: (lot: PlanLot) => void;
+  onLotHover: (id: string | null) => void;
   onAmenityClick: (amenity: Amenity) => void;
   onQuadraClick: (quadra: string) => void;
   onBackgroundClick: () => void;
@@ -455,8 +457,8 @@ interface MapInnerProps {
 }
 
 const MapInner = memo(function MapInner({
-  lots, allLots, context, showTechLayer, selectedId, compareIds, multiSelectMode, vb, isDragging,
-  activeQuadra, onLotClick, onAmenityClick, onQuadraClick, onBackgroundClick, onPointerDown, onPointerMove, onPointerUp,
+  lots, allLots, context, showTechLayer, selectedId, hoverId, compareIds, multiSelectMode, vb, isDragging,
+  activeQuadra, onLotClick, onLotHover, onAmenityClick, onQuadraClick, onBackgroundClick, onPointerDown, onPointerMove, onPointerUp,
   onPointerLeave, onPointerCancel,
 }: MapInnerProps) {
   // Derive scale from the viewBox: how much the viewport has been narrowed
@@ -606,6 +608,19 @@ const MapInner = memo(function MapInner({
       onPointerLeave={onPointerLeave}
       onPointerCancel={onPointerCancel}
     >
+      <style>{`
+        /* Transições do lote: cor de status muda com fade (mapa "vivo") e o hover
+           de mouse realça o polígono sem re-render. Só em dispositivos com hover. */
+        .ab-lot-shape { transition: fill 400ms ease, stroke 400ms ease, filter 180ms ease; }
+        @media (hover: hover) {
+          .ab-lot:hover .ab-lot-shape { filter: brightness(1.12) saturate(1.15); }
+        }
+        .ab-tooltip { animation: abTooltipIn 160ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+        @keyframes abTooltipIn { from { opacity: 0; } to { opacity: 1; } }
+        @media (prefers-reduced-motion: reduce) {
+          .ab-lot, .ab-lot-shape, .ab-tooltip { transition: none !important; animation: none !important; }
+        }
+      `}</style>
       <svg
         viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
         className="w-full h-full select-none"
@@ -925,11 +940,21 @@ const MapInner = memo(function MapInner({
           const cy = lot.centroid?.[1] ?? 0;
           const dims = showDimensions && lot.area_m2 ? computeDimensions(lot.polygon, lot.area_m2 as number) : null;
 
+          // Spotlight: com um lote selecionado, os demais recuam suavemente —
+          // foco cinematográfico no lote ativo sem esconder o contexto.
+          const isDimmed = selectedId !== null && !isSelected && !isCompared;
+
           return (
             <g
               key={lot.id}
               data-lot-id={lot.id}
-              style={{ cursor: multiSelectMode ? 'crosshair' : 'pointer', outline: 'none' }}
+              className="ab-lot"
+              style={{
+                cursor: multiSelectMode ? 'crosshair' : 'pointer',
+                outline: 'none',
+                opacity: isDimmed ? 0.45 : 1,
+                transition: 'opacity 320ms cubic-bezier(0.22, 1, 0.36, 1)',
+              }}
               role="button"
               aria-label={`Lote ${lot.lot_number} Quadra ${lot.quadra} — ${cfg.label}${lot.area_m2 ? `, ${Math.round(lot.area_m2 as number)}m²` : ''}${lot.price ? `, ${fmtBRL(lot.price as number)}` : ''}`}
               tabIndex={0}
@@ -940,6 +965,8 @@ const MapInner = memo(function MapInner({
                   onLotClick(lot);
                 }
               }}
+              onPointerEnter={(e) => { if (e.pointerType === 'mouse') onLotHover(lot.id); }}
+              onPointerLeave={(e) => { if (e.pointerType === 'mouse') onLotHover(null); }}
             >
               {isSelected && !isCompared && (
                 <polygon
@@ -963,6 +990,7 @@ const MapInner = memo(function MapInner({
                 />
               )}
               <polygon
+                className="ab-lot-shape"
                 points={pts}
                 fill={isCompared ? 'rgba(37,99,235,0.38)' : isSelected ? 'rgba(200,163,95,0.55)' : cfg.fill}
                 stroke={isCompared ? '#2563EB' : isSelected ? '#D7B97A' : cfg.stroke}
@@ -1048,6 +1076,56 @@ const MapInner = memo(function MapInner({
             </g>
           );
         })}
+
+        {/* ── Layer 4.5: Hover tooltip (desktop) — pill glass ancorado ao lote,
+            tamanho constante em tela (unidades SVG ÷ scale). Puramente informativo:
+            pointer-events none, não interfere no gesto nem no clique. ── */}
+        {hoverId && !isDragging && (() => {
+          const lot = visibleLots.find(l => l.id === hoverId);
+          if (!lot || lot.id === selectedId || !lot.centroid) return null;
+          const cfg = getCfg(lot.status);
+          const [cx, cy] = lot.centroid;
+          const fs1 = 12 / scale;   // linha 1: identificação
+          const fs2 = 9.5 / scale;  // linha 2: status · área
+          const line1 = `${lot.quadra}-${lot.lot_number}`;
+          const line2 = `${cfg.label}${lot.area_m2 ? ` · ${Math.round(lot.area_m2 as number)} m²` : ''}`;
+          const w = Math.max(estTextWidth(line1, fs1), estTextWidth(line2, fs2)) + 22 / scale;
+          const h = 34 / scale;
+          const yTop = cy - h - 12 / scale;
+          const r = 7 / scale;
+          return (
+            <g style={{ pointerEvents: 'none' }} className="ab-tooltip">
+              <rect
+                x={cx - w / 2} y={yTop} width={w} height={h} rx={r}
+                fill="rgba(8,21,36,0.92)"
+                stroke="rgba(200,164,74,0.55)"
+                strokeWidth={1.2 / scale}
+              />
+              {/* Seta */}
+              <path
+                d={`M ${cx - 5 / scale} ${yTop + h} L ${cx} ${yTop + h + 5 / scale} L ${cx + 5 / scale} ${yTop + h} Z`}
+                fill="rgba(8,21,36,0.92)"
+              />
+              <circle cx={cx - w / 2 + 10 / scale} cy={yTop + h * 0.34} r={3 / scale} fill={cfg.dot} />
+              <text
+                x={cx - w / 2 + 17 / scale} y={yTop + h * 0.34}
+                dominantBaseline="central"
+                fontSize={fs1} fontWeight="800" fill="#FFFFFF"
+                style={{ fontFamily: 'monospace' }}
+              >
+                {line1}
+              </text>
+              <text
+                x={cx} y={yTop + h * 0.74}
+                textAnchor="middle" dominantBaseline="central"
+                fontSize={fs2} fontWeight="600" fill="rgba(255,255,255,0.78)"
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                {line2}
+              </text>
+            </g>
+          );
+        })()}
 
         {/* ── Layer 5: Street labels — fade out at high zoom to avoid covering lot numbers ── */}
         {showTechLayer && showStreetLabels && (
@@ -2231,6 +2309,7 @@ export default function AltoBellevuePlanView({
   const planLots = mapData?.lots ?? [];
 
   const [selectedLot, setSelectedLot] = useState<PlanLot | null>(null);
+  const [hoverLotId, setHoverLotId] = useState<string | null>(null);
   const priceMap = usePrices(selectedLot !== null);
   const [selectedAmenity, setSelectedAmenity] = useState<Amenity | null>(null);
   const [activeStatus, setActiveStatus] = useState('ALL');
@@ -2284,13 +2363,7 @@ export default function AltoBellevuePlanView({
     return { x: cx - w / 2, y: cy - h / 2, w, h };
   }, [mapData]);
 
-  // Aplica o enquadramento inicial uma única vez por carga do mapa.
   const homeApplied = useRef(false);
-  useEffect(() => {
-    if (!mapData || homeApplied.current) return;
-    homeApplied.current = true;
-    setVb(homeVb);
-  }, [mapData, homeVb]);
 
   // "No enquadramento inicial?" — usado para mostrar "Ver tudo" só quando há para
   // onde voltar (zoom/pan/quadra). Um botão que não faz nada em repouso é ruído.
@@ -2329,6 +2402,22 @@ export default function AltoBellevuePlanView({
     };
     animRef.current = requestAnimationFrame(tick);
   }, []);
+
+  // Aplica o enquadramento inicial uma única vez por carga do mapa.
+  // Entrada cinematográfica: abre num overview levemente afastado e assenta no
+  // enquadramento "casa" com ease-out — primeira impressão de mapa vivo.
+  useEffect(() => {
+    if (!mapData || homeApplied.current) return;
+    homeApplied.current = true;
+    const reduceMotion = typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) { setVb(homeVb); return; }
+    const wide = zoomViewBox(homeVb, 1.22);
+    vbLive.current = wide;
+    setVb(wide);
+    const id = requestAnimationFrame(() => animateTo(homeVb));
+    return () => cancelAnimationFrame(id);
+  }, [mapData, homeVb, animateTo]);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -2411,10 +2500,108 @@ export default function AltoBellevuePlanView({
   // pointerup) sabe distinguir um toque de um arraste.
   const TAP_SLOP = 8;
 
+  // ── Gesto em GPU: durante pan/pinch aplicamos CSS transform no <svg> (composição,
+  // zero re-render dos ~380 polígonos por frame) e só "commitamos" o viewBox no fim
+  // do gesto. Rótulos/traços congelam durante o gesto e assentam no commit — mesmo
+  // comportamento do Google/Apple Maps com tiles. A matemática do commit reproduz
+  // exatamente o que o setVb por frame fazia antes.
+  const gestureRef = useRef<{
+    baseVb: ViewBox;
+    panTx: number; panTy: number;
+    pinch: null | {
+      startDist: number; factor: number;
+      startMid: { x: number; y: number }; curMid: { x: number; y: number };
+    };
+  } | null>(null);
+  const velRef = useRef({ vx: 0, vy: 0, t: 0 });
+
+  const getSvgEl = useCallback((): SVGSVGElement | null =>
+    containerRef.current?.querySelector('svg') ?? null, []);
+
+  const applyGestureTransform = useCallback(() => {
+    const g = gestureRef.current;
+    const el = getSvgEl();
+    if (!g || !el) return;
+    if (g.pinch) {
+      const { startMid, curMid, factor } = g.pinch;
+      el.style.transformOrigin = `${startMid.x}px ${startMid.y}px`;
+      el.style.transform =
+        `translate(${curMid.x - startMid.x}px, ${curMid.y - startMid.y}px) scale(${factor})`;
+    } else {
+      el.style.transformOrigin = '0 0';
+      el.style.transform = `translate(${g.panTx}px, ${g.panTy}px)`;
+    }
+  }, [getSvgEl]);
+
+  /** Converte o transform acumulado do gesto em viewBox e limpa o transform. */
+  const commitGesture = useCallback((): ViewBox => {
+    const g = gestureRef.current;
+    const el = containerRef.current;
+    const svg = getSvgEl();
+    const cur = vbLive.current;
+    if (!g || !el) return cur;
+    const rect = el.getBoundingClientRect();
+    let nvb = { ...g.baseVb };
+    if (g.pinch && rect.width > 0 && rect.height > 0) {
+      const { startMid, curMid } = g.pinch;
+      // Clamp do fator para os limites de escala (newW = baseW / f).
+      const minW = SVG_W / MAX_SCALE;
+      const maxW = SVG_W / MIN_SCALE;
+      const f = Math.max(nvb.w / maxW, Math.min(nvb.w / minW, g.pinch.factor));
+      const newW = nvb.w / f;
+      const newH = newW * (SVG_H / SVG_W);
+      const svgX = nvb.x + (startMid.x / rect.width) * nvb.w;
+      const svgY = nvb.y + (startMid.y / rect.height) * nvb.h;
+      nvb = {
+        x: svgX - (curMid.x / rect.width) * newW,
+        y: svgY - (curMid.y / rect.height) * newH,
+        w: newW, h: newH,
+      };
+    } else if ((g.panTx !== 0 || g.panTy !== 0) && rect.width > 0 && rect.height > 0) {
+      nvb = {
+        ...nvb,
+        x: nvb.x - (g.panTx / rect.width) * nvb.w,
+        y: nvb.y - (g.panTy / rect.height) * nvb.h,
+      };
+    }
+    gestureRef.current = null;
+    if (svg) { svg.style.transform = ''; svg.style.transformOrigin = ''; svg.style.willChange = ''; }
+    vbLive.current = nvb;
+    setVb(nvb);
+    return nvb;
+  }, [getSvgEl]);
+
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (animRef.current !== null) { cancelAnimationFrame(animRef.current); animRef.current = null; }
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointerCache.current.size === 2) {
+      // Segundo dedo → pinça. Commita o pan em curso e reancora o gesto.
+      const committed = commitGesture();
+      const el = containerRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const pts = [...pointerCache.current.values()];
+        const mid = {
+          x: (pts[0].x + pts[1].x) / 2 - rect.left,
+          y: (pts[0].y + pts[1].y) / 2 - rect.top,
+        };
+        gestureRef.current = {
+          baseVb: committed,
+          panTx: 0, panTy: 0,
+          pinch: {
+            startDist: Math.max(1, Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)),
+            factor: 1,
+            startMid: mid,
+            curMid: { ...mid },
+          },
+        };
+        const svg = getSvgEl();
+        if (svg) svg.style.willChange = 'transform';
+      }
+      didDrag.current = true;
+      return;
+    }
     if (pointerCache.current.size === 1) {
       // Capture ONLY mouse/pen: those have no implicit capture, so without it a drag
       // that leaves the div stops firing pointermove/up. Touch pointers already get
@@ -2443,8 +2630,12 @@ export default function AltoBellevuePlanView({
       didDrag.current = false; // novo gesto começa como "tap"
       lastPos.current = { x: e.clientX, y: e.clientY };
       downPos.current = { x: e.clientX, y: e.clientY };
+      gestureRef.current = { baseVb: vbLive.current, panTx: 0, panTy: 0, pinch: null };
+      velRef.current = { vx: 0, vy: 0, t: performance.now() };
+      const svg = getSvgEl();
+      if (svg) svg.style.willChange = 'transform';
     }
-  }, [animateTo]);
+  }, [animateTo, commitGesture, getSvgEl]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!pointerCache.current.has(e.pointerId)) return;
@@ -2454,29 +2645,28 @@ export default function AltoBellevuePlanView({
     const rect = el.getBoundingClientRect();
 
     if (pointerCache.current.size === 2) {
-      // Pinch-to-zoom: derive zoom factor from change in finger distance, pivot at midpoint
-      const ids = [...pointerCache.current.keys()];
-      const otherId = ids.find(id => id !== e.pointerId)!;
-      const otherPos = pointerCache.current.get(otherId)!;
-      const thisOldPos = pointerCache.current.get(e.pointerId)!;
-
-      const prevDist = Math.hypot(thisOldPos.x - otherPos.x, thisOldPos.y - otherPos.y);
-      const currDist = Math.hypot(e.clientX - otherPos.x, e.clientY - otherPos.y);
+      // Pinch-to-zoom em GPU: fator cumulativo desde o início da pinça + pivô no
+      // ponto médio dos dedos. Só atualiza o CSS transform — commit no fim do gesto.
+      const g = gestureRef.current;
       pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (!g?.pinch) return;
 
-      if (prevDist < 1) return;
-      // currDist > prevDist → fingers spreading → zoom in → viewBox shrinks → factor < 1
-      const factor = prevDist / currDist;
+      const pts = [...pointerCache.current.values()];
+      const currDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+      if (currDist < 1) return;
 
-      // Pivot = midpoint of the two fingers, in SVG coordinates
-      const midClientX = (e.clientX + otherPos.x) / 2;
-      const midClientY = (e.clientY + otherPos.y) / 2;
-      const cur = vbLive.current;
-      const pivotX = cur.x + (midClientX - rect.left) / rect.width * cur.w;
-      const pivotY = cur.y + (midClientY - rect.top) / rect.height * cur.h;
+      // Fator visual limitado aos limites de escala (sem overshoot que "estala" no commit).
+      const minW = SVG_W / MAX_SCALE;
+      const maxW = SVG_W / MIN_SCALE;
+      const raw = currDist / g.pinch.startDist;
+      g.pinch.factor = Math.max(g.baseVb.w / maxW, Math.min(g.baseVb.w / minW, raw));
+      g.pinch.curMid = {
+        x: (pts[0].x + pts[1].x) / 2 - rect.left,
+        y: (pts[0].y + pts[1].y) / 2 - rect.top,
+      };
 
       didDrag.current = true; // pinça é gesto, não toque — não abre card
-      setVb(prev => zoomViewBox(prev, factor, pivotX, pivotY));
+      applyGestureTransform();
       return;
     }
 
@@ -2495,12 +2685,23 @@ export default function AltoBellevuePlanView({
     lastPos.current = { x: e.clientX, y: e.clientY };
     pointerCache.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (!didDrag.current) return; // ainda é um toque (dentro do slop) — não paneia
-    setVb(prev => ({
-      ...prev,
-      x: prev.x - dx / rect.width * prev.w,
-      y: prev.y - dy / rect.height * prev.h,
-    }));
-  }, []);
+
+    // Velocidade suavizada (px/ms) para o momentum no fim do gesto.
+    const now = performance.now();
+    const dt = Math.max(1, now - velRef.current.t);
+    velRef.current = {
+      vx: 0.75 * (dx / dt) + 0.25 * velRef.current.vx,
+      vy: 0.75 * (dy / dt) + 0.25 * velRef.current.vy,
+      t: now,
+    };
+
+    const g = gestureRef.current;
+    if (g && !g.pinch) {
+      g.panTx += dx;
+      g.panTy += dy;
+      applyGestureTransform();
+    }
+  }, [applyGestureTransform]);
 
   // pointerup / leave / cancel: APENAS limpeza do estado do gesto. A SELEÇÃO é feita
   // pelo onClick nativo dos elementos (lote/área/quadra) e o deselect pelo onClick do
@@ -2510,8 +2711,60 @@ export default function AltoBellevuePlanView({
   // O reset acontece no próximo pointerdown.
   const endGesture = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     pointerCache.current.delete(e.pointerId);
-    if (pointerCache.current.size === 0) setIsDragging(false);
-  }, []);
+
+    if (pointerCache.current.size === 1) {
+      // Pinça → um dedo: commita a pinça e reancora um pan com o dedo restante.
+      const committed = commitGesture();
+      const rest = [...pointerCache.current.values()][0];
+      lastPos.current = { x: rest.x, y: rest.y };
+      gestureRef.current = { baseVb: committed, panTx: 0, panTy: 0, pinch: null };
+      velRef.current = { vx: 0, vy: 0, t: performance.now() };
+      const svg = getSvgEl();
+      if (svg) svg.style.willChange = 'transform';
+      return;
+    }
+
+    if (pointerCache.current.size === 0) {
+      setIsDragging(false);
+      const wasPan = gestureRef.current !== null && !gestureRef.current.pinch && didDrag.current;
+      const committed = commitGesture();
+
+      // Momentum (fling): continua o pan com desaceleração exponencial estilo iOS.
+      // Só para pan de verdade, com velocidade recente e sem preferência por menos movimento.
+      const { vx, vy, t } = velRef.current;
+      const speed = Math.hypot(vx, vy);
+      const fresh = performance.now() - t < 90;
+      const reduceMotion = typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      if (wasPan && fresh && speed > 0.25 && !reduceMotion) {
+        const el = containerRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return;
+        let cvx = vx, cvy = vy;
+        let last = performance.now();
+        let acc = { ...committed };
+        const TAU = 325; // constante de decaimento (~iOS scroll)
+        const tick = (now: number) => {
+          const dt = Math.min(48, now - last);
+          last = now;
+          acc = {
+            ...acc,
+            x: acc.x - (cvx * dt / rect.width) * acc.w,
+            y: acc.y - (cvy * dt / rect.height) * acc.h,
+          };
+          const decay = Math.exp(-dt / TAU);
+          cvx *= decay; cvy *= decay;
+          vbLive.current = acc;
+          setVb(acc);
+          if (Math.hypot(cvx, cvy) > 0.02) animRef.current = requestAnimationFrame(tick);
+          else animRef.current = null;
+        };
+        if (animRef.current !== null) cancelAnimationFrame(animRef.current);
+        animRef.current = requestAnimationFrame(tick);
+      }
+    }
+  }, [commitGesture, getSvgEl]);
   const handlePointerUp = endGesture;
   const handlePointerLeave = endGesture;
   const handlePointerCancel = endGesture;
@@ -2556,6 +2809,8 @@ export default function AltoBellevuePlanView({
 
   const handleLotClick = useCallback((lot: PlanLot) => {
     if (didDrag.current) return;
+    // Feedback tátil sutil na seleção (Android; no-op onde não há suporte).
+    try { navigator.vibrate?.(8); } catch { /* no-op */ }
     if (multiSelectMode) {
       toggleCompare(lot);
     } else {
@@ -2956,12 +3211,14 @@ export default function AltoBellevuePlanView({
             context={mapData}
             showTechLayer={showTechLayer}
             selectedId={selectedLot?.id ?? null}
+            hoverId={hoverLotId}
             compareIds={compareIds}
             multiSelectMode={multiSelectMode}
             vb={vb}
             isDragging={isDragging}
             activeQuadra={activeQuadra}
             onLotClick={handleLotClick}
+            onLotHover={setHoverLotId}
             onAmenityClick={handleAmenityClick}
             onQuadraClick={handleQuadraBadgeClick}
             onBackgroundClick={handleBackgroundClick}
@@ -3113,7 +3370,7 @@ export default function AltoBellevuePlanView({
                   boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                 }}
               >
-                Toque em um lote para ver detalhes
+                Toque em um lote · dois dedos ou duplo-toque para zoom
               </span>
             </motion.div>
           )}

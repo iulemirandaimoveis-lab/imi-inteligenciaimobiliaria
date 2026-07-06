@@ -4,6 +4,43 @@
 
 ---
 
+## 2026-07-06 · Sessão: Refino front-end (mapas AB + console + backoffice) — "modo Apple/iOS"
+
+**Branch**: `claude/frontend-refactor-design-gubdfu`
+
+### O que foi feito
+- **Mapas AB (AltoBellevuePlanView)**: pan/pinch agora em GPU (CSS transform no `<svg>` durante o
+  gesto, commit do viewBox no fim — zero re-render de 383 polígonos por frame); momentum/fling com
+  decaimento exponencial (~325ms, estilo iOS); hover premium desktop (brighten CSS + tooltip glass
+  em coords SVG com quadra-lote/status/área); spotlight de seleção (demais lotes a 0.45 c/ fade);
+  transição de cor em mudança de status ao vivo; entrada cinematográfica (overview→home); haptics
+  na seleção; dica de gesto atualizada. NENHUMA mudança em URLs Maps/Kuula (invariante respeitado).
+- **AltoBellevueMapExplorer**: legendas sem jargão (WebGL/georreferenciado), tab ativa com sombra, aria-pressed.
+- **DevelopmentLocation**: iframe sem grayscale morto, moldura 16px c/ borda dourada, aspect 16/9
+  no desktop, chip de marca flutuante. URLs intocadas.
+- **Console /users/dashboard**: fSerif corrigida p/ var(--font-serif) (títulos voltaram à Playfair);
+  safe-area iOS no header e página; loading.tsx (skeleton shimmer) + error.tsx novos; KPIs alinhados
+  às 6 colunas; disponibilidade auto-fill; aria progressbar nas barras; empty states; controles
+  mortos resolvidos (switcher→chip estático, sino removido); fade de scroll na nav mobile; focus-visible.
+- **Backoffice**: KPICard label 7px→10px; DataTable com overflow-x consertado (`overflow:hidden`
+  anulava o eixo X — tabela não rolava no mobile) + sort acessível por teclado (botão + aria-sort);
+  fontes fantasma corrigidas (--font-inter→--font-ui; Playfair hardcoded→var(--font-serif)).
+- **Global**: prefers-reduced-motion em globals.css; Skeleton primitive + .imi-rise em primitives.
+
+### Validação
+- type-check ✅ · lint ✅ · jest 64 suítes, 889 ✅ / 5 skipped (baseline mantida).
+- Visual: dev server + env stub + Playwright (padrão do projeto) em 390/768/1440 — zero erros de
+  console primeiro-partido, zero overflow horizontal; screenshots conferidos (mapa, hover tooltip,
+  dashboard desktop/mobile, skeleton). Pegou 1 bug real no processo (hydration mismatch por seletor
+  com aspas em <style> do MotionKeyframes — corrigido antes do commit).
+
+### Risco
+- Médio no gesto do mapa (código sensível a iOS Safari): a matemática do commit reproduz o setVb
+  antigo e o fluxo de eventos (tap slop/didDrag/click) não foi alterado. Validar pinch/pan em
+  aparelho real após deploy.
+
+---
+
 ## 2026-07-03 · Sessão: Spatial Intelligence Fase 2 — vista "Sat. + Lotes" no console
 
 **Branch**: `claude/imi-spatial-intelligence-vision-1ojqvc` (recomeçada de main @ eae934c após merge do #344)

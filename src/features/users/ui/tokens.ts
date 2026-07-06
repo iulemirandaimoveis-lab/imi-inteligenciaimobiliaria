@@ -57,7 +57,7 @@ export const tokens = {
 
   // Type
   fSans: "var(--font-sans, 'Geist', system-ui, sans-serif)",
-  fSerif: "'Playfair Display', Georgia, serif",
+  fSerif: "var(--font-serif, 'Playfair Display', Georgia, serif)",
   fMono: "var(--font-mono, 'Geist Mono', ui-monospace, monospace)",
 
   // Motion

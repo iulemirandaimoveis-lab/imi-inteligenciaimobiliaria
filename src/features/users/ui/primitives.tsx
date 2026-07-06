@@ -145,6 +145,35 @@ export function Spinner({ size = 16, color = 'currentColor' }: { size?: number; 
   )
 }
 
+/* ── Skeleton (loading placeholder) ────────────────────────────────────── */
+export function Skeleton({
+  width = '100%',
+  height = 14,
+  radius = 8,
+  style,
+}: {
+  width?: number | string
+  height?: number | string
+  radius?: number | string
+  style?: CSSProperties
+}) {
+  return (
+    <span
+      aria-hidden
+      style={{
+        display: 'block',
+        width,
+        height,
+        borderRadius: radius,
+        background: `linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 75%)`,
+        backgroundSize: '200% 100%',
+        animation: 'imiShimmer 1.6s ease-in-out infinite',
+        ...style,
+      }}
+    />
+  )
+}
+
 /* ── Keyframes (injected once) ─────────────────────────────────────────── */
 export function MotionKeyframes() {
   return (
@@ -154,6 +183,10 @@ export function MotionKeyframes() {
       @keyframes imiFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
       @keyframes imiRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
       @keyframes imiShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+      .imi-rise { animation: imiRise 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+      @media (prefers-reduced-motion: reduce) {
+        .imi-rise { animation: none !important; }
+      }
     `}</style>
   )
 }

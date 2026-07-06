@@ -94,7 +94,7 @@ export default function PageHeader({
                             className="text-[26px] sm:text-[30px] font-bold tracking-tight leading-tight"
                             style={{
                                 color: 'var(--text-primary)',
-                                fontFamily: 'var(--font-inter), sans-serif',
+                                fontFamily: 'var(--font-ui), sans-serif',
                                 letterSpacing: '-0.02em',
                             }}
                         >
