@@ -974,6 +974,7 @@ export default function AltoBellevueGeoMap({
   developmentId, developmentName, whatsappPhone = WA, height = '100svh', mapAmenities, cart: cartProp,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const hoveredIdRef = useRef<string | null>(null);
 
@@ -1276,9 +1277,11 @@ export default function AltoBellevueGeoMap({
 
   // O estado vem só do evento 'fullscreenchange' — setar otimista aqui deixava
   // o botão preso em "Minimizar" no iPhone (Safari iOS não tem requestFullscreen).
+  // Tela cheia no CONTAINER do mapa (rootRef), não em document.documentElement —
+  // senão o botão coloca a página inteira em tela cheia em vez de só o mapa.
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.()?.catch(() => {});
+      rootRef.current?.requestFullscreen?.()?.catch(() => {});
     } else {
       document.exitFullscreen?.()?.catch(() => {});
     }
@@ -1293,7 +1296,7 @@ export default function AltoBellevueGeoMap({
   const availCount = mergedDbLots.filter(l => l.status === 'DISPONIVEL').length;
 
   return (
-    <div className="relative w-full" style={{ height, background: NAVY }}>
+    <div ref={rootRef} className="relative w-full" style={{ height, background: NAVY }}>
       {/* Map container */}
       <div
         ref={containerRef}
