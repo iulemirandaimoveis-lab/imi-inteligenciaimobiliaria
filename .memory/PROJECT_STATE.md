@@ -20,6 +20,13 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-06 (branch claude/backoffice-recent-bugs-7zig1n, PR draft): **FX-11** — "Usuários não
+  abre" + "foto sumiu". Causa: dono tem 2 contas (`iule@imi.com` e a profissional) e o admin
+  máster não estava completo nos DOIS sistemas ao mesmo tempo (backoffice `profiles.role` vs
+  console `imi.users.is_super`). `iule@imi.com` era admin no backoffice mas nem tinha linha em
+  `imi.users`. Migration idempotente `20260706_owner_master_admin.sql` consolida `iule@imi.com`
+  como admin máster dos dois sistemas + propaga a foto; foto copiada p/ a conta profissional.
+  Aplicada em produção via MCP. Detalhe em FAILURES FX-11.
 - 2026-07-06 (branch claude/frontend-refactor-design-gubdfu, PR draft): refino front-end
   "Apple/iOS" — mapa AB com gesto em GPU + momentum + hover tooltip + spotlight; console
   dashboard (fonte serif corrigida, safe-area, loading/error, a11y); backoffice (KPICard 10px,
