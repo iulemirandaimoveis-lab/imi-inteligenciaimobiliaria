@@ -2510,6 +2510,12 @@ export default function AltoBellevuePlanView({
   // `click`, que dispara logo DEPOIS do pointerup, para o handler saber se houve pan.
   // O reset acontece no próximo pointerdown.
   const endGesture = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    // Mouse/pen ficam com o pointer capturado (setPointerCapture no pointerdown, acima)
+    // para o arrasto continuar mesmo saindo do container. Diferente do touch — que libera
+    // a captura sozinho no pointerup — o mouse NÃO libera automaticamente: sem este
+    // release, o `click` sintético que abre o card é retargetado para o container em vez
+    // do lote/quadra sob o cursor, e o mapa nunca abre o card no desktop (só no celular).
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* no-op */ }
     pointerCache.current.delete(e.pointerId);
 
     if (pointerCache.current.size === 1) {
