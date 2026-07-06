@@ -30,6 +30,14 @@
 - **Solução**: type-check movido para CI; build ignora tipos (D-07).
 - **Prevenção**: L-01; monitorar duração do job typecheck como proxy do crescimento do grafo.
 
+## FX-11 · "Usuários não abre no backoffice" + "não mostra minha foto no perfil"
+- **Sintoma**: dono clica em Configurações → Usuários e é redirecionado; avatar aparece como inicial "I".
+- **Causa-raiz** (dados, não código): existem DUAS contas do dono — `iule@imi.com` e `iule.miranda@iulemirandaimoveis.com.br` — e o admin máster não estava completo em nenhum dos dois sistemas ao mesmo tempo. Backoffice usa `public.profiles.role` (`iule@imi.com`=admin, profissional=broker); console `/users` usa o schema `imi` (`imi.users.is_super`+`user_roles`) onde `iule@imi.com` **não tinha sequer linha em `imi.users`**. A foto estava presa só numa conta (avatar_url nulo nas demais). O dono logou com a conta profissional (role broker) → guard `['ADMIN','SUPER_ADMIN','OWNER']` em `/backoffice/settings/usuarios` redirecionava.
+- **Afetou**: acesso admin do dono ao backoffice e ao console; foto de perfil.
+- **Solução**: migration idempotente `20260706_owner_master_admin.sql` — consolida `iule@imi.com` como admin máster dos DOIS sistemas (`profiles.role=admin` + `imi.users.is_super=true` + papel `SUPER_ADMIN`) e propaga a foto; foto copiada também para a conta profissional. Aplicada em produção via MCP.
+- **Prevenção**: admin do dono precisa existir nos DOIS sistemas simultaneamente (backoffice `profiles` + console `imi.users`). Antes de diagnosticar "página não abre", verificar `profiles.role` E `imi.users`/`is_super` do usuário logado.
+- **Confiança**: alta (verificado no banco pós-migration: backoffice admin+foto, console is_super+SUPER_ADMIN+foto).
+
 ## FX-06 · F-09 — hipótese de IDOR anônimo NÃO confirmada no banco (lição de verificação)
 - **Hipótese inicial (ALTA)**: `public.proposals` teria policies mas sem `ENABLE ROW LEVEL SECURITY` (lido só das migrations) → anon mutaria proposta por UUID.
 - **Verificação em produção (Supabase MCP, 2026-07-02)**: RLS estava **habilitada**; todas as policies exigem `auth.uid() IS NOT NULL` → **anon já bloqueado**. IDOR anônimo **não explorável**. `proposals` sequer tem `tenant_id`. K-13: 0 tabelas public com RLS off.
