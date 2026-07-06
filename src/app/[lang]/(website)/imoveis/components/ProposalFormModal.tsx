@@ -39,7 +39,28 @@ export default function ProposalFormModal({
   developmentId, developmentName, developmentSlug, whatsappPhone, items, onClose, onSubmitted,
 }: Props) {
   const totals = useMemo(() => cartTotals(items), [items]);
-  const suggestedDown = Math.round(totals.totalPrice * 0.2);
+  // Entrada sugerida: usa a forma de pagamento escolhida por lote (se houver) —
+  // à vista, o valor integral do lote; num plano parcelado, a entrada daquele
+  // plano (10%). Sem seleção, mantém o padrão de 20% do valor do lote.
+  const suggestedDown = useMemo(() => Math.round(
+    items.reduce((sum, l) => {
+      const plan = l.selectedPlan;
+      if (!plan) return sum + l.price * 0.2;
+      return sum + (plan.key === 'vista' ? plan.total : (plan.entrada ?? plan.total * 0.1));
+    }, 0)
+  ), [items]);
+  // Descrição das parcelas para pré-preencher a proposta — só quando todos os
+  // lotes compartilham a mesma forma de pagamento (evita descrição ambígua).
+  const parcelasDesc = useMemo(() => {
+    const plans = items.map((l) => l.selectedPlan).filter(Boolean) as NonNullable<CartLot['selectedPlan']>[];
+    if (plans.length !== items.length || plans.length === 0) return '';
+    const [first, ...rest] = plans;
+    const sameKey = rest.every((p) => p.key === first.key);
+    if (!sameKey) return '';
+    if (first.key === 'vista') return 'À vista';
+    const totalParcela = plans.reduce((s, p) => s + (p.parcela ?? 0), 0);
+    return `${first.label} de ${fmtBRL(totalParcela)}/mês`;
+  }, [items]);
 
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
@@ -132,7 +153,7 @@ export default function ProposalFormModal({
         quadras: quadrasStr,
         metragem: String(Math.round(totals.totalArea)),
       },
-      condicoes: { valor: totals.totalPrice, sinal: suggestedDown },
+      condicoes: { valor: totals.totalPrice, sinal: suggestedDown, ...(parcelasDesc ? { parcelas: parcelasDesc } : {}) },
       observacao: obs.trim(),
     };
 
@@ -247,7 +268,12 @@ export default function ProposalFormModal({
                 <div className="flex flex-col gap-1 mb-2">
                   {items.map((l) => (
                     <div key={l.id} className="flex items-center justify-between" style={{ fontSize: 12 }}>
-                      <span style={{ color: 'rgba(255,255,255,0.78)' }}>Quadra {l.block} · Lote {l.lot}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.78)' }}>
+                        Quadra {l.block} · Lote {l.lot}
+                        {l.selectedPlan && (
+                          <span style={{ color: GOLD, fontWeight: 700 }}> · {l.selectedPlan.label}</span>
+                        )}
+                      </span>
                       <span style={{ color: 'rgba(255,255,255,0.55)', fontFamily: "'JetBrains Mono', monospace" }}>{fmtM2(l.areaM2)} · {fmtBRL(l.price)}</span>
                     </div>
                   ))}
@@ -257,7 +283,9 @@ export default function ProposalFormModal({
                   <span style={{ fontSize: 15, fontWeight: 800, color: GOLD, fontFamily: "'JetBrains Mono', monospace" }}>{fmtBRL(totals.totalPrice)}</span>
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>Entrada sugerida (20%)</span>
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
+                    Entrada sugerida {items.some((l) => l.selectedPlan) ? '(conforme forma de pagamento)' : '(20%)'}
+                  </span>
                   <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.75)', fontFamily: "'JetBrains Mono', monospace" }}>{fmtBRL(suggestedDown)}</span>
                 </div>
               </div>

@@ -17,7 +17,7 @@ import AltoBellevuePlanView from './AltoBellevuePlanView';
 import type { Lot as MiguelMarquesLot } from '../../projetos/miguel-marques/data/lotsData';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
-import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
+import { cartTotals, buildCartShareUrl, type CartLot, type SelectedPaymentPlan } from '@/lib/lotmap/cart';
 import { useLotCart } from '@/hooks/useLotCart';
 import { CartFab, CartSheet } from './LotCartSheet';
 
@@ -1104,7 +1104,7 @@ export default function SubdivisionLotMap({
 
   const toggleCartPlanLot = useCallback((planLot: {
     id: string; quadra: string; lot_number: string; area_m2: number | null; price: number | null; status: string;
-  }) => {
+  }, plan?: SelectedPaymentPlan) => {
     cart.toggle({
       id: planLot.id,
       developmentSlug: devSlug,
@@ -1114,6 +1114,7 @@ export default function SubdivisionLotMap({
       areaM2: planLot.area_m2 ?? 0,
       price: planLot.price ?? 0,
       status: planLot.status,
+      selectedPlan: plan,
     });
   }, [cart, devSlug, developmentName]);
 

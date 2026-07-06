@@ -18,6 +18,7 @@ import {
 } from '@/lib/lots/amenity-media';
 import { useAbAvailability } from '@/hooks/use-ab-availability';
 import LotDetailContent from './LotDetailContent';
+import type { SelectedPaymentPlan } from '@/lib/lotmap/cart';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -63,7 +64,7 @@ interface Props {
   virtualTourUrl?: string;
   /** Ids dos lotes já no carrinho (carrinho compartilhado, levantado pelo pai do alternador). */
   cartIds?: Set<string>;
-  /** Alterna um lote no carrinho compartilhado. */
+  /** Alterna um lote no carrinho compartilhado (com a forma de pagamento escolhida, se houver). */
   onToggleCart?: (lot: {
     id: string;
     quadra: string;
@@ -71,7 +72,7 @@ interface Props {
     area_m2: number | null;
     price: number | null;
     status: string;
-  }) => void;
+  }, plan?: SelectedPaymentPlan) => void;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -1339,7 +1340,7 @@ function LotBottomSheet({
   portalTarget?: HTMLElement | null;
   isFullscreen?: boolean;
   inCart?: boolean;
-  onToggleCart?: () => void;
+  onToggleCart?: (plan?: SelectedPaymentPlan) => void;
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -3376,7 +3377,7 @@ export default function AltoBellevuePlanView({
             portalTarget={fsPortalTarget}
             isFullscreen={isFullscreen}
             inCart={cartIds?.has(selectedLot.id) ?? false}
-            onToggleCart={onToggleCart ? () => onToggleCart(selectedLot) : undefined}
+            onToggleCart={onToggleCart ? (plan) => onToggleCart(selectedLot, plan) : undefined}
           />
         )}
       </AnimatePresence>

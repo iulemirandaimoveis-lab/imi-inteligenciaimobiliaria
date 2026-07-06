@@ -131,6 +131,11 @@ export function CartSheet({
                 <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '2px 0 0', fontFamily: "'JetBrains Mono', monospace" }}>
                   {fmtM2(l.areaM2)} · {fmtBRL(l.price)}
                 </p>
+                {l.selectedPlan && (
+                  <p style={{ fontSize: 10.5, color: GOLD, margin: '2px 0 0', fontWeight: 700 }}>
+                    {l.selectedPlan.label}{l.selectedPlan.parcela ? ` · ${fmtBRL(l.selectedPlan.parcela)}/mês` : ''}
+                  </p>
+                )}
               </div>
               <button onClick={() => onRemove(l.id)} aria-label="Remover lote"
                 className="flex items-center justify-center flex-shrink-0"

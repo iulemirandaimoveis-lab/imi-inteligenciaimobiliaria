@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, Scale, ShoppingCart, Check, X } from 'lucide-react';
+import type { SelectedPaymentPlan } from '@/lib/lotmap/cart';
 
 // Card de detalhe do lote — conteúdo compartilhado entre "Mapa de Lotes"
 // (AltoBellevuePlanView) e "Lotes + Satélite" (AltoBellevueGeoMap): mesmos
@@ -46,7 +47,8 @@ export interface LotDetailContentProps {
   waVisitText: string;
   waGeneralText: string;
   inCart?: boolean;
-  onToggleCart?: () => void;
+  /** Recebe a forma de pagamento selecionada no card (se houver) para seguir com o lote até a proposta. */
+  onToggleCart?: (selectedPlan?: SelectedPaymentPlan) => void;
   onAddToCompare?: () => void;
   isInCompare?: boolean;
   onClose?: () => void;
@@ -65,6 +67,22 @@ export default function LotDetailContent({
   inCart = false, onToggleCart, onAddToCompare, isInCompare,
   onClose, closeButtonRef,
 }: LotDetailContentProps) {
+  const [selectedPlanKey, setSelectedPlanKey] = useState<SelectedPaymentPlan['key'] | null>(null);
+
+  const planFromKey = (key: SelectedPaymentPlan['key'] | null): SelectedPaymentPlan | undefined => {
+    if (!key || !paymentPlans) return undefined;
+    if (key === 'vista') return { key: 'vista', label: 'À Vista', total: paymentPlans.preco_vista };
+    const defs: Record<string, { label: string; total: number; parcela: number; entrada?: number }> = {
+      p12: { label: '12×', total: paymentPlans.p12_total, parcela: paymentPlans.p12_parcela, entrada: paymentPlans.p12_entrada },
+      p36: { label: '36×', total: paymentPlans.p36_total, parcela: paymentPlans.p36_parcela, entrada: paymentPlans.p36_entrada },
+      p60: { label: '60×', total: paymentPlans.p60_total, parcela: paymentPlans.p60_parcela, entrada: paymentPlans.p60_entrada },
+      p120: { label: '120×', total: paymentPlans.p120_total, parcela: paymentPlans.p120_parcela, entrada: paymentPlans.p120_entrada },
+    };
+    const d = defs[key];
+    if (!d) return undefined;
+    return { key, label: d.label, total: d.total, parcela: d.parcela, entrada: d.entrada ?? Math.round(d.total * 10) / 100 };
+  };
+
   return (
     <>
       {/* Status accent */}
@@ -193,20 +211,36 @@ export default function LotDetailContent({
       {paymentPlans && (isAvailable || isNegotiating) && (
         <div className="px-5 pb-3">
           <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px', fontFamily: "'Outfit', sans-serif" }}>
-            Formas de Pagamento
+            Formas de Pagamento <span style={{ color: '#C0BAB2', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>(toque para selecionar)</span>
           </p>
           {/* Cash */}
-          <div style={{ background: '#081524', borderRadius: 12, padding: '11px 14px', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <button
+            type="button"
+            onClick={() => setSelectedPlanKey((k) => (k === 'vista' ? null : 'vista'))}
+            className="w-full text-left"
+            style={{
+              background: '#081524', borderRadius: 12, padding: '11px 14px', marginBottom: 8,
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              border: selectedPlanKey === 'vista' ? `2px solid ${GOLD}` : '2px solid transparent',
+              cursor: 'pointer',
+            }}
+          >
             <div>
               <p style={{ fontSize: 9, fontWeight: 700, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>À Vista</p>
               <p style={{ fontSize: 16, fontWeight: 800, color: GOLD, fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
                 {fmtBRL(paymentPlans.preco_vista)}
               </p>
             </div>
-            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(200,164,74,0.75)', background: 'rgba(200,164,74,0.12)', padding: '3px 8px', borderRadius: 8 }}>
-              −20%
-            </span>
-          </div>
+            {selectedPlanKey === 'vista' ? (
+              <span style={{ width: 20, height: 20, borderRadius: '50%', background: GOLD, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Check size={12} color="#081524" strokeWidth={3} />
+              </span>
+            ) : (
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(200,164,74,0.75)', background: 'rgba(200,164,74,0.12)', padding: '3px 8px', borderRadius: 8 }}>
+                −20%
+              </span>
+            )}
+          </button>
           {/* Installments */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
             {([
@@ -217,17 +251,33 @@ export default function LotDetailContent({
             ] as const).map(plan => {
               const desconto = PLAN_DISCOUNTS[plan.key];
               const entrada = plan.entrada ?? Math.round(plan.total * 10) / 100;
+              const isSelected = selectedPlanKey === plan.key;
               return (
-                <div key={plan.label} style={{ background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
+                <button
+                  key={plan.label}
+                  type="button"
+                  onClick={() => setSelectedPlanKey((k) => (k === plan.key ? null : plan.key))}
+                  className="text-left"
+                  style={{
+                    background: isSelected ? 'rgba(200,164,74,0.14)' : '#F8F6F2', borderRadius: 12, padding: '10px 12px',
+                    border: isSelected ? `2px solid ${GOLD}` : '2px solid transparent', cursor: 'pointer',
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
                     <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0, fontFamily: "'Outfit', sans-serif" }}>{plan.label}</p>
-                    <span style={{
-                      fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
-                      background: desconto > 0 ? 'rgba(50,209,124,0.14)' : 'rgba(0,0,0,0.05)',
-                      color: desconto > 0 ? '#15803D' : '#A8A296',
-                    }}>
-                      {desconto > 0 ? `−${desconto}%` : 'sem desc.'}
-                    </span>
+                    {isSelected ? (
+                      <span style={{ width: 16, height: 16, borderRadius: '50%', background: GOLD, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Check size={10} color="#081524" strokeWidth={3} />
+                      </span>
+                    ) : (
+                      <span style={{
+                        fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
+                        background: desconto > 0 ? 'rgba(50,209,124,0.14)' : 'rgba(0,0,0,0.05)',
+                        color: desconto > 0 ? '#15803D' : '#A8A296',
+                      }}>
+                        {desconto > 0 ? `−${desconto}%` : 'sem desc.'}
+                      </span>
+                    )}
                   </div>
                   <p style={{ fontSize: 13, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
                     {fmtBRL(plan.parcela)}/mês
@@ -235,13 +285,18 @@ export default function LotDetailContent({
                   <p style={{ fontSize: 8, color: '#B8B3A8', margin: '2px 0 0', fontWeight: 500 }}>
                     Entrada {fmtBRL(entrada)} · Total {fmtBRL(plan.total)}
                   </p>
-                </div>
+                </button>
               );
             })}
           </div>
           <p style={{ fontSize: 8.5, color: '#B8B3A8', margin: '8px 2px 0', fontWeight: 500, lineHeight: 1.45 }}>
             Entrada de 10% sobre o valor do plano · correção mensal pelo INCC conforme tabela oficial.
           </p>
+          {selectedPlanKey && (
+            <p style={{ fontSize: 10.5, color: '#081524', background: 'rgba(200,164,74,0.14)', borderRadius: 8, padding: '6px 10px', margin: '8px 2px 0', fontWeight: 700 }}>
+              Forma selecionada: {planFromKey(selectedPlanKey)?.label} — segue com o lote na proposta.
+            </p>
+          )}
         </div>
       )}
 
@@ -280,7 +335,7 @@ export default function LotDetailContent({
         )}
         {isAvailable && onToggleCart && (
           <button
-            onClick={onToggleCart}
+            onClick={() => onToggleCart(planFromKey(selectedPlanKey))}
             className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[12px] font-bold transition-all active:scale-95"
             style={{
               color: inCart ? '#fff' : '#0B1B2D',
