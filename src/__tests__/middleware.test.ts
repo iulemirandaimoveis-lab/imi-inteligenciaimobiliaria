@@ -206,6 +206,16 @@ describe('middleware', () => {
       const response = await middleware(request)
       expect(response.status).toBe(200)
     })
+
+    it('preserves the querystring when adding the locale prefix (cart share link)', async () => {
+      mockedMatch.mockReturnValue('pt')
+      const request = createRequest('/carrinho?id=eyJkIjoiYWx0by1iZWxsZXZ1ZSIsImkiOlsiTC0yMiJdfQ')
+      const response = await middleware(request)
+      expect(response.status).toBe(307)
+      const location = response.headers.get('Location')
+      expect(location).toContain('/pt/carrinho')
+      expect(location).toContain('id=eyJkIjoiYWx0by1iZWxsZXZ1ZSIsImkiOlsiTC0yMiJdfQ')
+    })
   })
 
   describe('matcher config', () => {
