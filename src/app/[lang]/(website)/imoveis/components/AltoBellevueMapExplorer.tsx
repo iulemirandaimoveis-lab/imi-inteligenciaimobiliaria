@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { AnimatePresence } from 'framer-motion'
-import { LayoutGrid, Satellite, Layers } from 'lucide-react'
+import { LayoutGrid, Satellite, Layers, List } from 'lucide-react'
 import { useLotCart } from '@/hooks/useLotCart'
 import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart'
 import { CartFab, CartSheet } from './LotCartSheet'
@@ -39,12 +39,13 @@ const ProposalFormModal = dynamic(() => import('./ProposalFormModal'), { ssr: fa
 // Âncora geográfica confirmada do Alto Bellevue (Plus Code 4FFQ+RJ, Garanhuns/PE).
 const AB_ANCHOR = { lng: -36.510937, lat: -8.875437, zoom: 16.5 }
 
-// Mesma chave de localStorage usada em SubdivisionLotMap/AltoBellevueGeoMap —
-// lotes adicionados em qualquer vista aparecem aqui também.
+// Chave do carrinho (localStorage) — mesma instância é levantada aqui e
+// repassada a todas as vistas filhas (padrão P9), então este slug só importa
+// para a chave de persistência em si.
 const DEV_SLUG = 'alto-bellevue'
 const WA_DEFAULT = '5581986141487'
 
-type ViewMode = 'plano' | 'satelite' | 'satlotes'
+type ViewMode = 'lista' | 'mapa' | 'satelite' | 'satlotes'
 
 interface Props {
   developmentId: string
@@ -56,13 +57,21 @@ interface Props {
 }
 
 /**
- * Explorador do empreendimento com MÚLTIPLAS vistas interativas:
- *  • Plano            — mapa de lotes vetorial (seleção, comparação, financiamento).
- *  • Satélite + Lotes — lotes georreferenciados clicáveis sobre satélite (WebGL).
- *  • Satélite         — imagem aérea real do terreno (render-like), navegável.
+ * Explorador do empreendimento com um único menu de 4 vistas interativas:
+ *  • Lista            — grid/lista de lotes com filtros, ranking e comparador.
+ *  • Mapa de Lotes     — mapa de lotes vetorial (planta, áreas comuns/lazer).
+ *  • Satélite + Lotes  — lotes georreferenciados clicáveis sobre satélite (WebGL).
+ *  • Satélite          — imagem aérea real do terreno + pontos de interesse próximos.
  *
- * Vista padrão = Plano (nenhuma regressão). Usado tanto em /projetos quanto em
- * /imóveis e /empreendimentos para o Alto Bellevue.
+ * Vista padrão = Mapa de Lotes (nenhuma regressão). Usado tanto em /projetos
+ * quanto em /imóveis e /empreendimentos para o Alto Bellevue.
+ *
+ * O carrinho de lotes/proposta é uma ÚNICA instância levantada aqui (padrão
+ * P9 — estado compartilhado entre vistas alternáveis vive no pai do
+ * alternador) e passada às vistas filhas, com um único FAB/Sheet/Modal
+ * visível nas 4 opções — adicionar um lote em qualquer vista mantém o
+ * carrinho ao trocar de opção, sem depender só da sincronização por
+ * localStorage entre instâncias independentes.
  */
 export default function AltoBellevueMapExplorer({
   developmentId,
@@ -71,11 +80,8 @@ export default function AltoBellevueMapExplorer({
   mapAmenities,
   virtualTourUrl,
 }: Props) {
-  const [view, setView] = useState<ViewMode>('plano')
+  const [view, setView] = useState<ViewMode>('mapa')
 
-  // ── Carrinho de lotes / proposta — só usado na vista "Satélite" (as outras
-  // duas vistas já têm seu próprio carrinho embutido). Mesma chave de
-  // localStorage, então lotes adicionados em qualquer vista aparecem aqui. ──
   const cart = useLotCart<CartLot>(DEV_SLUG)
   const [showCart, setShowCart] = useState(false)
   const [showProposal, setShowProposal] = useState(false)
@@ -95,18 +101,25 @@ export default function AltoBellevueMapExplorer({
 
   return (
     <div>
-      {/* View switcher — full-width segmented control on mobile, inline on desktop */}
+      {/* View switcher — menu único (4 opções), full-width no mobile, inline no desktop */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
         <div
-          className="grid grid-cols-3 sm:inline-flex w-full sm:w-auto gap-1 p-1 rounded-xl"
+          className="grid grid-cols-4 sm:inline-flex w-full sm:w-auto gap-1 p-1 rounded-xl"
           style={{ background: '#ECE5DA', border: '1px solid #E0D8CC' }}
         >
           <ViewTab
-            active={view === 'plano'}
-            onClick={() => setView('plano')}
+            active={view === 'lista'}
+            onClick={() => setView('lista')}
+            icon={<List size={15} />}
+            label="Lista"
+            shortLabel="Lista"
+          />
+          <ViewTab
+            active={view === 'mapa'}
+            onClick={() => setView('mapa')}
             icon={<LayoutGrid size={15} />}
-            label="Plano de lotes"
-            shortLabel="Plano"
+            label="Mapa de Lotes"
+            shortLabel="Mapa"
           />
           <ViewTab
             active={view === 'satlotes'}
@@ -125,13 +138,20 @@ export default function AltoBellevueMapExplorer({
         </div>
       </div>
 
-      {view === 'plano' && (
+      {/* "Lista" e "Mapa de Lotes" são a mesma vista (SubdivisionLotMap), só
+          muda o `viewMode` controlado — evita desmontar filtros/scroll/
+          comparador ao alternar entre as duas. */}
+      {(view === 'lista' || view === 'mapa') && (
         <SubdivisionLotMap
           developmentId={developmentId}
           developmentName={developmentName}
           whatsappPhone={whatsappPhone}
           mapAmenities={mapAmenities}
           virtualTourUrl={virtualTourUrl}
+          viewMode={view === 'lista' ? 'list' : 'plan'}
+          onViewModeChange={(mode) => setView(mode === 'list' ? 'lista' : 'mapa')}
+          hideViewToggle
+          cart={cart}
         />
       )}
 
@@ -147,6 +167,7 @@ export default function AltoBellevueMapExplorer({
               whatsappPhone={whatsappPhone}
               height="78vh"
               mapAmenities={mapAmenities}
+              cart={cart}
             />
           </div>
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
@@ -168,48 +189,50 @@ export default function AltoBellevueMapExplorer({
               zoom={AB_ANCHOR.zoom}
               label={developmentName}
               height="70vh"
+              developmentId={developmentId}
+              showPois
             />
           </div>
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
-            Vista aérea real do terreno em Garanhuns/PE — arraste e aproxime para explorar a região.
+            Vista aérea real do terreno em Garanhuns/PE — arraste e aproxime para explorar a região,
+            com os pontos de interesse (mercado, escola, posto, hospital) mais próximos.
           </p>
-
-          {/* ── Proposta — o carrinho é compartilhado com "Plano" e "Satélite +
-              Lotes"; aqui o cliente revisa/conclui mesmo sem selecionar lotes
-              nesta vista (que é apenas uma foto aérea, sem lotes clicáveis). */}
-          {cart.items.length > 0 && !showCart && !showProposal && (
-            <CartFab count={cart.items.length} onClick={() => setShowCart(true)} fixed />
-          )}
-          <AnimatePresence>
-            {showCart && (
-              <CartSheet
-                items={cart.items}
-                totals={cartT}
-                linkCopied={linkCopied}
-                onRemove={cart.remove}
-                onClear={cart.clear}
-                onCopyLink={copyShareLink}
-                onProposal={() => { setShowCart(false); setShowProposal(true) }}
-                onClose={() => setShowCart(false)}
-                fixed
-              />
-            )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {showProposal && cart.items.length > 0 && (
-              <ProposalFormModal
-                developmentId={developmentId}
-                developmentName={developmentName}
-                developmentSlug={DEV_SLUG}
-                whatsappPhone={whatsappPhone ?? WA_DEFAULT}
-                items={cart.items}
-                onClose={() => setShowProposal(false)}
-                onSubmitted={() => { cart.clear(); setShowProposal(false) }}
-              />
-            )}
-          </AnimatePresence>
         </div>
       )}
+
+      {/* ── Carrinho de lotes / proposta — único FAB/Sheet/Modal, visível nas
+          4 opções do menu (padrão P9: estado compartilhado vive no pai). ── */}
+      {cart.items.length > 0 && !showCart && !showProposal && (
+        <CartFab count={cart.items.length} onClick={() => setShowCart(true)} fixed />
+      )}
+      <AnimatePresence>
+        {showCart && (
+          <CartSheet
+            items={cart.items}
+            totals={cartT}
+            linkCopied={linkCopied}
+            onRemove={cart.remove}
+            onClear={cart.clear}
+            onCopyLink={copyShareLink}
+            onProposal={() => { setShowCart(false); setShowProposal(true) }}
+            onClose={() => setShowCart(false)}
+            fixed
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showProposal && cart.items.length > 0 && (
+          <ProposalFormModal
+            developmentId={developmentId}
+            developmentName={developmentName}
+            developmentSlug={DEV_SLUG}
+            whatsappPhone={whatsappPhone ?? WA_DEFAULT}
+            items={cart.items}
+            onClose={() => setShowProposal(false)}
+            onSubmitted={() => { cart.clear(); setShowProposal(false) }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

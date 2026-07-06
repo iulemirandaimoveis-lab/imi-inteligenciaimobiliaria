@@ -5,16 +5,17 @@ import React, {
 } from 'react';
 import { AnimatePresence, motion, useDragControls } from 'framer-motion';
 import {
-  X, ZoomIn, ZoomOut, RotateCcw, MessageCircle, Layers,
+  X, ZoomIn, ZoomOut, RotateCcw, Layers,
   Sun, Moon, Maximize2, Minimize2, Navigation,
   TreePine, Building2, Map as MapIcon, RefreshCw, AlertCircle,
-  Shield, ShoppingCart, Check,
+  Shield, Check,
   SlidersHorizontal, Copy, RotateCw,
 } from 'lucide-react';
 import { useLotCart } from '@/hooks/useLotCart';
 import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
 import ProposalFormModal from './ProposalFormModal';
 import { CartFab, CartSheet } from './LotCartSheet';
+import LotDetailContent from './LotDetailContent';
 import { loadAltoBellevueMap } from '@/lib/lots/alto-bellevue';
 import { useAbAvailability, useAbCanonicalStatuses } from '@/hooks/use-ab-availability';
 import { resolveLotStatus } from '@/lib/lots/alto-bellevue-availability';
@@ -44,6 +45,12 @@ interface Props {
   height?: string;
   /** Mídias das áreas comuns vindas do backoffice (developments.lot_map_amenities). */
   mapAmenities?: Record<string, unknown>[];
+  /**
+   * Instância de carrinho compartilhada (levantada pelo pai do alternador —
+   * padrão P9). Sem esta prop, o componente cria a própria instância via
+   * useLotCart — comportamento standalone inalterado.
+   */
+  cart?: ReturnType<typeof useLotCart<CartLot>>;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -107,7 +114,6 @@ const SOURCE = {
 
 const fmtBRL = (v: number) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v);
-const fmtM2 = (v: number) => `${Math.round(v).toLocaleString('pt-BR')} m²`;
 
 // ── Amenity content ───────────────────────────────────────────────────────────
 
@@ -587,12 +593,55 @@ function LotDetailPanel({
   const waMsg = encodeURIComponent(
     `Olá! Tenho interesse no ${developmentName} — Quadra ${lot.quadra}, Lote ${lot.lot_number}${area ? `, área ${Math.round(area)} m²` : ''}${price ? `, valor ${fmtBRL(price)}` : ''}. Gostaria de mais informações.`
   );
+  const waWaitlist = encodeURIComponent(
+    `Olá! Tenho interesse no ${developmentName}, Quadra ${lot.quadra}, Lote ${lot.lot_number} (${cfg.label}). Pode me avisar se houver disponibilidade?`
+  );
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
+
+  // Só monta o grid de planos quando os 4 prazos + à vista estão completos —
+  // igual ao card de "Mapa de Lotes" (evita células "R$ 0/mês" p/ dados parciais).
+  const hasFullPlans = isAvailable && !!lot.plans && !!lot.valorVista
+    && !!lot.plans.p12?.parcela && !!lot.plans.p36?.parcela
+    && !!lot.plans.p60?.parcela && !!lot.plans.p120?.parcela;
+  const paymentPlans = hasFullPlans ? {
+    preco_vista: lot.valorVista as number,
+    p12_total: lot.plans!.p12!.total ?? 0, p12_parcela: lot.plans!.p12!.parcela as number,
+    p36_total: lot.plans!.p36!.total ?? 0, p36_parcela: lot.plans!.p36!.parcela as number,
+    p60_total: lot.plans!.p60!.total ?? 0, p60_parcela: lot.plans!.p60!.parcela as number,
+    p120_total: lot.plans!.p120!.total ?? 0, p120_parcela: lot.plans!.p120!.parcela as number,
+  } : null;
+
+  // Conteúdo do card — mesmo componente usado em "Mapa de Lotes" (LotDetailContent),
+  // garantindo os mesmos campos/estilo aqui em "Lotes + Satélite". Só o wrapper
+  // (painel lateral desktop / bottom-sheet mobile) é específico desta vista.
+  const cardProps = {
+    quadra: lot.quadra,
+    lotNumber: lot.lot_number,
+    developmentName,
+    statusLabel: cfg.label,
+    statusBadgeBg: `${cfg.fill}22`,
+    statusBadgeText: cfg.fill,
+    statusDotColor: cfg.fill,
+    isAvailable,
+    isNegotiating: isNeg,
+    isCorner: dbLot?.special_type === 'ESQUINA',
+    areaM2: area,
+    price,
+    pricePerM2,
+    paymentPlans,
+    notes: dbLot?.notes ?? null,
+    whatsappPhone,
+    waInterestText: waMsg,
+    waVisitText: waMsg,
+    waGeneralText: waWaitlist,
+    inCart,
+    onToggleCart: isAvailable ? onToggleCart : undefined,
+  } as const;
 
   return (
     <>
@@ -604,158 +653,9 @@ function LotDetailPanel({
         exit={{ x: 340, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 400, damping: 40 }}
         className="hidden sm:flex flex-col absolute top-0 right-0 bottom-0 w-80 z-30 overflow-y-auto"
-        style={{
-          background: 'rgba(8,20,36,0.96)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderLeft: '1px solid rgba(200,164,74,0.20)',
-          boxShadow: '-8px 0 40px rgba(0,0,0,0.60)',
-        }}
+        style={{ background: '#fff', boxShadow: '-8px 0 40px rgba(0,0,0,0.35)' }}
       >
-        {/* Status accent bar */}
-        <div style={{ height: 3, background: cfg.fill, flexShrink: 0 }} />
-
-        {/* Header */}
-        <div className="flex items-start justify-between p-5 pb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span
-                className="text-[9px] font-bold uppercase tracking-[0.2em] px-2.5 py-1 rounded-full"
-                style={{ background: `${cfg.fill}22`, color: cfg.fill, border: `1px solid ${cfg.fill}44` }}
-              >
-                {cfg.label}
-              </span>
-              {dbLot?.special_type === 'ESQUINA' && (
-                <span className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-1 rounded-full"
-                  style={{ background: 'rgba(59,130,246,0.15)', color: '#60A5FA', border: '1px solid rgba(59,130,246,0.30)' }}>
-                  Esquina
-                </span>
-              )}
-            </div>
-            <h3 style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', margin: 0, fontFamily: "'Outfit', sans-serif" }}>
-              Quadra {lot.quadra}
-            </h3>
-            <p style={{ fontSize: 15, fontWeight: 700, color: 'rgba(255,255,255,0.55)', margin: '2px 0 0', fontFamily: "'JetBrains Mono', monospace" }}>
-              Lote {lot.lot_number}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            aria-label="Fechar detalhes do lote"
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors flex-shrink-0"
-            style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.50)' }}
-          >
-            <X size={15} />
-          </button>
-        </div>
-
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 gap-2 px-5 pb-4">
-          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: '12px 14px', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.40)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 6px', fontFamily: "'Outfit', sans-serif" }}>Área</p>
-            <p style={{ fontSize: 19, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>
-              {area ? fmtM2(area) : '—'}
-            </p>
-          </div>
-          <div style={{ background: isAvailable ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.05)', borderRadius: 12, padding: '12px 14px', border: `1px solid ${isAvailable ? 'rgba(200,164,74,0.35)' : 'rgba(255,255,255,0.07)'}` }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: isAvailable ? GOLD : 'rgba(255,255,255,0.40)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 6px', fontFamily: "'Outfit', sans-serif" }}>Valor</p>
-            <p style={{ fontSize: price && price >= 200000 ? 14 : 18, fontWeight: 800, color: isAvailable ? GOLD : 'rgba(255,255,255,0.80)', margin: 0, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>
-              {price ? fmtBRL(price) : 'Consultar'}
-            </p>
-          </div>
-        </div>
-
-        {/* Price per m² */}
-        {pricePerM2 && (
-          <div className="px-5 pb-3">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.40)', fontWeight: 600 }}>Preço por m²</span>
-              <span style={{ fontSize: 14, fontWeight: 800, color: 'rgba(255,255,255,0.80)', fontFamily: "'JetBrains Mono', monospace" }}>
-                {fmtBRL(pricePerM2)}/m²
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Payment plans */}
-        {isAvailable && lot.plans && (
-          <div className="px-5 pb-4">
-            <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px', fontFamily: "'Outfit', sans-serif" }}>Formas de Pagamento</p>
-            <div className="grid grid-cols-2 gap-2">
-              {lot.valorVista && (
-                <div style={{ background: 'rgba(200,164,74,0.10)', borderRadius: 10, padding: '10px 12px', border: '1px solid rgba(200,164,74,0.25)', gridColumn: '1 / -1' }}>
-                  <p style={{ fontSize: 9, fontWeight: 700, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>À Vista · 20% desconto</p>
-                  <p style={{ fontSize: 16, fontWeight: 800, color: GOLD, margin: 0, fontFamily: "'JetBrains Mono', monospace" }}>{fmtBRL(lot.valorVista)}</p>
-                </div>
-              )}
-              {[
-                { label: '12×', plan: lot.plans.p12 },
-                { label: '36×', plan: lot.plans.p36 },
-                { label: '60×', plan: lot.plans.p60 },
-                { label: '120×', plan: lot.plans.p120 },
-              ].filter(p => p.plan?.parcela).map(({ label, plan }) => (
-                <div key={label} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 12px', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.40)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>{label}</p>
-                  <p style={{ fontSize: 13, fontWeight: 800, color: 'rgba(255,255,255,0.85)', margin: 0, fontFamily: "'JetBrains Mono', monospace", lineHeight: 1 }}>{fmtBRL(plan!.parcela!)}/mês</p>
-                  {plan!.total && <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.25)', margin: '2px 0 0' }}>Total {fmtBRL(plan!.total)}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Notes */}
-        {dbLot?.notes && (
-          <div className="px-5 pb-3">
-            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 12px', margin: 0, lineHeight: 1.5 }}>
-              {dbLot.notes}
-            </p>
-          </div>
-        )}
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* CTA */}
-        <div className="p-5 pt-3 flex flex-col gap-2" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-          {isAvailable && (
-            <button
-              onClick={onToggleCart}
-              className="flex items-center justify-center gap-2 w-full h-11 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all active:scale-95"
-              style={{
-                background: inCart ? 'rgba(34,197,94,0.14)' : 'rgba(200,164,74,0.12)',
-                color: inCart ? '#34D399' : GOLD,
-                border: `1px solid ${inCart ? 'rgba(52,211,153,0.4)' : 'rgba(200,164,74,0.35)'}`,
-                cursor: 'pointer', fontFamily: "'Outfit', sans-serif",
-              }}
-            >
-              {inCart ? <><Check size={15} /> Na proposta</> : <><ShoppingCart size={14} /> Adicionar à proposta</>}
-            </button>
-          )}
-          {(isAvailable || isNeg) ? (
-            <a
-              href={`https://wa.me/${whatsappPhone}?text=${waMsg}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full h-11 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all hover:opacity-90 active:scale-95"
-              style={{ background: GOLD, color: NAVY, textDecoration: 'none', fontFamily: "'Outfit', sans-serif" }}
-            >
-              <MessageCircle size={14} />
-              Tenho Interesse
-            </a>
-          ) : (
-            <a
-              href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(`Olá! Tenho interesse no ${developmentName}, Quadra ${lot.quadra}, Lote ${lot.lot_number} (${cfg.label}). Pode me avisar se houver disponibilidade?`)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full h-11 rounded-xl text-[12px] font-bold uppercase tracking-wider transition-all hover:opacity-90"
-              style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.70)', border: '1px solid rgba(255,255,255,0.15)', textDecoration: 'none', fontFamily: "'Outfit', sans-serif" }}
-            >
-              <MessageCircle size={14} />
-              Entrar em lista de espera
-            </a>
-          )}
-        </div>
+        <LotDetailContent {...cardProps} onClose={onClose} />
       </motion.div>
 
       {/* Mobile: bottom sheet — arrastável p/ fechar (iOS-like) */}
@@ -774,13 +674,7 @@ function LotDetailPanel({
           if (info.offset.y > 110 || info.velocity.y > 700) onClose();
         }}
         className="sm:hidden fixed bottom-0 left-0 right-0 z-[9999] max-h-[78svh] flex flex-col rounded-t-[24px] overflow-hidden"
-        style={{
-          background: 'rgba(8,20,36,0.97)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          boxShadow: '0 -8px 40px rgba(0,0,0,0.60)',
-          borderTop: `3px solid ${cfg.fill}`,
-        }}
+        style={{ background: '#fff', boxShadow: '0 -8px 40px rgba(0,0,0,0.35)' }}
       >
         {/* Drag handle — inicia o arrasto p/ fechar (resto da folha rola normal) */}
         <div
@@ -788,87 +682,10 @@ function LotDetailPanel({
           style={{ touchAction: 'none' }}
           onPointerDown={(e) => dragControls.start(e)}
         >
-          <div style={{ width: 40, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.18)' }} />
+          <div style={{ width: 40, height: 5, borderRadius: 3, background: '#E5DDD0' }} />
         </div>
-        {/* Close */}
-        <div className="absolute top-3 right-4">
-          <button onClick={onClose} aria-label="Fechar detalhes do lote" className="w-7 h-7 flex items-center justify-center rounded-full" style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.50)' }}>
-            <X size={13} />
-          </button>
-        </div>
-
         <div className="overflow-y-auto flex-1">
-          {/* Header */}
-          <div className="px-5 pt-2 pb-3">
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 rounded-full"
-                style={{ background: `${cfg.fill}22`, color: cfg.fill, border: `1px solid ${cfg.fill}44` }}>
-                {cfg.label}
-              </span>
-            </div>
-            <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'Outfit', sans-serif" }}>
-              Quadra {lot.quadra} — Lote {lot.lot_number}
-            </h3>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-2 px-5 pb-3">
-            <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 12, padding: '12px' }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 4px' }}>Área</p>
-              <p style={{ fontSize: 17, fontWeight: 800, color: '#fff', margin: 0, fontFamily: "'JetBrains Mono', monospace" }}>{area ? fmtM2(area) : '—'}</p>
-            </div>
-            <div style={{ background: isAvailable ? 'rgba(200,164,74,0.12)' : 'rgba(255,255,255,0.05)', borderRadius: 12, padding: '12px', border: isAvailable ? '1px solid rgba(200,164,74,0.30)' : 'none' }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: isAvailable ? GOLD : 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 4px' }}>Valor</p>
-              <p style={{ fontSize: price && price >= 200000 ? 13 : 17, fontWeight: 800, color: isAvailable ? GOLD : '#fff', margin: 0, fontFamily: "'JetBrains Mono', monospace" }}>{price ? fmtBRL(price) : 'Consultar'}</p>
-            </div>
-          </div>
-
-          {/* Installment highlight */}
-          {isAvailable && lot.plans?.p120?.parcela && (
-            <div className="px-5 pb-3">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.40)', fontWeight: 600 }}>120× a partir de</span>
-                <span style={{ fontSize: 15, fontWeight: 800, color: 'rgba(255,255,255,0.80)', fontFamily: "'JetBrains Mono', monospace" }}>
-                  {fmtBRL(lot.plans.p120.parcela!)}/mês
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* CTA */}
-        <div
-          className="px-5 pt-4 flex flex-col gap-2"
-          style={{
-            borderTop: '1px solid rgba(255,255,255,0.07)',
-            flexShrink: 0,
-            paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
-          }}
-        >
-          {isAvailable && (
-            <button
-              onClick={onToggleCart}
-              className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[13px] font-bold uppercase tracking-wider active:scale-95"
-              style={{
-                background: inCart ? 'rgba(34,197,94,0.14)' : 'rgba(200,164,74,0.12)',
-                color: inCart ? '#34D399' : GOLD,
-                border: `1px solid ${inCart ? 'rgba(52,211,153,0.4)' : 'rgba(200,164,74,0.35)'}`,
-                cursor: 'pointer', fontFamily: "'Outfit', sans-serif",
-              }}
-            >
-              {inCart ? <><Check size={16} /> Na proposta</> : <><ShoppingCart size={15} /> Adicionar à proposta</>}
-            </button>
-          )}
-          <a
-            href={`https://wa.me/${whatsappPhone}?text=${waMsg}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl text-[13px] font-bold uppercase tracking-wider"
-            style={{ background: isAvailable ? GOLD : 'rgba(255,255,255,0.08)', color: isAvailable ? NAVY : 'rgba(255,255,255,0.70)', textDecoration: 'none', border: isAvailable ? 'none' : '1px solid rgba(255,255,255,0.15)', fontFamily: "'Outfit', sans-serif" }}
-          >
-            <MessageCircle size={15} />
-            {isAvailable ? 'Tenho Interesse' : 'Falar sobre este lote'}
-          </a>
+          <LotDetailContent {...cardProps} onClose={onClose} />
         </div>
       </motion.div>
     </>
@@ -1154,7 +971,7 @@ function round(n: number, d: number): number {
 const AB_DEV_ID = 'ab7d1fc1-f069-4e3b-a515-8e1204c11247';
 
 export default function AltoBellevueGeoMap({
-  developmentId, developmentName, whatsappPhone = WA, height = '100svh', mapAmenities,
+  developmentId, developmentName, whatsappPhone = WA, height = '100svh', mapAmenities, cart: cartProp,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -1219,7 +1036,8 @@ export default function AltoBellevueGeoMap({
 
   // ── Carrinho de lotes / proposta (compartilhado com a vista "Plano") ───────
   const devSlug = 'alto-bellevue';
-  const cart = useLotCart<CartLot>(devSlug);
+  const fallbackCart = useLotCart<CartLot>(devSlug);
+  const cart = cartProp ?? fallbackCart;
   const [showCart, setShowCart] = useState(false);
   const [showProposal, setShowProposal] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -1613,13 +1431,16 @@ export default function AltoBellevueGeoMap({
       </AnimatePresence>
 
       {/* ── Botão flutuante "Proposta" (carrinho) ─────────────────────────── */}
-      {cart.items.length > 0 && !showCart && !showProposal && !selectedLot && !selectedAmenity && (
+      {/* Quando `cartProp` é fornecida, o pai (AltoBellevueMapExplorer) já
+          renderiza um único FAB/Sheet/Modal visível nas 4 opções do menu —
+          evita duplicar a UI de carrinho aqui (padrão P9). */}
+      {!cartProp && cart.items.length > 0 && !showCart && !showProposal && !selectedLot && !selectedAmenity && (
         <CartFab count={cart.items.length} onClick={() => setShowCart(true)} />
       )}
 
       {/* ── Painel do carrinho / proposta ─────────────────────────────────── */}
       <AnimatePresence>
-        {showCart && (
+        {!cartProp && showCart && (
           <CartSheet
             items={cart.items}
             totals={cartT}
@@ -1635,7 +1456,7 @@ export default function AltoBellevueGeoMap({
 
       {/* ── Modal de proposta (cliente preenche) ──────────────────────────── */}
       <AnimatePresence>
-        {showProposal && cart.items.length > 0 && (
+        {!cartProp && showProposal && cart.items.length > 0 && (
           <ProposalFormModal
             developmentId={developmentId}
             developmentName={developmentName}

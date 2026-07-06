@@ -80,6 +80,21 @@ interface SubdivisionLotMapProps {
   mapAmenities?: Record<string, unknown>[];
   /** Tour virtual 360° do empreendimento (developments.virtual_tour_url) — editável no backoffice. */
   virtualTourUrl?: string;
+  /**
+   * Controle externo de Lista/Planta (usado pelo menu unificado do
+   * AltoBellevueMapExplorer). Sem esta prop, o componente usa seu próprio
+   * estado interno — comportamento standalone inalterado (Miguel Marques etc.).
+   */
+  viewMode?: 'list' | 'plan';
+  onViewModeChange?: (mode: 'list' | 'plan') => void;
+  /** Esconde o toggle "Lista/Planta" interno quando o pai já expõe essa opção no menu. */
+  hideViewToggle?: boolean;
+  /**
+   * Instância de carrinho compartilhada (levantada pelo pai do alternador —
+   * padrão P9). Sem esta prop, o componente cria a própria instância via
+   * useLotCart — comportamento standalone inalterado.
+   */
+  cart?: ReturnType<typeof useLotCart<CartLot>>;
 }
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -1020,7 +1035,18 @@ function CompareBar({
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function SubdivisionLotMap({ developmentId, developmentName, whatsappPhone = '5581986141487', paymentConditions, mapAmenities, virtualTourUrl }: SubdivisionLotMapProps) {
+export default function SubdivisionLotMap({
+  developmentId,
+  developmentName,
+  whatsappPhone = '5581986141487',
+  paymentConditions,
+  mapAmenities,
+  virtualTourUrl,
+  viewMode: viewModeProp,
+  onViewModeChange,
+  hideViewToggle = false,
+  cart: cartProp,
+}: SubdivisionLotMapProps) {
   const [rawLots, setRawLots] = useState<Lot[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -1054,7 +1080,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   // igual ao devSlug hardcoded em AltoBellevueGeoMap.tsx) — lotes adicionados numa
   // vista aparecem na outra ao trocar de aba.
   const devSlug = useMemo(() => devSlugFrom(developmentName), [developmentName]);
-  const cart = useLotCart<CartLot>(devSlug);
+  const fallbackCart = useLotCart<CartLot>(devSlug);
+  const cart = cartProp ?? fallbackCart;
   const [showCart, setShowCart] = useState(false);
   const [showCartProposal, setShowCartProposal] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -1070,6 +1097,23 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
       areaM2: lot.area_m2,
       price: lot.price ?? 0,
       status: lot.status,
+    });
+  }, [cart, devSlug, developmentName]);
+
+  const cartIds = useMemo(() => new Set(cart.items.map((i) => i.id)), [cart.items]);
+
+  const toggleCartPlanLot = useCallback((planLot: {
+    id: string; quadra: string; lot_number: string; area_m2: number | null; price: number | null; status: string;
+  }) => {
+    cart.toggle({
+      id: planLot.id,
+      developmentSlug: devSlug,
+      developmentName,
+      block: planLot.quadra,
+      lot: planLot.lot_number,
+      areaM2: planLot.area_m2 ?? 0,
+      price: planLot.price ?? 0,
+      status: planLot.status,
     });
   }, [cart, devSlug, developmentName]);
 
@@ -1090,7 +1134,12 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
   const [recLoading, setRecLoading] = useState(false);
 
   const hasPlanView = PLAN_VIEW_IDS.has(developmentId);
-  const [viewMode, setViewMode] = useState<'list' | 'plan'>(() => hasPlanView ? 'plan' : 'list');
+  const [internalViewMode, setInternalViewMode] = useState<'list' | 'plan'>(() => hasPlanView ? 'plan' : 'list');
+  const viewMode = viewModeProp ?? internalViewMode;
+  const setViewMode = useCallback((mode: 'list' | 'plan') => {
+    onViewModeChange?.(mode);
+    if (viewModeProp === undefined) setInternalViewMode(mode);
+  }, [onViewModeChange, viewModeProp]);
   const [abPricesMap, setAbPricesMap] = useState<Map<string, ABPriceEntry>>(new Map());
   const pricesFetched = useRef(false);
 
@@ -1378,7 +1427,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
               {stats.available} de {stats.total} lotes disponíveis em {quadras.size} quadras
             </p>
           </div>
-          {hasPlanView && (
+          {hasPlanView && !hideViewToggle && (
             <div
               className="flex items-center rounded-lg p-0.5 flex-shrink-0"
               style={{ background: '#F0EDE5', border: '1.5px solid rgba(200,164,74,0.35)' }}
@@ -1434,6 +1483,8 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             whatsappPhone={whatsappPhone}
             amenityOverrides={mapAmenities}
             virtualTourUrl={virtualTourUrl}
+            cartIds={cartIds}
+            onToggleCart={toggleCartPlanLot}
           />
         )}
       </div>
@@ -1477,7 +1528,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
             </button>
           )}
           {/* View toggle */}
-          {hasPlanView && (
+          {hasPlanView && !hideViewToggle && (
             <div
               className="flex items-center rounded-lg p-0.5 flex-shrink-0"
               style={{ background: '#F0EDE5', border: '1.5px solid rgba(200,164,74,0.35)' }}
@@ -1943,13 +1994,16 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
       </AnimatePresence>
 
       {/* ── Botão flutuante "Proposta" (carrinho compartilhado) ──────────────── */}
-      {cart.items.length > 0 && !showCart && !showCartProposal && !selectedLot && !showComparator && (
+      {/* Quando `cartProp` é fornecida, o pai (AltoBellevueMapExplorer) já
+          renderiza um único FAB/Sheet/Modal visível nas 4 opções do menu — evita
+          duplicar a UI de carrinho aqui (padrão P9). */}
+      {!cartProp && cart.items.length > 0 && !showCart && !showCartProposal && !selectedLot && !showComparator && (
         <CartFab count={cart.items.length} onClick={() => setShowCart(true)} fixed />
       )}
 
       {/* ── Painel do carrinho / proposta ──────────────────────────────────── */}
       <AnimatePresence>
-        {showCart && (
+        {!cartProp && showCart && (
           <CartSheet
             items={cart.items}
             totals={cartT}
@@ -1966,7 +2020,7 @@ export default function SubdivisionLotMap({ developmentId, developmentName, what
 
       {/* ── Modal de proposta a partir do carrinho ────────────────────────── */}
       <AnimatePresence>
-        {showCartProposal && cart.items.length > 0 && (
+        {!cartProp && showCartProposal && cart.items.length > 0 && (
           <ProposalFormModal
             developmentId={developmentId}
             developmentName={developmentName}
