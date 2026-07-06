@@ -55,18 +55,19 @@ export const AB_CALIBRATION_DEFAULT: AbCalibration = {
   // Ajuste fino a olho (pedido do dono, 2026-07-06): +30% de escala e 5° para
   // a esquerda (sentido anti-horário) para alinhar o overlay georreferenciado
   // à imagem de satélite real, igualando a leitura visual da "Mapa de Lotes".
-  // Depois (mesmo dia): o dono demarcou o perímetro real do terreno em
-  // vermelho sobre um screenshot do próprio "Satélite + Lotes". Medimos por
-  // detecção de cor o centróide dos lotes renderizados vs. o centróide da
-  // área demarcada em vermelho naquele screenshot e convertemos o deslocamento
-  // em pixels para graus (usando a largura leste-oeste conhecida do perímetro
-  // como escala px/grau) — deu ~0,00084° a oeste, bem menos que a estimativa
-  // grosseira anterior de 20% da caixa (0,0014912°), que já estava
-  // superestimada. dLat ficou dentro do ruído de medição (~0) e não mudou.
+  // Depois (mesmo dia, 2 rodadas): o dono demarcou o perímetro real do
+  // terreno em vermelho sobre screenshots do próprio "Satélite + Lotes" — uma
+  // vez em produção com dLng=0 (ainda sem esta calibração) e de novo já com
+  // dLng=-0,0014912 ao vivo. Medimos por detecção de cor o centróide dos
+  // lotes renderizados vs. o centróide da área vermelha em cada screenshot;
+  // a 2ª medição (contra o valor já ao vivo, portanto mais confiável que a
+  // 1ª) mostrou que o deslocamento leste-oeste já estava praticamente certo
+  // (~2% de ajuste fino) mas faltava subir para o norte. Consolidamos as
+  // duas medições em dLng=-0,00133 e dLat=+0,00022 (~25 m para o norte).
   rotationDeg: -5,
   scale: 1.3,
-  dLng: -0.00084,
-  dLat: 0,
+  dLng: -0.00133,
+  dLat: 0.00022,
 };
 
 let _calibration: AbCalibration = { ...AB_CALIBRATION_DEFAULT };
