@@ -4,6 +4,46 @@
 
 ---
 
+## 2026-07-06 (3ª rodada) · Reorganização do menu do mapa (Alto Bellevue) — 4 opções + carrinho único
+
+**Branch**: `claude/map-menu-reorganize-77jk1s`
+
+Unificado o alternador de vistas do `AltoBellevueMapExplorer` (antes: 3 abas + toggle
+interno "Lista/Planta" dentro de "Plano") num único menu de 4 opções lado a lado:
+Lista, Mapa de Lotes, Satélite + Lotes, Satélite.
+
+- **Carrinho levantado ao pai do alternador** (padrão P9): `useLotCart` agora vive só em
+  `AltoBellevueMapExplorer`, passado via prop `cart` para `SubdivisionLotMap` e
+  `AltoBellevueGeoMap` (que mantêm fallback próprio p/ uso standalone fora do explorador,
+  ex. Miguel Marques). Um único FAB/Sheet/Modal de proposta, visível nas 4 opções.
+- **Card de lote compartilhado**: extraído `LotDetailContent.tsx` do antigo
+  `LotBottomSheet` de `AltoBellevuePlanView` (referência visual = "Mapa de Lotes") e
+  reaproveitado por `AltoBellevueGeoMap` ("Satélite + Lotes"), incluindo o CTA "Adicionar
+  à proposta" que faltava no Mapa de Lotes. Card de "Lista" (`LotModal`) não foi tocado.
+- **POIs no "Satélite"**: `AerialSatelliteMap` ganhou props opcionais `developmentId`/
+  `showPois` — busca `/api/pois` (mesmo endpoint do `POIGrid`) e mostra um painel "Nas
+  proximidades" com distância real por categoria. Como a API não retorna lat/lng por
+  item, optamos por um painel de lista em vez de pinos com posição inventada (evita
+  sugerir localização exata falsa numa imagem de satélite real). Prop opt-in, sem
+  regressão no console (`src/features/users/map/SatelliteMap.tsx`).
+- `SubdivisionLotMap` ganhou `viewMode`/`onViewModeChange`/`hideViewToggle` controláveis
+  (fallback = comportamento local de sempre) para o pai poder dirigir Lista↔Mapa sem
+  desmontar o componente (preserva filtros/scroll/comparador ao trocar).
+
+Bug pego durante verificação: o CTA de carrinho tinha vazado para lotes em `NEGOCIACAO`
+no card compartilhado (o padrão original só permite em `DISPONIVEL`) — corrigido antes do
+commit.
+
+**Validado**: `tsc --noEmit` limpo, `next lint` limpo, suíte jest completa (64/64 suítes,
+889/894 testes) sem regressão. Verificação end-to-end via dev server + Playwright em
+`/pt/projetos/alto-bellevue`: menu de 4 opções renderiza, lote adicionado em "Mapa de
+Lotes" mantém o carrinho ao trocar para Lista/Satélite+Lotes/Satélite (FAB "Proposta 1"
+em todas). Camadas de satélite (Esri) e `/api/pois` (Google Places) não puderam ser
+verificadas visualmente neste ambiente por falta de acesso de rede externo (sandbox) —
+código segue o mesmo padrão já validado do georef existente.
+
+---
+
 ## 2026-07-06 (2ª rodada) · Passe de densidade mobile — "melhor em 80%" → ideal em 100%
 
 **Branch**: `claude/frontend-refactor-design-gubdfu` (recomeçada de main @ c18616d pós-merge #363)

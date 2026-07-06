@@ -17,6 +17,7 @@ import {
   type AmenityOverride,
 } from '@/lib/lots/amenity-media';
 import { useAbAvailability } from '@/hooks/use-ab-availability';
+import LotDetailContent from './LotDetailContent';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -60,6 +61,17 @@ interface Props {
   amenityOverrides?: Record<string, unknown>[];
   /** Tour virtual 360° do empreendimento — configurável no backoffice (developments.virtual_tour_url). */
   virtualTourUrl?: string;
+  /** Ids dos lotes já no carrinho (carrinho compartilhado, levantado pelo pai do alternador). */
+  cartIds?: Set<string>;
+  /** Alterna um lote no carrinho compartilhado. */
+  onToggleCart?: (lot: {
+    id: string;
+    quadra: string;
+    lot_number: string;
+    area_m2: number | null;
+    price: number | null;
+    status: string;
+  }) => void;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -1313,7 +1325,7 @@ function MapSkeleton() {
 
 function LotBottomSheet({
   lot, priceEntry, onClose, whatsappPhone, developmentName, dbLot, streetLabels,
-  onAddToCompare, isInCompare, portalTarget, isFullscreen,
+  onAddToCompare, isInCompare, portalTarget, isFullscreen, inCart, onToggleCart,
 }: {
   lot: PlanLot;
   priceEntry?: PriceEntry;
@@ -1326,6 +1338,8 @@ function LotBottomSheet({
   isInCompare?: boolean;
   portalTarget?: HTMLElement | null;
   isFullscreen?: boolean;
+  inCart?: boolean;
+  onToggleCart?: () => void;
 }) {
   const isAvailable = lot.status === 'DISPONIVEL';
   const isNegotiating = lot.status === 'NEGOCIACAO';
@@ -1439,253 +1453,36 @@ function LotBottomSheet({
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#E5DDD0' }} />
         </div>
 
-        {/* Status accent */}
-        <div style={{ height: 3, background: cfg.dot }} />
-
-        {/* Header */}
-        <div className="flex items-start justify-between px-5 pt-5 pb-2">
-          <div>
-            <div className="flex items-center gap-2 flex-wrap mb-2">
-              <span
-                className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
-                style={{ background: cfg.badgeBg, color: cfg.badgeText }}
-              >
-                {cfg.label}
-              </span>
-              {isAvailable && (
-                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full" style={{ background: '#F0EDE5', color: GOLD }}>
-                  Premium
-                </span>
-              )}
-              {isCorner && (
-                <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-blue-50 text-blue-700">
-                  Esquina
-                </span>
-              )}
-            </div>
-            <h3 style={{ fontSize: 22, fontWeight: 800, color: '#081524', fontFamily: "'Outfit', sans-serif", margin: 0, lineHeight: 1.2 }}>
-              Quadra {lot.quadra} · Lote {lot.lot_number}
-            </h3>
-            <p style={{ fontSize: 11, color: '#948F84', margin: '3px 0 0', fontWeight: 500 }}>
-              {developmentName} · Garanhuns, PE
-            </p>
-          </div>
-          <button
-            ref={closeRef}
-            onClick={onClose}
-            className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0 mt-1"
-            style={{ background: '#F7F8FA' }}
-            aria-label="Fechar detalhes do lote"
-          >
-            <X size={15} color="#948F84" />
-          </button>
-        </div>
-
-        {/* Area + Price */}
-        <div className="grid grid-cols-2 gap-2.5 px-5 pb-3">
-          <div style={{ background: '#F8F6F2', borderRadius: 14, padding: '13px 14px' }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 4px', fontFamily: "'Outfit', sans-serif" }}>Área Total</p>
-            <p style={{ fontSize: 18, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-              {lot.area_m2 ? fmtM2(lot.area_m2 as number) : '—'}
-            </p>
-          </div>
-          <div style={{ background: isAvailable ? '#081524' : '#F8F6F2', borderRadius: 14, padding: '13px 14px' }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: isAvailable ? GOLD : '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 4px', fontFamily: "'Outfit', sans-serif" }}>Valor</p>
-            <p style={{ fontSize: lot.price && (lot.price as number) >= 100000 ? 15 : 18, fontWeight: 800, color: isAvailable ? '#fff' : '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-              {lot.price ? fmtBRL(lot.price as number) : 'Consultar'}
-            </p>
-          </div>
-        </div>
-
-        {/* Dimensions (computed) */}
-        {dims && (
-          <div className="grid grid-cols-2 gap-2.5 px-5 pb-3">
-            <div style={{ background: '#F8F6F2', borderRadius: 14, padding: '11px 14px' }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>Testada aprox.</p>
-              <p style={{ fontSize: 15, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-                {fmtM(dims.testada)}
-              </p>
-            </div>
-            <div style={{ background: '#F8F6F2', borderRadius: 14, padding: '11px 14px' }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>Profundidade aprox.</p>
-              <p style={{ fontSize: 15, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-                {fmtM(dims.profundidade)}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Confrontações (aprox. — derivadas das arestas) */}
-        {sides && (
-          <div className="px-5 pb-3">
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 8px', fontFamily: "'Outfit', sans-serif" }}>
-              Confrontações <span style={{ color: '#C0BAB2', fontWeight: 500 }}>(aprox.)</span>
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-              {([
-                { label: 'Frente', v: sides.frente },
-                { label: 'Fundos', v: sides.fundos },
-                { label: 'Lateral esq.', v: sides.lateralEsq },
-                { label: 'Lateral dir.', v: sides.lateralDir },
-              ] as const).map((s) => (
-                <div key={s.label} style={{ background: '#F8F6F2', borderRadius: 10, padding: '8px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 10, color: '#948F84', fontWeight: 600 }}>{s.label}</span>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace" }}>{fmtM(s.v)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Rua de acesso */}
-        {acessoRua && (
-          <div className="px-5 pb-3">
-            <div style={{ background: '#F0EDE5', borderRadius: 12, padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600, flexShrink: 0 }}>Rua de acesso</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#081524', textAlign: 'right', fontFamily: "'Outfit', sans-serif" }}>{acessoRua}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Price per m² */}
-        {pricePerM2 && (
-          <div className="px-5 pb-3">
-            <div style={{ background: '#F0EDE5', borderRadius: 12, padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 11, color: '#948F84', fontWeight: 600 }}>Preço por m²</span>
-              <span style={{ fontSize: 15, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace" }}>
-                {fmtBRL(pricePerM2)}/m²
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Payment plans */}
-        {priceEntry && (isAvailable || isNegotiating) && (
-          <div className="px-5 pb-3">
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px', fontFamily: "'Outfit', sans-serif" }}>
-              Formas de Pagamento
-            </p>
-            {/* Cash */}
-            <div style={{ background: '#081524', borderRadius: 12, padding: '11px 14px', marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <p style={{ fontSize: 9, fontWeight: 700, color: GOLD, textTransform: 'uppercase', letterSpacing: '0.12em', margin: '0 0 3px', fontFamily: "'Outfit', sans-serif" }}>À Vista</p>
-                <p style={{ fontSize: 16, fontWeight: 800, color: GOLD, fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-                  {fmtBRL(priceEntry.preco_vista)}
-                </p>
-              </div>
-              <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(200,164,74,0.75)', background: 'rgba(200,164,74,0.12)', padding: '3px 8px', borderRadius: 8 }}>
-                −20%
-              </span>
-            </div>
-            {/* Installments — desconto oficial por plano (quanto menor o prazo, maior o desconto) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-              {([
-                { key: 'p12', label: '12×', parcela: priceEntry.p12_parcela, total: priceEntry.p12_total, entrada: priceEntry.p12_entrada },
-                { key: 'p36', label: '36×', parcela: priceEntry.p36_parcela, total: priceEntry.p36_total, entrada: priceEntry.p36_entrada },
-                { key: 'p60', label: '60×', parcela: priceEntry.p60_parcela, total: priceEntry.p60_total, entrada: priceEntry.p60_entrada },
-                { key: 'p120', label: '120×', parcela: priceEntry.p120_parcela, total: priceEntry.p120_total, entrada: priceEntry.p120_entrada },
-              ] as const).map(plan => {
-                const desconto = PLAN_DISCOUNTS[plan.key];
-                // Entrada oficial = 10% do total com desconto do plano (fallback p/ dados antigos)
-                const entrada = plan.entrada ?? Math.round(plan.total * 10) / 100;
-                return (
-                  <div key={plan.label} style={{ background: '#F8F6F2', borderRadius: 12, padding: '10px 12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
-                      <p style={{ fontSize: 9, fontWeight: 700, color: '#948F84', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0, fontFamily: "'Outfit', sans-serif" }}>{plan.label}</p>
-                      <span style={{
-                        fontSize: 8, fontWeight: 700, padding: '2px 6px', borderRadius: 6,
-                        background: desconto > 0 ? 'rgba(50,209,124,0.14)' : 'rgba(0,0,0,0.05)',
-                        color: desconto > 0 ? '#15803D' : '#A8A296',
-                      }}>
-                        {desconto > 0 ? `−${desconto}%` : 'sem desc.'}
-                      </span>
-                    </div>
-                    <p style={{ fontSize: 13, fontWeight: 800, color: '#081524', fontFamily: "'JetBrains Mono', monospace", margin: 0 }}>
-                      {fmtBRL(plan.parcela)}/mês
-                    </p>
-                    <p style={{ fontSize: 8, color: '#B8B3A8', margin: '2px 0 0', fontWeight: 500 }}>
-                      Entrada {fmtBRL(entrada)} · Total {fmtBRL(plan.total)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-            <p style={{ fontSize: 8.5, color: '#B8B3A8', margin: '8px 2px 0', fontWeight: 500, lineHeight: 1.45 }}>
-              Entrada de 10% sobre o valor do plano · correção mensal pelo INCC conforme tabela oficial.
-            </p>
-          </div>
-        )}
-
-        {isNegotiating && (
-          <div className="px-5 pb-3">
-            <p style={{ fontSize: 11, color: '#92400E', background: '#FEF3C7', borderRadius: 10, padding: '9px 13px', margin: 0, lineHeight: 1.5 }}>
-              Este lote está em processo de negociação. Entre em contato para verificar disponibilidade.
-            </p>
-          </div>
-        )}
-
-        {(lot.notes || dbLot?.notes) && (
-          <div className="px-5 pb-3">
-            <p style={{ fontSize: 11, color: '#636363', background: '#F8F6F2', borderRadius: 10, padding: '9px 13px', margin: 0, lineHeight: 1.5 }}>
-              {lot.notes ?? dbLot?.notes}
-            </p>
-          </div>
-        )}
-
-        {/* CTAs */}
-        <div className="px-5 pt-1 pb-2 flex flex-col gap-2">
-          {/* Compare button */}
-          {onAddToCompare && (
-            <button
-              onClick={() => onAddToCompare(lot)}
-              className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[12px] font-semibold transition-all active:scale-95"
-              style={{
-                color: isInCompare ? '#0B1B2D' : GOLD,
-                border: isInCompare ? '1.5px solid #C8A44A' : '1.5px solid rgba(200,164,74,0.4)',
-                background: isInCompare ? 'rgba(200,164,74,0.15)' : 'transparent',
-                fontFamily: "'Outfit', sans-serif",
-              }}
-            >
-              <Scale size={14} />
-              {isInCompare ? 'Remover da comparação' : 'Comparar este lote'}
-            </button>
-          )}
-          {isAvailable || isNegotiating ? (
-            <>
-              <a
-                href={`https://wa.me/${whatsappPhone}?text=${waInterest}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative flex items-center justify-center gap-2 w-full h-12 rounded-2xl text-[13px] font-bold uppercase tracking-wider overflow-hidden"
-                style={{ background: 'linear-gradient(135deg, #0B1B2D, #10233B)', color: '#fff', textDecoration: 'none', fontFamily: "'Outfit', sans-serif" }}
-              >
-                <MessageCircle size={15} />
-                Tenho Interesse
-                <span style={{ position: 'absolute', bottom: 0, left: '15%', right: '15%', height: 2, background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)`, opacity: 0.8 }} />
-              </a>
-              <a
-                href={`https://wa.me/${whatsappPhone}?text=${waVisit}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full h-11 rounded-2xl text-[12px] font-semibold"
-                style={{ color: '#0B1B2D', border: '1.5px solid rgba(11,27,45,0.14)', background: '#F8F6F2', textDecoration: 'none', fontFamily: "'Outfit', sans-serif" }}
-              >
-                Agendar Visita
-              </a>
-            </>
-          ) : (
-            <a
-              href={`https://wa.me/${whatsappPhone}?text=${waGeneral}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl text-[13px] font-bold"
-              style={{ color: '#0B1B2D', border: '1.5px solid rgba(11,27,45,0.12)', background: '#fff', textDecoration: 'none', fontFamily: "'Outfit', sans-serif" }}
-            >
-              <MessageCircle size={15} />
-              Ver Lotes Disponíveis
-            </a>
-          )}
-        </div>
+        <LotDetailContent
+          quadra={lot.quadra}
+          lotNumber={lot.lot_number}
+          developmentName={developmentName}
+          statusLabel={cfg.label}
+          statusBadgeBg={cfg.badgeBg}
+          statusBadgeText={cfg.badgeText}
+          statusDotColor={cfg.dot}
+          isAvailable={isAvailable}
+          isNegotiating={isNegotiating}
+          isCorner={isCorner}
+          areaM2={lot.area_m2}
+          price={lot.price}
+          pricePerM2={pricePerM2}
+          dims={dims}
+          sides={sides}
+          acessoRua={acessoRua}
+          paymentPlans={priceEntry ?? null}
+          notes={lot.notes ?? dbLot?.notes ?? null}
+          whatsappPhone={whatsappPhone}
+          waInterestText={waInterest}
+          waVisitText={waVisit}
+          waGeneralText={waGeneral}
+          inCart={inCart}
+          onToggleCart={onToggleCart}
+          onAddToCompare={onAddToCompare ? () => onAddToCompare(lot) : undefined}
+          isInCompare={isInCompare}
+          onClose={onClose}
+          closeButtonRef={closeRef}
+        />
       </motion.div>
     </>,
     target,
@@ -2294,6 +2091,8 @@ export default function AltoBellevuePlanView({
   whatsappPhone = '5581986141487',
   amenityOverrides,
   virtualTourUrl,
+  cartIds,
+  onToggleCart,
 }: Props) {
   const { data: mapData, loading, error, retry } = useABMap();
   // Lookup das mídias do backoffice por id de área (sobrepõe os defaults da UI).
@@ -3576,6 +3375,8 @@ export default function AltoBellevuePlanView({
             isInCompare={compareLots.some(l => l.id === selectedLot.id)}
             portalTarget={fsPortalTarget}
             isFullscreen={isFullscreen}
+            inCart={cartIds?.has(selectedLot.id) ?? false}
+            onToggleCart={onToggleCart ? () => onToggleCart(selectedLot) : undefined}
           />
         )}
       </AnimatePresence>

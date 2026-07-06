@@ -52,8 +52,11 @@ export interface AbCalibration {
 }
 
 export const AB_CALIBRATION_DEFAULT: AbCalibration = {
-  rotationDeg: 0,
-  scale: 1,
+  // Ajuste fino a olho (pedido do dono, 2026-07-06): +30% de escala e 5° para
+  // a esquerda (sentido anti-horário) para alinhar o overlay georreferenciado
+  // à imagem de satélite real, igualando a leitura visual da "Mapa de Lotes".
+  rotationDeg: -5,
+  scale: 1.3,
   dLng: 0,
   dLat: 0,
 };
