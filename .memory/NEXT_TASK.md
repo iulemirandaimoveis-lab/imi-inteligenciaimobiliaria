@@ -1,6 +1,18 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-05 (sessão CTO: decisão Partner API v1 — D-15)
+**Atualizado**: 2026-07-06 (conciliação de comissões BTG — estrutura completa, migration pendente de aplicação)
+
+## Conciliação de Comissões (BTG PF/PJ) — estrutura ENTREGUE, aplicação em produção pendente
+- Entregue: migration `20260706_commission_bank_reconciliation.sql` (versionada, **não aplicada**),
+  conector `src/lib/btg/`, motor de match `src/lib/finance/matching.ts`, rotas `src/app/api/finance/*`,
+  UI `/backoffice/financeiro/comissoes`. Detalhe: `.claude/completions/2026-07-06-conciliacao-comissoes-btg.md`.
+- **AÇÃO DO DONO 1**: aplicar a migration em produção (via Supabase MCP/CLI) para o módulo funcionar.
+- **AÇÃO DO DONO 2**: usar "Importar extrato (CSV)" (funciona sem depender de API) para começar a
+  conciliar a conta PF hoje; conectar a conta PJ via OAuth quando o CNPJ da IMI abrir conta BTG Empresas
+  (`docs/BTG_INTEGRATION_GUIDE.md`).
+- **Gatilho para revisitar**: acesso liberado a developers.empresas.btgpactual.com (bloqueado pela
+  política de rede da sessão que construiu isso) — confirmar path real do endpoint de extrato PJ e
+  ajustar `BTG_PJ_STATEMENT_PATH` / `normalizeEntry()` em `src/lib/btg/statement.ts` se divergir.
 
 ## Partner API v1 (D-15) — Fase 1 ✅ IMPLEMENTADA (2026-07-05, aprovada pelo dono)
 - Entregue: migration aplicada em produção + `src/lib/partner-api/` + 6 rotas `/api/v1/*` + OpenAPI

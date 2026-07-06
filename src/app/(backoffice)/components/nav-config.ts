@@ -215,6 +215,7 @@ export const SECTIONS: NavSection[] = [
             { label: 'Visão Geral', href: '/backoffice/financeiro',         icon: Banknote     },
             { label: 'A Receber',   href: '/backoffice/financeiro/receber', icon: TrendingUp   },
             { label: 'A Pagar',     href: '/backoffice/financeiro/pagar',   icon: TrendingDown },
+            { label: 'Comissões (BTG)', href: '/backoffice/financeiro/comissoes', icon: Plug, badge: 'NEW' },
             { label: 'Metas',       href: '/backoffice/financeiro/metas',   icon: Target       },
             {
                 label: 'BPO Financeiro', icon: Briefcase, badge: 'NEW',

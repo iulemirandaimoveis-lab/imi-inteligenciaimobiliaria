@@ -45,6 +45,8 @@ Load these files at every session start:
 - Auditorias históricas: `docs/AUDITORIA_*.md` (consultar sob demanda)
 - Migrations: `supabase/MIGRATIONS_MAP.md`
 - CAD/Mapas: `docs/cad/`, `docs/handoff-mapa-alto-bellevue-cad.md`
+- Partner API: `docs/PARTNER_API_V1_DESIGN.md`, `docs/api/PARTNER_API_GUIDE.md`
+- Conciliação de comissões (BTG PF/PJ): `docs/BTG_INTEGRATION_GUIDE.md`
 
 ---
 

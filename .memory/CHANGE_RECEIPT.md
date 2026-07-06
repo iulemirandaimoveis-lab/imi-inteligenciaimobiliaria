@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-07-06 (4ª rodada) · Conciliação de comissões IMI × Mano Imóveis (BTG PF/PJ)
+
+**Branch**: `claude/imi-commission-reconciliation-eyng5a`
+
+Pedido do dono: estrutura + interface completas para conciliar e confirmar as comissões da
+IMI recebidas via imobiliárias parceiras (Mano Imóveis), conectando (ou deixando pronto pra
+conectar) as contas BTG Pactual PF e PJ.
+
+- **Banco** (`supabase/migrations/20260706_commission_bank_reconciliation.sql`, criada mas
+  **NÃO aplicada em produção** — invariante "banco só com aprovação explícita"):
+  `bank_accounts`, `bank_transactions`, `commission_reconciliations`, `bank_oauth_tokens`
+  (RLS habilitada; a de tokens sem nenhuma policy, só service role — padrão D-15). Seed das
+  2 contas da IMI (PF atual + PJ pronta pra quando o CNPJ abrir).
+- **Conector** `src/lib/btg/`: OAuth2 (client_credentials + Authorization Code com `state`
+  HMAC), fetch+normalização de extrato, e **importação manual de CSV** (caminho que
+  funciona hoje, sem depender da API, pra PF e PJ).
+- **Motor de match** `src/lib/finance/matching.ts`: score por valor/data/documento.
+- **Rotas** `src/app/api/finance/*`: contas bancárias (CRUD admin), test-connection, sync,
+  authorize/callback OAuth, transações (list + import CSV), conciliação (GET sugestões +
+  POST confirm/reject/auto_match sobre `commission_repasses` já existente).
+- **UI** `/backoffice/financeiro/comissoes`: KPIs, painel de contas BTG, repasses pendentes
+  com sugestões de match, histórico. Nav atualizado.
+- **Limitação registrada com transparência**: `developers.empresas.btgpactual.com` foi
+  bloqueado pela política de rede da sessão (403 no proxy) — path exato do endpoint de
+  extrato PJ e nomes de campo não confirmados na doc oficial; deixados configuráveis via
+  env var. Ver `docs/BTG_INTEGRATION_GUIDE.md`.
+- **Validação**: tsc limpo, lint limpo, 27 testes novos (parser CSV, motor de match,
+  auth-gating + fluxo de confirmação), suíte completa 68/916 passed (5 skipped) sem regressão.
+- **Pendências do dono**: aplicar a migration em produção; usar import CSV pra começar a
+  conciliar já; conectar PJ via OAuth quando tiver CNPJ+conta BTG Empresas.
+
 ## 2026-07-06 (3ª rodada) · Reorganização do menu do mapa (Alto Bellevue) — 4 opções + carrinho único
 
 **Branch**: `claude/map-menu-reorganize-77jk1s`

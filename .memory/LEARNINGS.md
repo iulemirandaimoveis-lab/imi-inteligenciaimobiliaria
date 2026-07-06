@@ -6,6 +6,12 @@
 
 ## Infra/Build
 
+- **L-16** `developers.empresas.btgpactual.com` é bloqueado pela política de rede de sessões
+  Claude Code neste ambiente (proxy retorna 403/`connect_rejected` tanto via `WebFetch`
+  quanto `curl` direto — não é algo pra contornar). Antes de tentar integrar APIs do BTG
+  Empresas, considerar que os docs precisam ser lidos por outro meio (dono cola o conteúdo,
+  ou sessão roda num ambiente sem essa restrição). Ver `docs/BTG_INTEGRATION_GUIDE.md`
+  (2026-07-06) — conector ficou configurável via env var justamente por causa disso.
 - **L-01** O build precisa de `--max-old-space-size=7168`; type-check OOM no Vercel → por isso `ignoreBuildErrors`. O gate de tipos é o CI. Não "consertar" isso removendo a flag sem resolver a memória primeiro.
 - **L-02** Jest completo roda em ~12s — não há desculpa para não rodar antes de commit.
 - **L-03** `next lint --quiet` está limpo desde 2026-07-02; o `continue-on-error` no CI é vestigial.

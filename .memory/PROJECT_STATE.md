@@ -20,6 +20,19 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-06 (branch claude/imi-commission-reconciliation-eyng5a, PR draft): **conciliação
+  de comissões IMI × Mano Imóveis** — estrutura completa pra confirmar repasses recebidos,
+  conectando (ou deixando pronto pra conectar) as contas BTG PF/PJ da IMI. Migration nova
+  (`20260706_commission_bank_reconciliation.sql`, **NÃO aplicada em produção** — pendência
+  do dono) cria `bank_accounts`/`bank_transactions`/`commission_reconciliations`/
+  `bank_oauth_tokens` (RLS, tokens sem nenhuma policy — só service role). Conector
+  `src/lib/btg/` (OAuth2 client_credentials + Authorization Code + import CSV — caminho que
+  funciona hoje sem depender da API). Motor de match por valor/data/documento
+  (`src/lib/finance/matching.ts`). UI em `/backoffice/financeiro/comissoes`. **Acesso a
+  developers.empresas.btgpactual.com bloqueado pela política de rede da sessão** — path
+  exato do endpoint de extrato e nomes de campo não puderam ser confirmados na doc oficial,
+  ficaram configuráveis via env var (ver `docs/BTG_INTEGRATION_GUIDE.md`). 27 testes novos,
+  68 suítes/916 passed sem regressão. Detalhe: `.claude/completions/2026-07-06-conciliacao-comissoes-btg.md`.
 - 2026-07-06 (branch claude/backoffice-recent-bugs-7zig1n, PR draft): **FX-11** — "Usuários não
   abre" + "foto sumiu". Causa: dono tem 2 contas (`iule@imi.com` e a profissional) e o admin
   máster não estava completo nos DOIS sistemas ao mesmo tempo (backoffice `profiles.role` vs
@@ -56,6 +69,7 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 - Migration segura APLICADA (`proposal_events` + colunas de tracking). A versão que reescrevia policies foi descartada (proposals não tem `tenant_id`).
 
 ## Pendências quentes (topo da fila)
+-1. **AÇÃO DO DONO — aplicar migration de conciliação de comissões**: `supabase/migrations/20260706_commission_bank_reconciliation.sql` está versionada mas **não aplicada em produção** (mudança de banco exige aprovação explícita). Depois de aplicar: ver `docs/BTG_INTEGRATION_GUIDE.md` pra conectar a conta BTG PJ (ou usar import de CSV, que já funciona sem migration adicional nenhuma além dessa).
 0. **AÇÃO DO DONO — chave da Mano Imóveis**: rodar localmente `node scripts/partner/create-partner-key.mjs --name "Mano Imóveis" --scopes developments:read,lots:read,maps:read,prices:read` e enviar a chave por canal seguro (ela só aparece uma vez). Guia p/ o parceiro: `docs/api/PARTNER_API_GUIDE.md`.
 1. **T-07**: DOMPurify nos 13 `dangerouslySetInnerHTML` (verificação por uso).
 2. Upgrade Next/next-pwa (altas de `npm audit` de produção) → depois subir gate do CI para `high`.
