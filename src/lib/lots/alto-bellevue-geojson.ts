@@ -55,9 +55,13 @@ export const AB_CALIBRATION_DEFAULT: AbCalibration = {
   // Ajuste fino a olho (pedido do dono, 2026-07-06): +30% de escala e 5° para
   // a esquerda (sentido anti-horário) para alinhar o overlay georreferenciado
   // à imagem de satélite real, igualando a leitura visual da "Mapa de Lotes".
+  // Depois (mesmo dia): +20% de translação para a esquerda (oeste), pois o
+  // render dos polígonos ainda ficava deslocado a leste do posicionamento
+  // real visto no satélite — 20% da largura leste-oeste da caixa geográfica
+  // base (AB_GEO_CONFIG.east - AB_GEO_CONFIG.west).
   rotationDeg: -5,
   scale: 1.3,
-  dLng: 0,
+  dLng: -0.0014912,
   dLat: 0,
 };
 
