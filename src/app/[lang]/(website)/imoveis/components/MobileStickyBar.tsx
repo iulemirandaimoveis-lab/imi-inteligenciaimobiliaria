@@ -37,8 +37,8 @@ export default function MobileStickyBar({ propertyName, propertyId, priceMin, wh
                     backdropFilter: 'blur(16px)',
                     WebkitBackdropFilter: 'blur(16px)',
                     borderTop: '1px solid rgba(184,179,168,0.2)',
-                    padding: '12px 16px',
-                    paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+                    padding: '10px 16px',
+                    paddingBottom: 'calc(10px + env(safe-area-inset-bottom, 0px))',
                     boxShadow: '0 -4px 24px rgba(0,0,0,0.09)',
                 }}
             >
@@ -58,7 +58,7 @@ export default function MobileStickyBar({ propertyName, propertyId, priceMin, wh
                         <p style={{ fontSize: 9, color: '#948F84', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: '0 0 2px' }}>
                             A partir de
                         </p>
-                        <p style={{ fontSize: 19, fontWeight: 800, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, lineHeight: 1.15 }}>
+                        <p style={{ fontSize: 17, fontWeight: 800, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: 0, lineHeight: 1.15 }}>
                             {priceDisplay}
                         </p>
                     </div>
@@ -69,8 +69,8 @@ export default function MobileStickyBar({ propertyName, propertyId, priceMin, wh
                             background: '#0B1928',
                             color: '#FFFFFF',
                             borderRadius: 12,
-                            padding: '0 20px',
-                            height: 46,
+                            padding: '0 16px',
+                            height: 44,
                             fontWeight: 700,
                             fontSize: 11,
                             letterSpacing: '0.08em',

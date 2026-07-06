@@ -50,12 +50,12 @@ export default function AnchorNav({ sections }: AnchorNavProps) {
                 borderBottom: '1px solid rgba(200,164,74,0.12)',
             }}
         >
-            <div className="flex gap-0 max-w-7xl mx-auto px-4">
+            <div className="flex gap-0 max-w-7xl mx-auto px-2 sm:px-4">
                 {sections.map(s => (
                     <button
                         key={s.id}
                         onClick={() => scrollTo(s.id)}
-                        className="relative px-4 text-sm font-medium whitespace-nowrap transition-colors duration-200"
+                        className="relative px-2 sm:px-4 text-[13px] sm:text-sm font-medium whitespace-nowrap transition-colors duration-200"
                         style={{
                             color: active === s.id ? GOLD : '#8E99AB',
                             fontFamily: "var(--fu, 'Outfit', sans-serif)",

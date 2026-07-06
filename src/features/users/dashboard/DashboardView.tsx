@@ -141,7 +141,7 @@ function StatCard({
       <p
         style={{
           fontFamily: T.fMono,
-          fontSize: 26,
+          fontSize: 'clamp(21px, 5.5vw, 26px)',
           fontWeight: 600,
           color: accent,
           margin: 0,

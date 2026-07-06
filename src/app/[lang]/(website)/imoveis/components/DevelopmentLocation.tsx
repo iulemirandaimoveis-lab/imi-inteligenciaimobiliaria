@@ -78,7 +78,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
             whileInView="visible"
             viewport={{ once: true }}
         >
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <div className="w-1 h-6 rounded-full" style={{ background: GOLD }} />
                 <h2
                     className="text-xl text-gray-900 font-bold tracking-tight"
@@ -88,7 +88,7 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                 </h2>
             </div>
 
-            <p className="text-gray-500 leading-relaxed text-[15px] mb-6 max-w-xl">
+            <p className="text-gray-500 leading-relaxed text-[14px] sm:text-[15px] mb-4 sm:mb-6 max-w-xl">
                 {development.location.address
                     ? `${development.location.address}, ${development.location.neighborhood} — ${development.location.city}, ${development.location.state}`
                     : `${development.location.neighborhood}, ${development.location.city} — ${development.location.state}`}
