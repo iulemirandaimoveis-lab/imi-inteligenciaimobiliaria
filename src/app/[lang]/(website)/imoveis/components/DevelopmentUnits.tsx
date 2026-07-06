@@ -254,7 +254,7 @@ export default function DevelopmentUnits({ propertyId, propertyName }: Developme
         <>
             <div className="scroll-mt-32" id="inventory">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
                     <div>
                         <div className="flex items-center gap-3 mb-3">
                             <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />

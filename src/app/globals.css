@@ -1419,8 +1419,11 @@
     @apply py-16 md:py-24;
   }
 
+  /* Nota: a escala de spacing deste projeto é dobrada (px-4 = 32px). No mobile,
+     32px de padding lateral consumia ~16% de uma tela de 390px — px-2 (16px)
+     devolve a densidade correta em zoom 100% (auditoria do dono: "melhor em 80%"). */
   .container-custom {
-    @apply w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8;
+    @apply w-full max-w-[1280px] mx-auto px-2 sm:px-6 lg:px-8;
   }
 
   /* Overlays fixos não-essenciais (FAB do WhatsApp, sticky bar de lead) escondem

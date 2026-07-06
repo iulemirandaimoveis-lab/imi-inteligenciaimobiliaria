@@ -4,6 +4,34 @@
 
 ---
 
+## 2026-07-06 (2ª rodada) · Passe de densidade mobile — "melhor em 80%" → ideal em 100%
+
+**Branch**: `claude/frontend-refactor-design-gubdfu` (recomeçada de main @ c18616d pós-merge #363)
+
+### Causa-raiz encontrada
+A escala de spacing do tailwind.config é DOBRADA (`px-4`=32px, `space-y-8`=64px, `py-6`=48px).
+No desktop dá o ar editorial; num celular de 390px, 32px de padding lateral = 16% da tela —
+exatamente o "fica melhor em 80% de zoom" relatado pelo dono. NÃO mexer na escala global
+(regressão em cascata); corrigir nos pontos de consumo mobile.
+
+### O que foi feito (mobile-only, sm+ preservado)
+- `container-custom`: px-4→px-2 (32→16px) — alavanca que corrige o site público inteiro.
+- Página do imóvel: pb-40→pb-24; pt-4→pt-2 (breadcrumbs/key facts); py-6→py-4; space-y-8→space-y-6;
+  key facts (valor 15→13px, ícone 28→24, minWidth 70→62, padding 12/10→10/8).
+- Hero: h1 28→23px; preço text-3xl→26px; margens mb-8→mb-4, mb-5→mb-3, pb-6/pt-5→pb-4/pt-3; gaps.
+- AnchorNav: px-4→px-2 nos tabs (32→16px), 13px no mobile.
+- MobileStickyBar: padding 12→10px, preço 19→17px, botão 46→44px.
+- Headers de seção (Gallery/Location/Units): mb-6→mb-4 sm:mb-6, gap-2 sm:gap-3.
+- Console: KPI 26px→clamp(21px,5.5vw,26px); Metric 22→clamp(18px,4.8vw,22px).
+
+### Validação
+- Probe Playwright em 390px: containerPaddingLeft 16px (era 32), h1 23px, overflow 0.
+- tsc ✅ lint ✅ jest 889/894 ✅. Screenshots conferidos (hero + localização).
+- Deploy do #363 CONFIRMADO em produção via Vercel MCP (dono não viu porque as mudanças
+  eram de interação + provável cache PWA; a densidade era a queixa real).
+
+---
+
 ## 2026-07-06 · Sessão: Refino front-end (mapas AB + console + backoffice) — "modo Apple/iOS"
 
 **Branch**: `claude/frontend-refactor-design-gubdfu`

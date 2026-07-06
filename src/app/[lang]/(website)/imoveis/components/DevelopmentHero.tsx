@@ -189,7 +189,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
 
                 {/* ── Content overlay ── */}
                 <div className="relative md:absolute md:bottom-0 md:left-0 md:right-0 md:pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(5,11,20,0.97) 0%, rgba(5,11,20,0.75) 30%, rgba(5,11,20,0.3) 60%, rgba(5,11,20,0.05) 100%)' }}>
-                    <div className="container-custom pb-6 md:pb-12 pt-5 md:pt-32 md:pointer-events-auto">
+                    <div className="container-custom pb-4 md:pb-12 pt-3 md:pt-32 md:pointer-events-auto">
                         <motion.div
                             initial="hidden"
                             animate="visible"
@@ -197,7 +197,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             className="max-w-4xl"
                         >
                             {/* Status badge + Developer logo */}
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 sm:mb-5">
                                 <motion.div variants={slideUp} className="flex items-center gap-3">
                                     <span
                                         className="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest"
@@ -234,7 +234,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             {/* Title */}
                             <motion.h1
                                 variants={slideUp}
-                                className="text-[28px] sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-4 leading-[1.07] tracking-tight"
+                                className="text-[23px] sm:text-4xl md:text-5xl lg:text-[56px] text-white font-bold mb-2 sm:mb-4 leading-[1.1] tracking-tight"
                                 style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}
                             >
                                 {development.name}
@@ -244,7 +244,7 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             {/* Meta info row */}
                             <motion.div
                                 variants={slideUp}
-                                className="flex flex-wrap items-center gap-y-3 gap-x-6 text-sm mb-8"
+                                className="flex flex-wrap items-center gap-y-2 gap-x-4 sm:gap-x-6 text-[13px] sm:text-sm mb-4 sm:mb-8"
                                 style={{ color: '#9FB3C8' }}
                             >
                                 <div className="flex items-center gap-2">
@@ -268,12 +268,12 @@ export default function DevelopmentHero({ development }: DevelopmentHeroProps) {
                             </motion.div>
 
                             {/* Price + Specs */}
-                            <motion.div variants={slideUp} className="flex flex-col sm:flex-row sm:items-end gap-6 sm:gap-10">
+                            <motion.div variants={slideUp} className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-10">
                                 {development.priceRange.min > 0 && (
                                     <div>
-                                        <p className="text-[11px] mb-1.5 uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, opacity: 0.7, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
+                                        <p className="text-[10px] sm:text-[11px] mb-1 uppercase tracking-[0.25em] font-bold" style={{ color: GOLD, opacity: 0.7, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>A partir de</p>
                                         <p
-                                            className="text-3xl sm:text-4xl md:text-[44px] font-bold tracking-tight"
+                                            className="text-[26px] sm:text-4xl md:text-[44px] font-bold tracking-tight"
                                             style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)", color: GOLD }}
                                         >
                                             <span className="text-base md:text-xl mr-2 font-normal" style={{ color: '#627D98', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>R$</span>

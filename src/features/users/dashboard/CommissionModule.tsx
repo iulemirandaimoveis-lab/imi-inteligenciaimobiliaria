@@ -114,7 +114,7 @@ function Metric({ label, value, accent }: { label: string; value: string; accent
   return (
     <GlassCard padding={18} style={{ borderRadius: T.rMd }}>
       <Eyebrow style={{ marginBottom: 12 }}>{label}</Eyebrow>
-      <p style={{ fontFamily: T.fMono, fontSize: 22, fontWeight: 600, color: accent, margin: 0, lineHeight: 1 }}>{value}</p>
+      <p style={{ fontFamily: T.fMono, fontSize: 'clamp(18px, 4.8vw, 22px)', fontWeight: 600, color: accent, margin: 0, lineHeight: 1 }}>{value}</p>
     </GlassCard>
   )
 }

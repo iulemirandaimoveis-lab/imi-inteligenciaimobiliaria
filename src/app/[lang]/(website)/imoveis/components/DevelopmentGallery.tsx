@@ -734,7 +734,7 @@ function VideoEmbed({ src, title }: { src: string; title: string }) {
 
 function SectionTitle({ label }: { label: string }) {
     return (
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <div className="w-1 h-6 rounded-full" style={{ background: '#C8A44A' }} />
             <h2 className="text-xl text-gray-900 font-bold tracking-tight" style={{ fontFamily: "var(--font-body, 'Outfit', sans-serif)" }}>
                 {label}

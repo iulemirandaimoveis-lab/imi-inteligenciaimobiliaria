@@ -333,7 +333,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             : ANCHOR_SECTIONS
 
     return (
-        <main className="pb-40 lg:pb-0" style={{ background: '#F7F5F2' }}>
+        <main className="pb-24 lg:pb-0" style={{ background: '#F7F5F2' }}>
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -346,12 +346,12 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             <DevelopmentHero development={development} />
 
             {/* Breadcrumbs */}
-            <div className="container-custom pt-4 pb-0">
+            <div className="container-custom pt-2 sm:pt-4 pb-0">
                 <Breadcrumbs items={breadcrumbs} />
             </div>
 
             {/* Key Facts Bar */}
-            <div className="container-custom pt-4 pb-0">
+            <div className="container-custom pt-2 sm:pt-4 pb-0">
                 <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 sm:grid sm:grid-cols-4 xl:grid-cols-5 sm:gap-3">
                     {[
                         { label: 'Quartos', value: development.specs.bedroomsRange, Icon: Bed },
@@ -362,18 +362,18 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     ].filter(item => item.value && item.value !== '—').map((item, i) => (
                         <div key={i} role="group" aria-label={`${item.value} ${item.label.toLowerCase()}`} style={{
                             background: '#FFFFFF',
-                            padding: '12px 10px',
+                            padding: '10px 8px',
                             textAlign: 'center' as const,
                             border: '1px solid rgba(184,179,168,0.3)',
-                            borderRadius: 14,
+                            borderRadius: 12,
                             boxShadow: '0 1px 6px rgba(0,0,0,0.04)',
                             flexShrink: 0,
-                            minWidth: 70,
+                            minWidth: 62,
                         }}>
-                            <div style={{ width: 28, height: 28, borderRadius: 7, background: '#F0EDE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px' }}>
-                                <item.Icon size={14} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.7 }} />
+                            <div style={{ width: 24, height: 24, borderRadius: 6, background: '#F0EDE5', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 5px' }}>
+                                <item.Icon size={13} aria-hidden="true" style={{ color: '#0B1928', opacity: 0.7 }} />
                             </div>
-                            <p style={{ fontSize: 15, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '0 0 2px', whiteSpace: 'nowrap' as const }}>{item.value}</p>
+                            <p style={{ fontSize: 13, fontWeight: 700, color: '#0B1928', fontFamily: "var(--fm, 'JetBrains Mono', monospace)", margin: '0 0 2px', whiteSpace: 'nowrap' as const }}>{item.value}</p>
                             <p style={{ fontSize: 9, color: '#948F84', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' as const, fontFamily: "var(--fu, 'Outfit', sans-serif)", margin: 0 }}>{item.label}</p>
                         </div>
                     ))}
@@ -383,10 +383,10 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
             {/* Anchor Navigation */}
             <AnchorNav sections={anchorSections} />
 
-            <div className="container-custom py-6 sm:py-8 md:py-16">
+            <div className="container-custom py-4 sm:py-8 md:py-16">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-14">
                     {/* Main content */}
-                    <div className="lg:col-span-8 space-y-8 sm:space-y-10 md:space-y-20">
+                    <div className="lg:col-span-8 space-y-6 sm:space-y-10 md:space-y-20">
                         <section id="galeria">
                             <DevelopmentGallery
                                 development={development}
