@@ -94,22 +94,46 @@ export default function DevelopmentLocation({ development }: DevelopmentLocation
                     : `${development.location.neighborhood}, ${development.location.city} — ${development.location.state}`}
             </p>
 
-            {/* Map */}
+            {/* Map — moldura premium: cor total (sem grayscale morto), cantos 16px,
+                borda dourada sutil e chip de marca flutuante sobre o mapa */}
             <motion.div
                 variants={slideUp}
-                className="rounded-[10px] overflow-hidden mb-5 shadow-lg"
-                style={{ border: '1px solid rgba(200,164,74,0.1)', aspectRatio: '4/3' }}
+                className="relative overflow-hidden mb-5 aspect-[4/3] sm:aspect-[16/9] rounded-2xl"
+                style={{
+                    border: '1px solid rgba(200,164,74,0.22)',
+                    boxShadow: '0 4px 24px rgba(11,25,40,0.10), 0 1px 4px rgba(11,25,40,0.06)',
+                    background: '#EBE5D5',
+                }}
             >
                 <iframe
                     src={mapSrc}
                     width="100%"
                     height="100%"
-                    style={{ border: 0, display: 'block' }}
+                    title={`Mapa de localização — ${development.name ?? development.location.neighborhood}`}
+                    style={{ border: 0, display: 'block', position: 'absolute', inset: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    className="grayscale-[30%] hover:grayscale-0 transition-all duration-700"
                 />
+                {/* Chip de identificação — flutua sobre o mapa, não intercepta gestos */}
+                <div
+                    className="absolute top-3 left-3 flex items-center gap-2 px-3 py-2 rounded-full pointer-events-none"
+                    style={{
+                        background: 'rgba(11,25,40,0.88)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(200,164,74,0.45)',
+                        boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+                    }}
+                >
+                    <MapPin className="w-3.5 h-3.5 flex-shrink-0" style={{ color: GOLD }} aria-hidden="true" />
+                    <span
+                        className="text-[11px] font-bold tracking-wide truncate max-w-[220px]"
+                        style={{ color: '#fff', fontFamily: "var(--fu, 'Outfit', sans-serif)" }}
+                    >
+                        {development.location.neighborhood || development.location.city}
+                    </span>
+                </div>
             </motion.div>
 
             {/* Street View toggle */}

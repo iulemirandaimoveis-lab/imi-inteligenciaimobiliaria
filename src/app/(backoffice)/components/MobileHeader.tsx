@@ -332,7 +332,7 @@ export default function MobileHeader() {
                                 >
                                     {/* IMI monogram — Playfair Display 700 · Brand Identity v1.1 DARK */}
                                     <span style={{
-                                        fontFamily: "'Playfair Display', Georgia, serif",
+                                        fontFamily: "var(--font-serif, 'Playfair Display', Georgia, serif)",
                                         fontSize: 20,
                                         fontWeight: 700,
                                         color: 'var(--text-primary)',

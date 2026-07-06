@@ -150,9 +150,8 @@ export default function AltoBellevueMapExplorer({
             />
           </div>
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
-            Lotes georreferenciados sobre satélite real, clicáveis (WebGL). Posicionamento
-            aproximado norte-acima — o ajuste fino (rotação/escala) será calibrado com os
-            pontos de controle do levantamento.
+            Os lotes desenhados sobre a imagem real de satélite — toque em um lote para ver
+            preço e disponibilidade. Posicionamento aproximado, em refinamento contínuo.
           </p>
         </div>
       )}
@@ -172,7 +171,7 @@ export default function AltoBellevueMapExplorer({
             />
           </div>
           <p className="text-[11px] text-[#8A8A8A] mt-3 px-4 sm:px-0">
-            Vista de satélite real (Esri World Imagery) centrada no terreno em Garanhuns/PE.
+            Vista aérea real do terreno em Garanhuns/PE — arraste e aproxime para explorar a região.
           </p>
 
           {/* ── Proposta — o carrinho é compartilhado com "Plano" e "Satélite +
@@ -233,10 +232,12 @@ function ViewTab({
     <button
       type="button"
       onClick={onClick}
-      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 min-h-[44px] rounded-lg text-[12px] sm:text-[13px] font-semibold leading-none whitespace-nowrap transition-all active:scale-[0.97]"
+      aria-pressed={active}
+      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 min-h-[44px] rounded-lg text-[12px] sm:text-[13px] font-semibold leading-none whitespace-nowrap transition-all duration-200 active:scale-[0.97]"
       style={{
         color: active ? '#0B1928' : '#6B6B6B',
         background: active ? '#C8A44A' : 'transparent',
+        boxShadow: active ? '0 2px 8px rgba(200,164,74,0.35)' : 'none',
       }}
     >
       <span className="flex-shrink-0">{icon}</span>

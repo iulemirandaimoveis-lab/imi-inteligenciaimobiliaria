@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import {
-  ChevronDown, LogOut, Building2, Bell, BarChart3, LayoutDashboard, Users, FileText,
+  LogOut, Building2, BarChart3, LayoutDashboard, Users, FileText,
   Target, Coins, Map as MapIcon, ShieldCheck,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -60,7 +60,7 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: 12,
-        padding: '12px 20px',
+        padding: 'calc(12px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-right, 0px)) 12px calc(20px + env(safe-area-inset-left, 0px))',
         background: 'rgba(7,12,20,0.72)',
         borderBottom: `1px solid ${T.glassBorder}`,
         backdropFilter: 'blur(16px)',
@@ -76,27 +76,27 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           <span style={{ width: 1, height: 18, background: T.goldBorder }} />
         </div>
 
-        <button
-          type="button"
+        {/* Chip estático do empreendimento — vira switcher quando houver mais
+            de um projeto no console (controle interativo sem ação engana o usuário). */}
+        <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 9,
+            minHeight: 40,
             padding: '8px 12px',
             borderRadius: T.rSm,
             background: 'rgba(255,255,255,0.03)',
             border: `1px solid ${T.glassBorder}`,
             color: T.t1,
-            cursor: 'pointer',
             minWidth: 0,
           }}
-          title="Trocar empreendimento"
         >
           <Building2 size={16} color={T.gold} style={{ flexShrink: 0 }} />
           <span
             style={{
               fontFamily: T.fSans,
-              fontSize: 13.5,
+              fontSize: 13,
               fontWeight: 600,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -105,8 +105,7 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
           >
             {projectName}
           </span>
-          <ChevronDown size={15} color={T.t3} style={{ flexShrink: 0 }} />
-        </button>
+        </div>
       </div>
 
       {/* Right cluster */}
@@ -124,26 +123,6 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
             {showAdmin && <NavLink href="/users/admin" active={pathname.startsWith('/users/admin')} icon={<ShieldCheck size={18} />} label="Usuários" />}
           </nav>
         )}
-        <button
-          type="button"
-          aria-label="Notificações"
-          style={{
-            display: 'inline-flex',
-            width: 42,
-            height: 42,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 12,
-            background: 'rgba(255,255,255,0.04)',
-            border: `1px solid ${T.glassBorder}`,
-            color: T.t2,
-            cursor: 'pointer',
-            flexShrink: 0,
-          }}
-        >
-          <Bell size={18} />
-        </button>
-
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
             style={{
@@ -185,6 +164,7 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
 
         <button
           type="button"
+          className="imi-header-btn"
           onClick={handleLogout}
           aria-label="Sair"
           disabled={loggingOut}
@@ -212,8 +192,19 @@ export function DashboardTopbar({ projectName }: { projectName: string }) {
         .imi-navlink-icon svg { width: 18px; height: 18px; }
         .imi-navlink:hover { background: rgba(255,255,255,0.06); }
         .imi-navlink[aria-current="page"]:hover { background: ${T.gold}; }
+        .imi-navlink:active { transform: scale(0.97); }
+        .imi-navlink:focus-visible,
+        .imi-header-btn:focus-visible {
+          outline: 2px solid ${T.gold};
+          outline-offset: 2px;
+        }
         @media (max-width: 760px){
-          .imi-section-nav { order: 3; width: 100%; flex: 1 1 100%; }
+          .imi-section-nav {
+            order: 3; width: 100%; flex: 1 1 100%;
+            /* Fade nas bordas sinaliza que há mais itens fora da tela */
+            -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+          }
           .imi-right-cluster { width: 100%; justify-content: space-between; }
         }
         /* Paridade mobile: o celular renderiza tudo que o desktop renderiza —

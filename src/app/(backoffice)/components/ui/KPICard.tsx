@@ -90,11 +90,11 @@ export function KPICard({
         <span
           style={{
             fontFamily: 'var(--font-ui)',
-            fontSize: '7px',
+            fontSize: '10px',
             fontWeight: 700,
             color: 'var(--text-tertiary)',
             textTransform: 'uppercase' as const,
-            letterSpacing: '2px',
+            letterSpacing: '0.12em',
             lineHeight: 1.3,
           }}
         >

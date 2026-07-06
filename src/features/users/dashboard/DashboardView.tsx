@@ -31,9 +31,17 @@ const KIND_COLOR: Record<ActivityItem['kind'], string> = {
 
 export function DashboardView({ data }: { data: DashboardData }) {
   return (
-    <div style={{ maxWidth: 1240, margin: '0 auto', padding: '28px 24px 64px' }}>
+    <div
+      style={{
+        maxWidth: 1240,
+        margin: '0 auto',
+        padding:
+          'clamp(20px, 4vw, 28px) calc(clamp(16px, 3vw, 24px) + env(safe-area-inset-right, 0px)) calc(64px + env(safe-area-inset-bottom, 0px)) calc(clamp(16px, 3vw, 24px) + env(safe-area-inset-left, 0px))',
+      }}
+    >
       {/* Header */}
       <div
+        className="imi-rise"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -49,7 +57,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
             style={{
               fontFamily: T.fSerif,
               fontWeight: 500,
-              fontSize: 32,
+              fontSize: 'clamp(26px, 5vw, 32px)',
               color: T.t1,
               margin: '8px 0 4px',
               letterSpacing: '-0.01em',
@@ -62,15 +70,8 @@ export function DashboardView({ data }: { data: DashboardData }) {
         <LiveBadge live={data.live} />
       </div>
 
-      {/* KPI row */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: 14,
-          marginBottom: 16,
-        }}
-      >
+      {/* KPI row — alinhada às 6 colunas do grid inferior no desktop */}
+      <div className="imi-kpi-grid imi-rise" style={{ marginBottom: 16, animationDelay: '40ms' }}>
         <StatCard label="Disponíveis" value={data.kpis.available} accent={T.green} />
         <StatCard label="Reservados" value={data.kpis.reserved} accent={T.amber} />
         <StatCard label="Vendidos" value={data.kpis.sold} accent={T.gold} />
@@ -80,7 +81,7 @@ export function DashboardView({ data }: { data: DashboardData }) {
       </div>
 
       {/* Lower grid */}
-      <div className="imi-dash-grid">
+      <div className="imi-dash-grid imi-rise" style={{ animationDelay: '80ms' }}>
         <TeamCard team={data.team} />
         <PerformanceCard rows={data.performance} />
         <ActivityCard items={data.activity} />
@@ -92,15 +93,22 @@ export function DashboardView({ data }: { data: DashboardData }) {
       <CommissionGate commissions={data.commissions} />
 
       <style>{`
+        .imi-kpi-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 14px;
+        }
         .imi-dash-grid {
           display: grid;
           grid-template-columns: 1fr;
           gap: 16px;
         }
         @media (min-width: 720px) {
+          .imi-kpi-grid { grid-template-columns: repeat(3, 1fr); }
           .imi-dash-grid { grid-template-columns: 1fr 1fr; }
         }
         @media (min-width: 1080px) {
+          .imi-kpi-grid { grid-template-columns: repeat(6, 1fr); }
           .imi-dash-grid { grid-template-columns: repeat(6, 1fr); }
           .imi-span-2 { grid-column: span 2; }
           .imi-span-3 { grid-column: span 3; }
@@ -162,6 +170,7 @@ function TeamCard({ team }: { team: TeamMember[] }) {
     <GlassCard className="imi-span-2" padding={20}>
       <SectionHead title="Equipe" hint={`${team.length} membros`} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {team.length === 0 && <EmptyHint>Nenhum membro cadastrado ainda.</EmptyHint>}
         {team.slice(0, 8).map((m) => (
           <div key={m.name} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div
@@ -228,19 +237,28 @@ function PerformanceCard({ rows }: { rows: PerformanceBar[] }) {
     <GlassCard className="imi-span-2" padding={20}>
       <SectionHead title="Performance" hint="vendas / corretor" />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {rows.length === 0 && <EmptyHint>Sem vendas registradas neste período.</EmptyHint>}
         {rows.map((r) => (
           <div key={r.name}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <span style={{ fontFamily: T.fSans, fontSize: 12.5, color: T.t2 }}>{r.name}</span>
-              <span style={{ fontFamily: T.fMono, fontSize: 12.5, color: T.t1, fontWeight: 600 }}>{r.sales}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+              <span style={{ fontFamily: T.fSans, fontSize: 12.5, color: T.t2, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</span>
+              <span style={{ fontFamily: T.fMono, fontSize: 12.5, color: T.t1, fontWeight: 600, flexShrink: 0 }}>{r.sales}</span>
             </div>
-            <div style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+            <div
+              role="progressbar"
+              aria-label={`Vendas de ${r.name}`}
+              aria-valuenow={r.pct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              style={{ height: 6, borderRadius: 99, background: 'rgba(255,255,255,0.05)', overflow: 'hidden' }}
+            >
               <div
                 style={{
                   height: '100%',
                   width: `${r.pct}%`,
                   borderRadius: 99,
                   background: `linear-gradient(90deg, ${T.goldBorder}, ${T.gold})`,
+                  transition: `width 600ms ${T.ease}`,
                 }}
               />
             </div>
@@ -251,12 +269,20 @@ function PerformanceCard({ rows }: { rows: PerformanceBar[] }) {
   )
 }
 
+/* ── Empty hint compartilhado ──────────────────────────────────────────── */
+function EmptyHint({ children }: { children: string }) {
+  return (
+    <p style={{ fontFamily: T.fSans, fontSize: 12, color: T.t3, margin: 0, lineHeight: 1.5 }}>{children}</p>
+  )
+}
+
 /* ── Activity ──────────────────────────────────────────────────────────── */
 function ActivityCard({ items }: { items: ActivityItem[] }) {
   return (
     <GlassCard className="imi-span-2" padding={20}>
       <SectionHead title="Atividade recente" />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {items.length === 0 && <EmptyHint>Sem atividade recente para exibir.</EmptyHint>}
         {items.map((it, i) => (
           <div key={i} style={{ display: 'flex', gap: 10 }}>
             <span
@@ -289,18 +315,39 @@ function PipelineCard({ stages }: { stages: PipelineStage[] }) {
     <GlassCard className="imi-span-3" padding={20}>
       <SectionHead title="Pipeline comercial" />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {stages.length === 0 && <EmptyHint>Pipeline vazio — as etapas aparecem aqui conforme as propostas evoluem.</EmptyHint>}
         {stages.map((s) => (
           <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ width: 96, fontFamily: T.fSans, fontSize: 12.5, color: T.t2, flexShrink: 0 }}>
+            <span
+              style={{
+                width: 96,
+                fontFamily: T.fSans,
+                fontSize: 12.5,
+                color: T.t2,
+                flexShrink: 0,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+              title={s.label}
+            >
               {s.label}
             </span>
-            <div style={{ flex: 1, height: 26, borderRadius: T.rSm, background: 'rgba(255,255,255,0.04)', position: 'relative', overflow: 'hidden' }}>
+            <div
+              role="progressbar"
+              aria-label={`${s.label}: ${s.count}`}
+              aria-valuenow={s.count}
+              aria-valuemin={0}
+              aria-valuemax={max}
+              style={{ flex: 1, height: 26, borderRadius: T.rSm, background: 'rgba(255,255,255,0.04)', position: 'relative', overflow: 'hidden' }}
+            >
               <div
                 style={{
                   height: '100%',
                   width: `${(s.count / max) * 100}%`,
                   background: `linear-gradient(90deg, ${T.blueSoft}, rgba(96,165,250,0.32))`,
                   borderRight: `1px solid rgba(96,165,250,0.4)`,
+                  transition: `width 600ms ${T.ease}`,
                 }}
               />
               <span
@@ -318,7 +365,7 @@ function PipelineCard({ stages }: { stages: PipelineStage[] }) {
                 {s.count}
               </span>
             </div>
-            <span style={{ width: 78, textAlign: 'right', fontFamily: T.fMono, fontSize: 11.5, color: T.t3, flexShrink: 0 }}>
+            <span style={{ minWidth: 78, textAlign: 'right', fontFamily: T.fMono, fontSize: 11.5, color: T.t3, flexShrink: 0 }}>
               {s.value}
             </span>
           </div>
@@ -341,7 +388,8 @@ function AvailabilityCard({ rows }: { rows: AvailabilityRow[] }) {
           <span style={{ fontFamily: T.fSans, fontSize: 11, color: T.t3 }}>ao vivo</span>
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+        {rows.length === 0 && <EmptyHint>Nenhuma unidade para exibir no momento.</EmptyHint>}
         {rows.map((r) => (
           <div
             key={r.unit}
