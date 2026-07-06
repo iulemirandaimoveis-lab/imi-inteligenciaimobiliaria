@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { LayoutGrid, Satellite, Layers, List } from 'lucide-react'
 import { useLotCart } from '@/hooks/useLotCart'
 import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart'
@@ -46,6 +46,13 @@ const DEV_SLUG = 'alto-bellevue'
 const WA_DEFAULT = '5581986141487'
 
 type ViewMode = 'lista' | 'mapa' | 'satelite' | 'satlotes'
+
+const TABS: { key: ViewMode; icon: React.ReactNode; label: string; shortLabel: string }[] = [
+  { key: 'lista', icon: <List size={15} />, label: 'Lista', shortLabel: 'Lista' },
+  { key: 'mapa', icon: <LayoutGrid size={15} />, label: 'Mapa de Lotes', shortLabel: 'Mapa' },
+  { key: 'satlotes', icon: <Layers size={15} />, label: 'Satélite + Lotes', shortLabel: 'Sat.+Lotes' },
+  { key: 'satelite', icon: <Satellite size={15} />, label: 'Satélite', shortLabel: 'Satélite' },
+]
 
 interface Props {
   developmentId: string
@@ -101,40 +108,27 @@ export default function AltoBellevueMapExplorer({
 
   return (
     <div>
-      {/* View switcher — menu único (4 opções), full-width no mobile, inline no desktop */}
+      {/* View switcher — segmented control único (4 opções), com indicador
+          deslizante (estilo iOS: mesmo "pill" anima entre as posições em vez
+          de trocar de cor instantaneamente). Full-width no mobile, inline no
+          desktop. */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
         <div
-          className="grid grid-cols-4 sm:inline-flex w-full sm:w-auto gap-1 p-1 rounded-xl"
+          className="grid grid-cols-4 sm:inline-flex w-full sm:w-auto gap-0.5 p-1 rounded-2xl"
           style={{ background: '#ECE5DA', border: '1px solid #E0D8CC' }}
+          role="tablist"
+          aria-label="Alternar visualização do empreendimento"
         >
-          <ViewTab
-            active={view === 'lista'}
-            onClick={() => setView('lista')}
-            icon={<List size={15} />}
-            label="Lista"
-            shortLabel="Lista"
-          />
-          <ViewTab
-            active={view === 'mapa'}
-            onClick={() => setView('mapa')}
-            icon={<LayoutGrid size={15} />}
-            label="Mapa de Lotes"
-            shortLabel="Mapa"
-          />
-          <ViewTab
-            active={view === 'satlotes'}
-            onClick={() => setView('satlotes')}
-            icon={<Layers size={15} />}
-            label="Satélite + Lotes"
-            shortLabel="Sat. + Lotes"
-          />
-          <ViewTab
-            active={view === 'satelite'}
-            onClick={() => setView('satelite')}
-            icon={<Satellite size={15} />}
-            label="Satélite"
-            shortLabel="Satélite"
-          />
+          {TABS.map((tab) => (
+            <ViewTab
+              key={tab.key}
+              active={view === tab.key}
+              onClick={() => setView(tab.key)}
+              icon={tab.icon}
+              label={tab.label}
+              shortLabel={tab.shortLabel}
+            />
+          ))}
         </div>
       </div>
 
@@ -255,18 +249,33 @@ function ViewTab({
     <button
       type="button"
       onClick={onClick}
-      aria-pressed={active}
-      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-4 min-h-[44px] rounded-lg text-[12px] sm:text-[13px] font-semibold leading-none whitespace-nowrap transition-all duration-200 active:scale-[0.97]"
-      style={{
-        color: active ? '#0B1928' : '#6B6B6B',
-        background: active ? '#C8A44A' : 'transparent',
-        boxShadow: active ? '0 2px 8px rgba(200,164,74,0.35)' : 'none',
-      }}
+      role="tab"
+      aria-selected={active}
+      className="relative w-full sm:w-auto min-w-0 px-1 sm:px-4 py-1.5 sm:py-0 min-h-[46px] sm:min-h-[38px] rounded-xl font-semibold leading-none transition-transform duration-150 active:scale-[0.96]"
+      style={{ color: active ? '#0B1928' : '#6B6B6B' }}
     >
-      <span className="flex-shrink-0">{icon}</span>
-      {/* Rótulo curto no mobile, completo a partir de sm — sem quebra de linha */}
-      <span className="sm:hidden">{shortLabel ?? label}</span>
-      <span className="hidden sm:inline">{label}</span>
+      {/* Indicador único que "desliza" entre os tabs (mesmo layoutId em todas
+          as instâncias ativas) — igual ao comportamento de um segmented
+          control nativo (iOS), em vez de cada botão trocar de cor sozinho.
+          zIndex explícito (não `-z-10`): dentro do stacking context do botão,
+          um filho absoluto com z-index auto pintaria POR CIMA do texto
+          inline — precisa ficar atrás explicitamente. */}
+      {active && (
+        <motion.div
+          layoutId="ab-explorer-tab-indicator"
+          className="absolute inset-0 rounded-xl"
+          style={{ background: '#C8A44A', boxShadow: '0 2px 8px rgba(200,164,74,0.35)', zIndex: 0 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+        />
+      )}
+      <span className="relative flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2" style={{ zIndex: 1 }}>
+        <span className="flex-shrink-0">{icon}</span>
+        {/* Mobile: ícone em cima, rótulo curto embaixo (tab bar estilo iOS) —
+            cabe as 4 opções numa barra estreita sem cortar texto. Desktop:
+            ícone + rótulo completo lado a lado. */}
+        <span className="sm:hidden text-[9.5px] w-full text-center truncate px-0.5">{shortLabel ?? label}</span>
+        <span className="hidden sm:inline text-[13px] whitespace-nowrap">{label}</span>
+      </span>
     </button>
   )
 }
