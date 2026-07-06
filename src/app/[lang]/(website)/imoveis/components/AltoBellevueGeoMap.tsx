@@ -12,7 +12,7 @@ import {
   SlidersHorizontal, Copy, RotateCw,
 } from 'lucide-react';
 import { useLotCart } from '@/hooks/useLotCart';
-import { cartTotals, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
+import { cartTotals, buildCartShareUrl, type CartLot, type SelectedPaymentPlan } from '@/lib/lotmap/cart';
 import ProposalFormModal from './ProposalFormModal';
 import { CartFab, CartSheet } from './LotCartSheet';
 import LotDetailContent from './LotDetailContent';
@@ -578,7 +578,7 @@ function LotDetailPanel({
   developmentName: string;
   onClose: () => void;
   inCart: boolean;
-  onToggleCart: () => void;
+  onToggleCart: (plan?: SelectedPaymentPlan) => void;
 }) {
   const status = dbLot?.status || lot.status;
   const price = dbLot?.price ?? lot.price;
@@ -1057,7 +1057,7 @@ export default function AltoBellevueGeoMap({
     setCalibrationState(getAbCalibration());
   }, []);
 
-  const toCart = useCallback((lot: ABLot, dbLot?: DBLot): CartLot => ({
+  const toCart = useCallback((lot: ABLot, dbLot?: DBLot, plan?: SelectedPaymentPlan): CartLot => ({
     id: lot.id,
     developmentSlug: devSlug,
     developmentName,
@@ -1066,6 +1066,7 @@ export default function AltoBellevueGeoMap({
     areaM2: dbLot?.area_m2 ?? lot.area_m2 ?? 0,
     price: dbLot?.price ?? lot.price ?? 0,
     status: dbLot?.status ?? lot.status,
+    selectedPlan: plan,
   }), [developmentName]);
 
   const copyShareLink = useCallback(() => {
@@ -1416,7 +1417,7 @@ export default function AltoBellevueGeoMap({
             developmentName={developmentName}
             onClose={() => setSelectedLot(null)}
             inCart={cart.has(selectedLot.id)}
-            onToggleCart={() => cart.toggle(toCart(selectedLot, selectedDbLot))}
+            onToggleCart={(plan) => cart.toggle(toCart(selectedLot, selectedDbLot, plan))}
           />
         )}
       </AnimatePresence>

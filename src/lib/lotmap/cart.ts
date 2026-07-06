@@ -10,6 +10,16 @@
 
 // ── Modelo neutro ────────────────────────────────────────────────────────────
 
+/** Forma de pagamento escolhida pelo cliente no card do lote — segue com o
+ *  lote para o carrinho e pré-preenche a proposta (evita reperguntar). */
+export interface SelectedPaymentPlan {
+  key: 'vista' | 'p12' | 'p36' | 'p60' | 'p120';
+  label: string;      // "À Vista", "12×", ...
+  total: number;
+  parcela?: number;   // ausente na opção à vista
+  entrada?: number;   // ausente na opção à vista
+}
+
 export interface CartLot {
   id: string;             // chave única do lote (ex.: "A-12")
   developmentSlug: string; // "alto-bellevue" | "miguel-marques"
@@ -19,6 +29,7 @@ export interface CartLot {
   areaM2: number;
   price: number;
   status?: string;
+  selectedPlan?: SelectedPaymentPlan;
 }
 
 export interface CartTotals {
@@ -82,6 +93,11 @@ const BRL = (n: number) =>
 const M2 = (n: number) =>
   `${new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(n || 0)} m²`;
 
+const planSuffix = (l: CartLot) =>
+  l.selectedPlan
+    ? ` (${l.selectedPlan.label}${l.selectedPlan.parcela ? ` · ${BRL(l.selectedPlan.parcela)}/mês` : ''})`
+    : '';
+
 // ── Compartilhamento por URL (/carrinho?id=token) ────────────────────────────
 
 export interface CartShare { d: string; ids: string[] }
@@ -135,7 +151,7 @@ export function buildCartWhatsAppMessage(items: CartLot[], opts: CartMessageOpti
   const lines = [
     `Olá! Tenho interesse nestes lotes do *${name}*:`,
     '',
-    ...items.map((l) => `• Quadra ${l.block}, Lote ${l.lot} — ${M2(l.areaM2)} — ${BRL(l.price)}`),
+    ...items.map((l) => `• Quadra ${l.block}, Lote ${l.lot} — ${M2(l.areaM2)} — ${BRL(l.price)}${planSuffix(l)}`),
     '',
     `*${t.count} ${t.count === 1 ? 'lote' : 'lotes'} · ${M2(t.totalArea)} · ${BRL(t.totalPrice)}*`,
   ];
@@ -155,7 +171,7 @@ export function buildCartPlainText(items: CartLot[], opts: CartMessageOptions = 
   return [
     `${name} — Seleção de lotes`,
     '',
-    ...items.map((l, i) => `${i + 1}. Quadra ${l.block} · Lote ${l.lot} — ${M2(l.areaM2)} — ${BRL(l.price)}`),
+    ...items.map((l, i) => `${i + 1}. Quadra ${l.block} · Lote ${l.lot} — ${M2(l.areaM2)} — ${BRL(l.price)}${planSuffix(l)}`),
     '',
     `Total: ${t.count} lote(s) · ${M2(t.totalArea)} · ${BRL(t.totalPrice)} (média ${BRL(t.avgPrice)}/lote · ${BRL(t.avgPricePerM2)}/m²)`,
   ].join('\n');
