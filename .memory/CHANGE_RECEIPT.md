@@ -540,3 +540,18 @@ usa service_role+token, funciona sob a RLS real).
   cinza legível `#6B6B6B` e página atual em navy `#0B1928`. Breadcrumb já montava
   `Imóveis › Cidade › Bairro › Nome` corretamente ([slug]/page.tsx) — só faltava contraste.
 - NÃO alterado: localização/bairro "Aloísio Pinto" (invariante), links Maps/Kuula.
+
+## 2026-07-07 · Agendamento de Visitas — calendário do corretor
+- CTA "Agendar Visita" (RealtorCard) + ação na vídeo chamada abrem VisitBookingModal: modo
+  presencial/vídeo → dia → horário (GET /api/visits/availability, ocupados somem) → nome/e-mail/
+  telefone + upload de documento com foto (reusa /api/lots/proposal/documents) → POST /api/visits/book.
+- book: valida horário, cria sala de vídeo (modo vídeo), gera .ics (bucket visit-invites), persiste
+  visit_bookings (best-effort), cria evento no Google Calendar do corretor (Service Account, RS256
+  via node:crypto, env-gated), notifica cliente+corretor por WhatsApp com convite e documento.
+- Motor de disponibilidade PURO em src/lib/scheduling/ (fuso fixo Recife UTC-3, seg–sáb 09–18, slot
+  45min, lead 3h, horizonte 21d). ICS e availability testáveis sem rede.
+- Migration 20260707_visit_bookings.sql NÃO aplicada (pendência do dono). Gates: tsc ok, lint ok,
+  jest 966 passed/5 skipped (11 novos), 0 regressão.
+- Padrão reforçado: rota pública de captação = best-effort total (nunca deixa o cliente sem
+  confirmação, mesmo com banco/gateway fora); "conectar agenda" resolvido em 2 camadas (ICS
+  universal + Google opcional).

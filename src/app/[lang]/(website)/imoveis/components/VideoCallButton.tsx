@@ -14,11 +14,20 @@
  */
 
 import { useState } from 'react';
-import { X, Video, Loader2, MessageCircle, ExternalLink } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { X, Video, Loader2, MessageCircle, ExternalLink, Calendar } from 'lucide-react';
+import VisitBookingModal from './VisitBookingModal';
 
 const GOLD = '#C8A44A';
 const NAVY = '#0B1928';
 const WHATS_GREEN = '#25D366';
+
+interface BrokerInfo {
+  id?: string | null;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+}
 
 interface Props {
   brokerName: string;
@@ -27,12 +36,18 @@ interface Props {
   /** Contexto curto para a mensagem do WhatsApp ao corretor, ex.: "Alto Bellevue — Quadra L, Lote 22". */
   context?: string;
   compact?: boolean;
+  /** Dados completos do corretor + empreendimento — habilitam agendar durante a chamada. */
+  broker?: BrokerInfo;
+  developmentId?: string | null;
+  developmentName?: string | null;
+  developmentSlug?: string | null;
 }
 
-export default function VideoCallButton({ brokerName, brokerPhone, clientName, context, compact }: Props) {
+export default function VideoCallButton({ brokerName, brokerPhone, clientName, context, compact, broker, developmentId, developmentName, developmentSlug }: Props) {
   const [state, setState] = useState<'idle' | 'loading' | 'error' | 'ready'>('idle');
   const [roomUrl, setRoomUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [scheduling, setScheduling] = useState(false);
 
   async function startCall() {
     setState('loading');
@@ -181,9 +196,41 @@ export default function VideoCallButton({ brokerName, brokerPhone, clientName, c
               style={{ flex: 1, border: 'none' }}
               title="Vídeo chamada"
             />
+            {/* Passo 3 — agendar uma visita sem sair da chamada */}
+            {broker && (
+              <div
+                className="flex items-center justify-center px-4 py-2.5 flex-shrink-0"
+                style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setScheduling(true)}
+                  className="flex items-center gap-1.5"
+                  style={{ fontSize: 12, fontWeight: 700, color: GOLD, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                >
+                  <Calendar size={13} /> Agendar visita
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
+
+      {/* Agendar visita durante a vídeo chamada */}
+      <AnimatePresence>
+        {scheduling && broker && (
+          <VisitBookingModal
+            broker={broker}
+            developmentId={developmentId}
+            developmentName={developmentName ?? context ?? null}
+            developmentSlug={developmentSlug}
+            whatsappPhone={brokerPhone}
+            source="video_call"
+            defaultMode="presencial"
+            onClose={() => setScheduling(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }

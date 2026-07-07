@@ -143,6 +143,7 @@ All earlier migrations are either superseded or supplementary.
 | `20260220_add_location_to_developers.sql` | 254 B | ALTER | Adds lat/lng to developers |
 | `20260301_fix_settings_fk.sql` | 2.7 KB | FIX | Settings FK fix + audit_log table |
 | `20260317_production_unified_migration.sql` | 78 KB | **MASTER** | 30+ tables, the definitive migration |
+| `20260707_visit_bookings.sql` | ~4 KB | CREATE | `visit_bookings` (agendamento de visita — calendário do corretor). RLS managers-only, índice único anti-conflito. ⚠️ **NÃO aplicada** — pendência do dono. Ver `docs/AGENDAMENTO_VISITAS.md` |
 
 ### Group O: Legacy non-standard names
 | File | Size | Type | Notes |
