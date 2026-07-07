@@ -4,6 +4,30 @@
 
 ---
 
+## 2026-07-07 · Mapa Alto Bellevue — remoção das árvores + correção do zoom
+
+**Branch**: `claude/map-zoom-optimization-ii2mj8`
+
+**Por quê**: dono relatou (print no celular) que o mapa "está bugando o zoom", não é intuitivo
+nem prático para apresentar ao cliente, e pediu para remover as árvores decorativas e otimizar.
+A arborização era ~120 símbolos SVG (× 4 círculos cada) puramente decorativos espalhados na
+margem; escondiam um problema real: dava para afastar o zoom (MIN_SCALE 0.35 → `vb.w` ~3429px)
+e arrastar a planta para o vazio do fundo — o mapa "se perdia".
+
+**O que mudou** (`AltoBellevuePlanView.tsx`, +39/−56 líquido):
+- Removido o bloco de árvores decorativas e o filtro `ab-canopy-depth` (não referenciado).
+- Novo `clampVb(v)` puro: afastamento máximo = enquadramento "Ver tudo" (`homeVb`, scale ~1.14),
+  pan preso aos bounds do conteúdo com meia-viewport de folga, zoom-in respeita MAX_SCALE (20).
+  Aplicado em todos os pontos que confirmam o `vb`: wheel, botões +/−, double-tap, commit de
+  pan/pinça e momentum (fling). Limite da pinça ao vivo alinhado ao `homeVb` (sem rubber-band).
+- Áreas verdes oficiais do CAD (clicáveis, `greenAreas`) e a camada técnica ficam intactas —
+  só a arborização puramente decorativa saiu.
+
+**Validação**: `tsc --noEmit` limpo (0 erros no projeto), `next lint` limpo no arquivo,
+`alto-bellevue.test.ts` 20/20. Lógica do `clampVb` verificada com o perímetro real do JSON
+(T1 afastar-além-do-VerTudo trava em home; T2 pan-para-longe preso ao conteúdo; T3 zoom-in
+≤ MAX_SCALE; T4 home fica enquadrado/centrado).
+
 ## 2026-07-07 · Correção do bairro do Alto Bellevue: Aloísio Pinto → Magano
 
 **Por quê**: dono reportou (de novo) que o site mostra "Aloísio Pinto" como bairro do Alto
@@ -32,6 +56,7 @@ ocorrência de "Aloísio Pinto" em código/migrations/docs; nenhuma tabela além
 links). `SELECT` pós-update confirma `neighborhood='Magano'` em produção. Links de Maps/Kuula
 **não foram tocados** (fora do escopo do pedido).
 
+---
 
 ## 2026-07-07 · Avaliações — Laudo NBR 14653-2 completo + Quadro Amostral
 

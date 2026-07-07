@@ -653,10 +653,6 @@ const MapInner = memo(function MapInner({
             <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.1  0 0 0 0 0.8  0 0 0 0 0.2  0 0 0 0.5 0" result="colorBlur"/>
             <feMerge><feMergeNode in="colorBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
-          <filter id="ab-canopy-depth" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="2.5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
           {/* Google Maps inspired terrain base — warm parchment */}
           <linearGradient id="ab-base" x1="0" y1="0" x2="0.1" y2="1">
             <stop offset="0%" stopColor="#EBE5D5" />
@@ -707,44 +703,6 @@ const MapInner = memo(function MapInner({
           <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(160,125,68,0.18)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
           <ellipse cx="505" cy="415" rx="62" ry="43" fill="none" stroke="rgba(152,118,62,0.15)" strokeWidth={Math.max(0.2, 0.55 / scale)} />
         </g>
-
-        {/* ── Individual tree canopy symbols — arborização detalhada ── */}
-        {/* Render only when zoomed in enough to appreciate the detail */}
-        {scale < 8 && (
-          <g style={{ pointerEvents: 'none' }}>
-            {/* Tree macro-symbol: layered circles simulating canopy depth.
-                Positions in SVG coords: NW zone, NE zone, SW zone, SE zone, top/bottom/left/right belts */}
-            {([
-              // NW corner grove
-              [48,38,13],[82,32,10],[116,52,15],[58,72,11],[96,84,12],[138,48,9],[44,108,14],[79,122,10],[112,108,12],[62,148,11],[30,165,8],[98,55,8],[140,90,10],
-              // NE corner grove
-              [1062,38,13],[1098,32,10],[1134,52,15],[1158,38,11],[1082,68,12],[1052,92,10],[1102,102,9],[1144,75,14],[1072,132,10],[1120,50,11],[1155,110,8],
-              // SW corner grove
-              [46,678,12],[82,695,15],[58,720,10],[102,712,13],[132,732,11],[48,752,14],[88,762,9],[114,748,12],[66,782,10],[35,718,8],[105,775,9],
-              // SE corner grove
-              [1058,678,12],[1092,695,15],[1122,712,13],[1152,722,10],[1062,742,14],[1098,757,9],[1132,752,12],[1158,772,11],[1040,720,8],[1118,778,9],
-              // Top belt trees
-              [268,32,11],[308,48,13],[348,28,10],[388,44,12],[428,54,11],[468,32,14],[508,48,9],[548,38,12],[588,54,11],[628,32,13],[668,48,10],[708,38,12],[748,54,11],[788,38,9],[828,52,12],[868,36,11],[908,50,10],
-              // Bottom belt trees
-              [268,784,11],[308,769,13],[348,789,10],[388,774,12],[428,789,11],[468,779,14],[508,794,9],[548,784,12],[588,774,11],[628,794,13],[668,780,10],[708,790,12],[748,775,11],[788,788,9],[828,774,12],
-              // Left belt trees
-              [38,232,12],[56,264,10],[42,296,13],[62,326,11],[36,358,12],[52,388,10],[42,418,14],[62,448,11],[36,478,12],[56,510,10],[42,542,13],[62,572,11],[36,602,12],[52,632,10],
-              // Right belt trees
-              [1158,232,12],[1140,264,10],[1162,296,13],[1146,326,11],[1158,358,12],[1140,388,10],[1162,418,14],[1146,448,11],[1158,478,12],[1140,510,10],[1162,542,13],[1146,572,11],[1158,602,12],
-            ] as [number,number,number][]).map(([cx, cy, r], i) => (
-              <g key={`tree-${i}`}>
-                {/* Shadow/depth base — softer on light background */}
-                <circle cx={cx + 1.5} cy={cy + 2} r={r * 1.1} fill="rgba(60,100,40,0.25)" />
-                {/* Vivid canopy base — Google Maps fresh green */}
-                <circle cx={cx} cy={cy} r={r} fill={i % 3 === 0 ? '#4A9B35' : i % 3 === 1 ? '#3E8E2C' : '#52A83C'} />
-                {/* Mid-tone canopy — lighter green */}
-                <circle cx={cx - r * 0.15} cy={cy - r * 0.2} r={r * 0.72} fill={i % 3 === 0 ? '#60B848' : i % 3 === 1 ? '#56AE40' : '#68C050'} />
-                {/* Highlight — sunlit canopy top */}
-                <circle cx={cx - r * 0.25} cy={cy - r * 0.35} r={r * 0.38} fill="rgba(130,210,90,0.75)" />
-              </g>
-            ))}
-          </g>
-        )}
 
         {/* ── Camada técnica: perímetro, ruas, BR, portaria ── */}
         {showTechLayer && context && (
@@ -2135,6 +2093,28 @@ export default function AltoBellevuePlanView({
     return { x: cx - w / 2, y: cy - h / 2, w, h };
   }, [mapData]);
 
+  // Clamp de enquadramento: impede afastar além do "Ver tudo" (o zoom-out máximo)
+  // e impede arrastar a planta para fora da tela. Sem isto o mapa "se perde" no
+  // vazio do fundo — a causa do zoom parecer bugado. Mantém o loteamento sempre
+  // enquadrado: previsível e prático para apresentar ao cliente.
+  const clampVb = useCallback((v: ViewBox): ViewBox => {
+    const minW = SVG_W / MAX_SCALE;
+    const maxW = homeVb.w; // "Ver tudo" é o afastamento máximo — nada de vazio
+    const w = Math.min(maxW, Math.max(minW, v.w));
+    const h = w * (SVG_H / SVG_W);
+    // Reancora mantendo o centro pedido pelo gesto/zoom.
+    let x = v.x + v.w / 2 - w / 2;
+    let y = v.y + v.h / 2 - h / 2;
+    // Pan: conteúdo (bounds do "Ver tudo") nunca sai de vista, com meia-viewport
+    // de folga para respiro sem perder a planta.
+    const mX = w * 0.5, mY = h * 0.5;
+    const minX = homeVb.x - mX, maxX = homeVb.x + homeVb.w + mX - w;
+    const minY = homeVb.y - mY, maxY = homeVb.y + homeVb.h + mY - h;
+    x = minX <= maxX ? Math.min(maxX, Math.max(minX, x)) : homeVb.x + homeVb.w / 2 - w / 2;
+    y = minY <= maxY ? Math.min(maxY, Math.max(minY, y)) : homeVb.y + homeVb.h / 2 - h / 2;
+    return { x, y, w, h };
+  }, [homeVb]);
+
   const homeApplied = useRef(false);
 
   // "No enquadramento inicial?" — usado para mostrar "Ver tudo" só quando há para
@@ -2318,7 +2298,7 @@ export default function AltoBellevuePlanView({
       const { startMid, curMid } = g.pinch;
       // Clamp do fator para os limites de escala (newW = baseW / f).
       const minW = SVG_W / MAX_SCALE;
-      const maxW = SVG_W / MIN_SCALE;
+      const maxW = homeVb.w;
       const f = Math.max(nvb.w / maxW, Math.min(nvb.w / minW, g.pinch.factor));
       const newW = nvb.w / f;
       const newH = newW * (SVG_H / SVG_W);
@@ -2338,10 +2318,11 @@ export default function AltoBellevuePlanView({
     }
     gestureRef.current = null;
     if (svg) { svg.style.transform = ''; svg.style.transformOrigin = ''; svg.style.willChange = ''; }
+    nvb = clampVb(nvb);
     vbLive.current = nvb;
     setVb(nvb);
     return nvb;
-  }, [getSvgEl]);
+  }, [getSvgEl, clampVb, homeVb]);
 
   // Pointer handlers — single-finger drag pans the viewBox; two-finger pinch zooms it.
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -2392,7 +2373,7 @@ export default function AltoBellevuePlanView({
         const cur = vbLive.current;
         const pivotX = cur.x + (e.clientX - rect.left) / rect.width * cur.w;
         const pivotY = cur.y + (e.clientY - rect.top) / rect.height * cur.h;
-        animateTo(zoomViewBox(cur, 0.4, pivotX, pivotY));
+        animateTo(clampVb(zoomViewBox(cur, 0.4, pivotX, pivotY)));
         lastTapRef.current = null;
         didDrag.current = true;
         return;
@@ -2407,7 +2388,7 @@ export default function AltoBellevuePlanView({
       const svg = getSvgEl();
       if (svg) svg.style.willChange = 'transform';
     }
-  }, [animateTo, commitGesture, getSvgEl]);
+  }, [animateTo, commitGesture, getSvgEl, clampVb]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!pointerCache.current.has(e.pointerId)) return;
@@ -2427,9 +2408,11 @@ export default function AltoBellevuePlanView({
       const currDist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
       if (currDist < 1) return;
 
-      // Fator visual limitado aos limites de escala (sem overshoot que "estala" no commit).
+      // Fator visual limitado aos limites de escala (sem overshoot que "estala" no
+      // commit). O afastamento máximo é o "Ver tudo" (homeVb) — não deixa a pinça
+      // revelar o vazio do fundo e depois "voltar" ao soltar.
       const minW = SVG_W / MAX_SCALE;
-      const maxW = SVG_W / MIN_SCALE;
+      const maxW = homeVb.w;
       const raw = currDist / g.pinch.startDist;
       g.pinch.factor = Math.max(g.baseVb.w / maxW, Math.min(g.baseVb.w / minW, raw));
       g.pinch.curMid = {
@@ -2473,7 +2456,7 @@ export default function AltoBellevuePlanView({
       g.panTy += dy;
       applyGestureTransform();
     }
-  }, [applyGestureTransform]);
+  }, [applyGestureTransform, homeVb]);
 
   // pointerup / leave / cancel: APENAS limpeza do estado do gesto. A SELEÇÃO é feita
   // pelo onClick nativo dos elementos (lote/área/quadra) e o deselect pelo onClick do
@@ -2526,11 +2509,11 @@ export default function AltoBellevuePlanView({
         const tick = (now: number) => {
           const dt = Math.min(48, now - last);
           last = now;
-          acc = {
+          acc = clampVb({
             ...acc,
             x: acc.x - (cvx * dt / rect.width) * acc.w,
             y: acc.y - (cvy * dt / rect.height) * acc.h,
-          };
+          });
           const decay = Math.exp(-dt / TAU);
           cvx *= decay; cvy *= decay;
           vbLive.current = acc;
@@ -2542,7 +2525,7 @@ export default function AltoBellevuePlanView({
         animRef.current = requestAnimationFrame(tick);
       }
     }
-  }, [commitGesture, getSvgEl]);
+  }, [commitGesture, getSvgEl, clampVb]);
   const handlePointerUp = endGesture;
   const handlePointerLeave = endGesture;
   const handlePointerCancel = endGesture;
@@ -2563,14 +2546,14 @@ export default function AltoBellevuePlanView({
       const cur = vbLive.current;
       const pivotX = cur.x + (e.clientX - rect.left) / rect.width * cur.w;
       const pivotY = cur.y + (e.clientY - rect.top) / rect.height * cur.h;
-      setVb(prev => zoomViewBox(prev, factor, pivotX, pivotY));
+      setVb(prev => clampVb(zoomViewBox(prev, factor, pivotX, pivotY)));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, []);
+  }, [clampVb]);
 
-  const zoomIn = useCallback(() => setVb(prev => zoomViewBox(prev, 0.75)), []);
-  const zoomOut = useCallback(() => setVb(prev => zoomViewBox(prev, 1.33)), []);
+  const zoomIn = useCallback(() => setVb(prev => clampVb(zoomViewBox(prev, 0.75))), [clampVb]);
+  const zoomOut = useCallback(() => setVb(prev => clampVb(zoomViewBox(prev, 1.33))), [clampVb]);
   // "Ver tudo" volta ao enquadramento do empreendimento (conteúdo), não ao canvas.
   const resetView = useCallback(() => animateTo(homeVb), [animateTo, homeVb]);
 
