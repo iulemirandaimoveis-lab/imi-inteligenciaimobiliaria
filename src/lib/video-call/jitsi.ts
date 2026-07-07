@@ -24,13 +24,28 @@ function readBaseUrl(): string {
 }
 
 /**
+ * Config passada via hash na URL do Jitsi. Crítico para o celular funcionar:
+ * - `disableDeepLinking` evita a tela "abrir no app Jitsi" (o interstitial que
+ *   trava a chamada dentro do iframe no navegador do celular — causa do
+ *   "não funciona" no mobile). Com isso a chamada abre direto no navegador.
+ * - `prejoinConfig.enabled` / `prejoinPageEnabled` (nomes novo e antigo) pulam
+ *   a tela de pré-entrada, indo direto pra sala.
+ * São overrides suportados pelo Jitsi via `#config.*` na URL.
+ */
+const JITSI_HASH =
+  '#config.disableDeepLinking=true' +
+  '&config.prejoinConfig.enabled=false' +
+  '&config.prejoinPageEnabled=false'
+
+/**
  * Gera uma sala Jitsi efêmera. O nome é aleatório e longo para que a sala não
  * seja adivinhável — quem tem o link entra, sem cadastro. Nunca lança nem faz
- * requisição de rede: é só a composição da URL.
+ * requisição de rede: é só a composição da URL. A URL já vem com a config de
+ * hash que faz a chamada abrir direto no navegador (inclusive no celular).
  */
 export function createJitsiRoom(opts: { namePrefix?: string } = {}): JitsiRoom {
   const prefix = (opts.namePrefix || 'IMI').replace(/[^a-zA-Z0-9]/g, '') || 'IMI'
   const rand = crypto.randomUUID().replace(/-/g, '')
   const name = `${prefix}${rand}`
-  return { url: `${readBaseUrl()}/${name}`, name }
+  return { url: `${readBaseUrl()}/${name}${JITSI_HASH}`, name }
 }
