@@ -44,6 +44,17 @@ const { withSentryConfig } = require('@sentry/nextjs')
 
 const path = require('path')
 
+// Origem do provedor de vídeo chamada (Jitsi). Precisa ser liberada na CSP
+// (frame-src) e na Permissions-Policy (camera/microphone) para a sala carregar
+// e acessar câmera/microfone dentro do iframe. Default: servidor público.
+const JITSI_ORIGIN = (() => {
+    try {
+        return new URL(process.env.JITSI_BASE_URL || 'https://meet.jit.si').origin
+    } catch {
+        return 'https://meet.jit.si'
+    }
+})()
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     webpack(config) {
@@ -127,7 +138,7 @@ const nextConfig = {
                     { key: 'X-DNS-Prefetch-Control', value: 'on' },
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-                    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
+                    { key: 'Permissions-Policy', value: `camera=(self "${JITSI_ORIGIN}"), microphone=(self "${JITSI_ORIGIN}"), geolocation=(self)` },
                     { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
                     {
                         key: 'Content-Security-Policy',
@@ -139,7 +150,7 @@ const nextConfig = {
                             "font-src 'self' https://fonts.gstatic.com https://fonts.mapbox.com",
                             "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://*.mapbox.com https://www.google-analytics.com https://basemaps.cartocdn.com https://*.arcgisonline.com https://fonts.openmaptiles.org https://*.ingest.sentry.io https://*.sentry.io",
                             "worker-src 'self' blob:",
-                            "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://kuula.co",
+                            `frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://kuula.co ${JITSI_ORIGIN} https://*.jit.si https://*.daily.co`,
                             "frame-ancestors 'self'",
                             "base-uri 'self'",
                             "form-action 'self'",
