@@ -674,18 +674,6 @@ const MapInner = memo(function MapInner({
             <stop offset="0%" stopColor="#FFF8EA" stopOpacity="0.60" />
             <stop offset="100%" stopColor="#FFF8EA" stopOpacity="0" />
           </radialGradient>
-          {/* Forest zone fill — bright vivid Google Maps green */}
-          <radialGradient id="ab-forest-edge" cx="50%" cy="50%" r="50%" gradientUnits="objectBoundingBox">
-            <stop offset="0%" stopColor="#7AC14F" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#5A9E38" stopOpacity="0.80" />
-          </radialGradient>
-          {/* Vegetation texture — bright green foliage dots */}
-          <pattern id="ab-veg-tex" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-            <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(80,160,50,0.55)" />
-            <circle cx="11" cy="9" r="1.8" fill="rgba(100,180,65,0.50)" />
-            <circle cx="6" cy="13" r="2" fill="rgba(70,150,45,0.52)" />
-            <circle cx="14" cy="3" r="1.5" fill="rgba(90,170,55,0.48)" />
-          </pattern>
           {/* Topographic grid — warm brown on light background */}
           <pattern id="ab-topo-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
             <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(130,100,55,0.07)" strokeWidth="0.35"/>
@@ -718,22 +706,6 @@ const MapInner = memo(function MapInner({
           <ellipse cx="505" cy="415" rx="155" ry="107" fill="none" stroke="rgba(148,115,60,0.13)" strokeWidth={Math.max(0.25, 0.65 / scale)} />
           <ellipse cx="505" cy="415" rx="105" ry="72" fill="none" stroke="rgba(160,125,68,0.18)" strokeWidth={Math.max(0.25, 0.7 / scale)} />
           <ellipse cx="505" cy="415" rx="62" ry="43" fill="none" stroke="rgba(152,118,62,0.15)" strokeWidth={Math.max(0.2, 0.55 / scale)} />
-        </g>
-
-        {/* ── Vegetation / Forest layer — Google Maps style vivid green perimeter ── */}
-        <g style={{ pointerEvents: 'none' }}>
-          {/* Top forest belt */}
-          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-forest-edge)" opacity="0.92" />
-          <ellipse cx="580" cy="-30" rx="680" ry="140" fill="url(#ab-veg-tex)" opacity="0.75" />
-          {/* Bottom forest belt */}
-          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-forest-edge)" opacity="0.88" />
-          <ellipse cx="620" cy={SVG_H + 30} rx="700" ry="150" fill="url(#ab-veg-tex)" opacity="0.72" />
-          {/* Left forest belt */}
-          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.90" />
-          <ellipse cx="-40" cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.70" />
-          {/* Right forest belt */}
-          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-forest-edge)" opacity="0.90" />
-          <ellipse cx={SVG_W + 40} cy="410" rx="160" ry="400" fill="url(#ab-veg-tex)" opacity="0.70" />
         </g>
 
         {/* ── Individual tree canopy symbols — arborização detalhada ── */}
