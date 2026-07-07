@@ -102,19 +102,22 @@ export async function generateMetadata({ params }: { params: { slug: string, lan
     }
 }
 
+// Ordem por prioridade = ordem de rolagem: ver (galeria) → o que dá pra comprar
+// e por quanto (unidades/mapa) → onde fica (localização) → detalhes → IMI Score.
+// A ordem das âncoras acompanha exatamente a ordem das seções no DOM.
 const ANCHOR_SECTIONS = [
     { id: 'galeria', label: 'Galeria' },
-    { id: 'detalhes', label: 'Sobre' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
+    { id: 'detalhes', label: 'Sobre' },
     { id: 'inteligencia', label: 'IMI Score' },
 ]
 
 const ANCHOR_SECTIONS_LOTEAMENTO = [
     { id: 'galeria', label: 'Galeria' },
-    { id: 'detalhes', label: 'Sobre' },
     { id: 'mapa', label: 'Disponibilidade' },
     { id: 'localizacao', label: 'Localização' },
+    { id: 'detalhes', label: 'Sobre' },
     { id: 'inteligencia', label: 'IMI Score' },
 ]
 
@@ -122,9 +125,9 @@ const ANCHOR_SECTIONS_SCROLLYTELLING = [
     { id: 'galeria', label: 'Galeria' },
     { id: 'conceito', label: 'Conceito' },
     { id: 'plantas', label: 'Plantas' },
-    { id: 'detalhes', label: 'Sobre' },
     { id: 'unidades', label: 'Unidades' },
     { id: 'localizacao', label: 'Localização' },
+    { id: 'detalhes', label: 'Sobre' },
     { id: 'inteligencia', label: 'IMI Score' },
 ]
 
@@ -442,13 +445,8 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
                             )}
                         </section>
-                        <section id="detalhes">
-                            <DevelopmentDetails
-                                development={development}
-                                financingEnabled={data.financing_enabled !== false}
-                                lang={params.lang}
-                            />
-                        </section>
+                        {/* Localização antes de "Sobre": onde fica é decisão nº1 em
+                            imóvel, logo após ver a galeria e a disponibilidade. */}
                         <section id="localizacao">
                             <DevelopmentLocation development={development} />
                             {development.location.coordinates.lat != null &&
@@ -468,6 +466,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                     />
                                 </div>
                             )}
+                        </section>
+                        <section id="detalhes">
+                            <DevelopmentDetails
+                                development={development}
+                                financingEnabled={data.financing_enabled !== false}
+                                lang={params.lang}
+                            />
                         </section>
                         <section id="inteligencia">
                             <PropertyIntelligence property={imiPropertyData} />
