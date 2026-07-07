@@ -14,7 +14,7 @@
 
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, ShoppingCart, Trash2, Check, Link2, FileText } from 'lucide-react';
+import { X, ShoppingCart, Trash2, Check, Link2, FileText, Plus, MapPin } from 'lucide-react';
 import { cartTotals, type CartLot } from '@/lib/lotmap/cart';
 
 const GOLD = '#C8A44A';
@@ -123,19 +123,26 @@ export function CartSheet({
           </button>
         </div>
 
-        <div className="overflow-y-auto px-5 flex-1" style={{ scrollbarWidth: 'thin' }}>
+        <div className="overflow-y-auto px-5 pt-1 flex-1" style={{ scrollbarWidth: 'thin' }}>
           {items.map((l) => (
-            <div key={l.id} className="flex items-center justify-between py-2.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', margin: 0 }}>Quadra {l.block} · Lote {l.lot}</p>
-                <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '2px 0 0', fontFamily: "'JetBrains Mono', monospace" }}>
-                  {fmtM2(l.areaM2)} · {fmtBRL(l.price)}
-                </p>
-                {l.selectedPlan && (
-                  <p style={{ fontSize: 10.5, color: GOLD, margin: '2px 0 0', fontWeight: 700 }}>
-                    {l.selectedPlan.label}{l.selectedPlan.parcela ? ` · ${fmtBRL(l.selectedPlan.parcela)}/mês` : ''}
+            <div key={l.id} className="flex items-center justify-between gap-3 mb-2 p-3"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14 }}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center justify-center flex-shrink-0"
+                  style={{ width: 38, height: 38, borderRadius: 10, background: 'rgba(200,164,74,0.12)', color: GOLD }}>
+                  <MapPin size={17} />
+                </div>
+                <div className="min-w-0">
+                  <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', margin: 0 }}>Quadra {l.block} · Lote {l.lot}</p>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', margin: '2px 0 0', fontFamily: "'JetBrains Mono', monospace" }}>
+                    {fmtM2(l.areaM2)} · {fmtBRL(l.price)}
                   </p>
-                )}
+                  {l.selectedPlan && (
+                    <p style={{ fontSize: 10.5, color: GOLD, margin: '2px 0 0', fontWeight: 700 }}>
+                      {l.selectedPlan.label}{l.selectedPlan.parcela ? ` · ${fmtBRL(l.selectedPlan.parcela)}/mês` : ''}
+                    </p>
+                  )}
+                </div>
               </div>
               <button onClick={() => onRemove(l.id)} aria-label="Remover lote"
                 className="flex items-center justify-center flex-shrink-0"
@@ -144,6 +151,19 @@ export function CartSheet({
               </button>
             </div>
           ))}
+
+          {items.length === 1 && (
+            <button
+              onClick={onClose}
+              className="flex items-center justify-center gap-2 w-full mb-2"
+              style={{
+                height: 40, borderRadius: 12, border: '1px dashed rgba(200,164,74,0.4)',
+                background: 'rgba(200,164,74,0.06)', color: GOLD, fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
+              }}
+            >
+              <Plus size={14} /> Adicionar mais lotes
+            </button>
+          )}
         </div>
 
         {/* Totais + ações */}
@@ -161,7 +181,7 @@ export function CartSheet({
             className="flex items-center justify-center gap-2 w-full mb-2"
             style={{ height: 48, borderRadius: 13, border: 'none', background: GOLD, color: NAVY, fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
           >
-            <FileText size={16} /> Preencher proposta
+            <FileText size={16} /> {items.length === 1 ? 'Enviar proposta deste lote' : 'Preencher proposta'}
           </button>
           <div className="flex gap-2">
             <button onClick={onCopyLink}

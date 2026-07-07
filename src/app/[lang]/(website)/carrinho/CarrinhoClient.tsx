@@ -11,7 +11,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ShoppingCart, MessageCircle, Link2, Printer, Check, AlertCircle } from 'lucide-react';
+import { ShoppingCart, MessageCircle, Link2, Printer, Check, AlertCircle, MapPin } from 'lucide-react';
 import {
   decodeCart,
   toCartLot,
@@ -135,18 +135,29 @@ export default function CarrinhoClient() {
                   {state.items.map((l) => (
                     <div
                       key={l.id}
-                      className="flex items-center justify-between gap-3 p-3 rounded-xl"
+                      className="flex items-center gap-3 p-3 rounded-xl"
                       style={{ background: '#fff', border: '1px solid rgba(184,179,168,0.35)' }}
                     >
-                      <div>
+                      <div
+                        className="flex items-center justify-center flex-shrink-0"
+                        style={{ width: 40, height: 40, borderRadius: 11, background: 'rgba(200,164,74,0.12)', color: GOLD }}
+                      >
+                        <MapPin size={18} />
+                      </div>
+                      <div className="flex-1 min-w-0">
                         <div style={{ fontSize: 14, fontWeight: 700, color: NAVY }}>
                           Quadra {l.block} · Lote {l.lot}
                         </div>
                         <div style={{ fontSize: 12, color: '#948F84', fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
                           {fmtM2(l.areaM2)}
                         </div>
+                        {l.selectedPlan && (
+                          <div style={{ fontSize: 11.5, color: GOLD, fontWeight: 700, marginTop: 2 }}>
+                            {l.selectedPlan.label}{l.selectedPlan.parcela ? ` · ${fmtBRL(l.selectedPlan.parcela)}/mês` : ''}
+                          </div>
+                        )}
                       </div>
-                      <div style={{ fontSize: 14, fontWeight: 800, color: NAVY, fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}>
+                      <div style={{ fontSize: 14, fontWeight: 800, color: NAVY, fontFamily: "var(--fm, 'JetBrains Mono', monospace)", whiteSpace: 'nowrap' }}>
                         {l.price > 0 ? fmtBRL(l.price) : 'Sob consulta'}
                       </div>
                     </div>
