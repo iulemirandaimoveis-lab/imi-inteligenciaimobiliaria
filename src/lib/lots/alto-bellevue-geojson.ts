@@ -72,10 +72,21 @@ export const AB_CALIBRATION_DEFAULT: AbCalibration = {
   // traçado à mão livre); o entalhe oeste (reentrância da mata) fica com a
   // maior folga residual — normal para uma transformação rígida única sobre
   // um traçado manual.
-  rotationDeg: -7.19,
+  //
+  // Rodada 4 (ajuste fino a olho, pedido do dono 2026-07-07): transformação
+  // RÍGIDA pura — só rotação + translação, escala INALTERADA (já estava certa).
+  // O overlay estava levemente fora de esquadro e deslocado sobre o satélite:
+  // (a) +1° horário em torno do centro (−7,19° → −6,19°) para casar as margens
+  // da BR-423, o trevo inferior direito e as curvas das vias internas;
+  // (b) ~6 px para oeste (dLng −0,00114 → −0,00119, ≈5-6 m) alinhando o limite
+  // oeste com a borda da vegetação e a via principal de entrada; (c) ~2 px para
+  // o norte (dLat 0,00043 → 0,000445, ≈1,7 m) como acerto vertical sutil final.
+  // Geometria de lotes/ruas/áreas verdes/equipamentos preservada 1:1 (nenhum
+  // elemento deformado individualmente — é uma única transformação de corpo rígido).
+  rotationDeg: -6.19,
   scale: 1.342,
-  dLng: -0.00114,
-  dLat: 0.00043,
+  dLng: -0.00119,
+  dLat: 0.000445,
 };
 
 let _calibration: AbCalibration = { ...AB_CALIBRATION_DEFAULT };
