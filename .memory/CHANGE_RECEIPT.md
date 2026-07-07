@@ -499,3 +499,13 @@ usa service_role+token, funciona sob a RLS real).
 - Verificação isolada (página temporária removida) com Playwright: chips/perfil/lotes/filtro de
   teto conferidos. Aprendizado: no dev mode, interagir só APÓS a hidratação (fill antes = DOM
   muda sem estado React). Gates: tsc ok, jest 889/894, lint ok, build exit 0.
+
+## 2026-07-07 · Fix contraste do breadcrumb na página de imóvel (Alto Bellevue)
+- Sintoma reportado: no altobellevue.com.br o empreendimento "aparecia como Aloísio Pinto".
+- Causa-raiz: o último item do breadcrumb (nome do empreendimento) usava cor `#E8E4DC`
+  (creme claro de tema escuro), invisível sobre o fundo claro `#F7F5F2` do `<main>`. A última
+  label legível virava o bairro "Aloísio Pinto", dando a impressão de ser o nome do imóvel.
+- Fix cirúrgico em `src/app/[lang]/(website)/imoveis/components/Breadcrumbs.tsx`: caminho em
+  cinza legível `#6B6B6B` e página atual em navy `#0B1928`. Breadcrumb já montava
+  `Imóveis › Cidade › Bairro › Nome` corretamente ([slug]/page.tsx) — só faltava contraste.
+- NÃO alterado: localização/bairro "Aloísio Pinto" (invariante), links Maps/Kuula.
