@@ -37,7 +37,7 @@ export default function CityInvestmentProfile({ city }: CityInvestmentProfilePro
                             <div className="w-10 h-10 bg-imi-900/5 rounded-xl flex items-center justify-center mb-4 text-imi-900">
                                 <stat.icon size={20} strokeWidth={1.5} />
                             </div>
-                            <p className="text-xs font-bold text-imi-400 uppercase tracking-widest mb-2">
+                            <p className="text-xs font-bold text-imi-500 uppercase tracking-widest mb-2">
                                 {stat.label}
                             </p>
                             <p className="text-2xl font-bold text-imi-900 font-display">

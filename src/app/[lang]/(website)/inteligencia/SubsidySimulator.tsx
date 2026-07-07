@@ -83,8 +83,8 @@ function SliderField({
         style={{ accentColor: '#C8A44A', background: `linear-gradient(to right, #C8A44A ${((value - min) / (max - min)) * 100}%, #142840 0%)` }}
       />
       <div className="flex justify-between mt-1">
-        <span className="text-[9px] text-[#556170]">{format(min)}</span>
-        <span className="text-[9px] text-[#556170]">{format(max)}</span>
+        <span className="text-[9px] text-[#8496AC]">{format(min)}</span>
+        <span className="text-[9px] text-[#8496AC]">{format(max)}</span>
       </div>
     </div>
   )
@@ -118,7 +118,7 @@ function ToggleField({ label, sublabel, value, onChange }: {
     >
       <div>
         <div className="text-sm font-semibold text-white">{label}</div>
-        <div className="text-[11px] text-[#556170] mt-0.5">{sublabel}</div>
+        <div className="text-[11px] text-[#8496AC] mt-0.5">{sublabel}</div>
       </div>
       <div className={`w-10 h-5 rounded-full transition-colors flex items-center px-0.5 shrink-0 ml-4 ${value ? 'bg-[#C8A44A]' : 'bg-[#1A3250]'}`}>
         <div className={`w-4 h-4 rounded-full bg-white shadow transition-transform ${value ? 'translate-x-5' : 'translate-x-0'}`} />
@@ -132,7 +132,7 @@ function StepDot({ n, current }: { n: Step; current: Step }) {
   const active = current === n
   return (
     <div className="flex items-center gap-2">
-      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${done ? 'bg-[#C8A44A] text-[#060D16]' : active ? 'bg-[#C8A44A] text-[#060D16]' : 'bg-[#0F2035] text-[#556170] border border-[rgba(255,255,255,0.06)]'}`}>
+      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${done ? 'bg-[#C8A44A] text-[#060D16]' : active ? 'bg-[#C8A44A] text-[#060D16]' : 'bg-[#0F2035] text-[#8496AC] border border-[rgba(255,255,255,0.06)]'}`}>
         {done ? '✓' : n}
       </div>
     </div>
@@ -148,12 +148,12 @@ function FeasibilityBadge({ f }: { f: 'viable' | 'marginal' | 'inviable' }) {
 function EligibilityRow({ flag, eligible, reason }: { flag: string; eligible: boolean; reason?: string }) {
   return (
     <div className={`flex items-start gap-3 p-3.5 rounded-xl border transition-colors ${eligible ? 'bg-[rgba(74,222,128,0.04)] border-[rgba(74,222,128,0.15)]' : 'bg-[#060D16] border-[rgba(255,255,255,0.04)]'}`}>
-      <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[9px] font-bold ${eligible ? 'bg-[rgba(74,222,128,0.2)] text-[#4ADE80]' : 'bg-[#0F2035] text-[#556170]'}`}>
+      <div className={`mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[9px] font-bold ${eligible ? 'bg-[rgba(74,222,128,0.2)] text-[#4ADE80]' : 'bg-[#0F2035] text-[#8496AC]'}`}>
         {eligible ? '✓' : '×'}
       </div>
       <div className="min-w-0">
-        <div className={`text-xs font-semibold leading-tight ${eligible ? 'text-white' : 'text-[#556170]'}`}>{flag}</div>
-        {reason && <div className="text-[10px] text-[#556170] mt-0.5 leading-snug">{reason}</div>}
+        <div className={`text-xs font-semibold leading-tight ${eligible ? 'text-white' : 'text-[#8496AC]'}`}>{flag}</div>
+        {reason && <div className="text-[10px] text-[#8496AC] mt-0.5 leading-snug">{reason}</div>}
       </div>
     </div>
   )
@@ -213,7 +213,7 @@ function Step3({ result, form, onStrategy }: { result: SubsidyResult; form: Form
           {result.estimated_subsidy > 0 ? R$(result.estimated_subsidy) : 'Sem subsídio'}
         </div>
         {result.estimated_subsidy > 0 && (
-          <div className="text-[11px] text-[#556170] mt-1">desconto direto no valor do imóvel</div>
+          <div className="text-[11px] text-[#8496AC] mt-1">desconto direto no valor do imóvel</div>
         )}
       </div>
 
@@ -226,7 +226,7 @@ function Step3({ result, form, onStrategy }: { result: SubsidyResult; form: Form
           { label: 'Comprometimento', value: pct(commitmentPct) },
         ].map(({ label, value }) => (
           <div key={label} className="bg-[#060D16] rounded-xl p-4 border border-[rgba(255,255,255,0.04)]">
-            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#556170] mb-1">{label}</div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#8496AC] mb-1">{label}</div>
             <div className="text-base font-bold text-white font-mono">{value}</div>
           </div>
         ))}
@@ -234,7 +234,7 @@ function Step3({ result, form, onStrategy }: { result: SubsidyResult; form: Form
 
       {/* Commitment bar */}
       <div>
-        <div className="flex justify-between text-[10px] text-[#556170] mb-1.5">
+        <div className="flex justify-between text-[10px] text-[#8496AC] mb-1.5">
           <span>Comprometimento de renda</span>
           <div className="flex items-center gap-2">
             <FeasibilityBadge f={result.feasibility} />
@@ -244,7 +244,7 @@ function Step3({ result, form, onStrategy }: { result: SubsidyResult; form: Form
           <div className="h-full rounded-full transition-all duration-500"
             style={{ width: `${Math.min(100, commitmentPct)}%`, background: commitmentPct <= 30 ? '#4ADE80' : commitmentPct <= 40 ? '#FBBF24' : '#F87171' }} />
         </div>
-        <div className="text-[9px] text-[#556170] mt-1">Limite recomendado: 30% da renda</div>
+        <div className="text-[9px] text-[#8496AC] mt-1">Limite recomendado: 30% da renda</div>
       </div>
 
       {/* Programs */}
@@ -287,7 +287,7 @@ function Step4({ strategy, form, lang }: { strategy: StrategyResult; form: FormS
       <div className="rounded-2xl bg-[#0B1928] border border-[rgba(200,164,74,0.18)] p-6">
         <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#94A0B2] mb-1">Subsídio Total Otimizado</div>
         <div className="text-4xl font-bold text-[#C8A44A] font-mono">{R$(strategy.total_subsidy)}</div>
-        <div className="text-[11px] text-[#556170] mt-1">patrimônio projetado em 12 meses: {R$(strategy.total_equity_12m)}</div>
+        <div className="text-[11px] text-[#8496AC] mt-1">patrimônio projetado em 12 meses: {R$(strategy.total_equity_12m)}</div>
       </div>
 
       {/* Sequence */}
@@ -320,7 +320,7 @@ function Step4({ strategy, form, lang }: { strategy: StrategyResult; form: FormS
                   { l: 'Parcela/mês', v: Rk(step.monthly_payment) },
                 ].map(({ l, v }) => (
                   <div key={l} className="min-w-0">
-                    <div className="text-[9px] text-[#556170] uppercase tracking-wider">{l}</div>
+                    <div className="text-[9px] text-[#8496AC] uppercase tracking-wider">{l}</div>
                     <div className="text-xs font-bold text-white font-mono whitespace-nowrap">{v}</div>
                   </div>
                 ))}
@@ -328,7 +328,7 @@ function Step4({ strategy, form, lang }: { strategy: StrategyResult; form: FormS
               {step.notes.length > 0 && (
                 <ul className="space-y-0.5">
                   {step.notes.map((note, i) => (
-                    <li key={i} className="text-[10px] text-[#556170] flex gap-1.5 leading-snug">
+                    <li key={i} className="text-[10px] text-[#8496AC] flex gap-1.5 leading-snug">
                       <span className="text-[#C8A44A] shrink-0 mt-px">—</span>
                       {note}
                     </li>
@@ -443,7 +443,7 @@ export default function SubsidySimulator({ lang }: { lang: string }) {
           <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#C8A44A]">Simulador</span>
         </div>
         <h2 className="font-display text-xl font-bold text-white">Motor de Aquisição</h2>
-        <p className="text-[12px] text-[#556170] mt-1">Descubra seu subsídio e estruture sua compra em minutos</p>
+        <p className="text-[12px] text-[#8496AC] mt-1">Descubra seu subsídio e estruture sua compra em minutos</p>
 
         {/* Step indicators */}
         <div className="flex items-center mt-4 gap-0">
@@ -451,7 +451,7 @@ export default function SubsidySimulator({ lang }: { lang: string }) {
             <div key={n} className="flex items-center">
               <div className="flex items-center gap-1">
                 <StepDot n={n} current={step} />
-                <span className={`hidden sm:block text-[10px] font-semibold transition-colors ${step === n ? 'text-[#C8A44A]' : step > n ? 'text-[#4ADE80]' : 'text-[#556170]'}`}>
+                <span className={`hidden sm:block text-[10px] font-semibold transition-colors ${step === n ? 'text-[#C8A44A]' : step > n ? 'text-[#4ADE80]' : 'text-[#8496AC]'}`}>
                   {STEP_LABELS[i]}
                 </span>
               </div>

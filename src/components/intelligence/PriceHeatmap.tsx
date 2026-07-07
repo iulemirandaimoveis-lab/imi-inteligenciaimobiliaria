@@ -121,7 +121,7 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
                         <div className="w-12 h-12 rounded-2xl bg-[#0B1928] border border-white/[0.06] flex items-center justify-center mb-4">
                             <span className="text-2xl text-[#334E68]">&#x2205;</span>
                         </div>
-                        <p className="text-[#556170] text-sm font-light max-w-sm">
+                        <p className="text-[#8496AC] text-sm font-light max-w-sm">
                             Nenhum dado de preços disponível para exibir no mapa. Selecione outra cidade ou aguarde a atualização dos dados.
                         </p>
                     </div>
@@ -150,7 +150,7 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
                     <LegendItem color="#10B981" label="Abaixo da média (oportunidade)" />
                     <LegendItem color={GOLD} label="Na média da cidade" />
                     <LegendItem color="#EF4444" label="Acima da média (premium)" />
-                    <span className="text-[10px] text-[#556170] ml-auto hidden sm:block">
+                    <span className="text-[10px] text-[#8496AC] ml-auto hidden sm:block">
                         Tamanho = estoque disponível
                     </span>
                 </div>
@@ -191,7 +191,7 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
                                     >
                                         {formatPrice(n.median_price_sqm)}
                                     </span>
-                                    <span className="text-[9px] text-[#556170] mt-0.5">R$/m²</span>
+                                    <span className="text-[9px] text-[#8496AC] mt-0.5">R$/m²</span>
                                 </div>
 
                                 {/* Name */}
@@ -215,7 +215,7 @@ export default function PriceHeatmap({ neighborhoods, cityAvgPrice, loading }: P
 
                                 {/* Inventory */}
                                 {n.inventory_count != null && (
-                                    <span className="text-[10px] text-[#556170] mt-1.5">
+                                    <span className="text-[10px] text-[#8496AC] mt-1.5">
                                         {n.inventory_count} imóveis
                                     </span>
                                 )}
@@ -242,7 +242,7 @@ function SectionHeader() {
             <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
                 Comparativo Visual de <span className="text-[#C8A44A] italic">Preços por Bairro</span>
             </h2>
-            <p className="text-[#7A8FA6] text-sm mt-2 max-w-xl font-light">
+            <p className="text-[#93A5B9] text-sm mt-2 max-w-xl font-light">
                 Cada bolha representa um bairro. O tamanho reflete o estoque e a cor indica a faixa de preço
                 em relação à média da cidade.
             </p>
