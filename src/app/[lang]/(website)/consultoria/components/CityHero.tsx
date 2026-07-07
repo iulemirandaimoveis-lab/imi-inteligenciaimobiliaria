@@ -28,21 +28,21 @@ export default function CityHero({ city }: CityHeroProps) {
                 >
                     <div className="flex items-center gap-4 mb-6">
                         <span className="text-4xl">{city.flag}</span>
-                        <div className="w-12 h-px bg-accent-500" />
-                        <span className="text-accent-500 font-semibold uppercase tracking-[0.2em] text-xs">
+                        <div className="w-12 h-px bg-gold-400" />
+                        <span className="text-gold-400 font-bold uppercase tracking-[0.2em] text-xs">
                             {city.country}
                         </span>
                     </div>
 
                     <h1 className="text-white font-display font-bold text-4xl sm:text-6xl lg:text-7xl leading-[1.1] mb-6 tracking-tight">
-                        Investir em <span className="text-accent-500">{city.name}</span>
+                        Investir em <span className="text-gold-400">{city.name}</span>
                     </h1>
 
-                    <p className="text-white/80 text-xl font-medium mb-4 font-display">
+                    <p className="text-white/90 text-xl font-medium mb-4 font-display">
                         {city.tagline}
                     </p>
 
-                    <p className="text-imi-300 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
+                    <p className="text-imi-200 text-lg md:text-xl font-light leading-relaxed max-w-2xl">
                         {city.description}
                     </p>
                 </motion.div>

@@ -288,22 +288,22 @@ export default function IntelligenceDashboard({
             Inteligência<br />
             <span className="text-[#C8A44A] italic">Imobiliária</span>
           </h1>
-          <p className="text-[#7A8FA6] text-base sm:text-lg font-light leading-relaxed max-w-xl mb-8">
+          <p className="text-[#93A5B9] text-base sm:text-lg font-light leading-relaxed max-w-xl mb-8">
             Explore preços, tendências e indicadores por bairro em todo o Brasil. Dados atualizados
             diariamente para decisões orientadas por dados.
           </p>
 
           {/* Geo hierarchy visual */}
           <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium mb-6">
-            <span className="flex items-center gap-1 text-[#556170]">
+            <span className="flex items-center gap-1 text-[#8496AC]">
               <Globe className="w-3 h-3" />
               Brasil
             </span>
-            <ChevronRight className="w-3 h-3 text-[#2A4060]" />
-            <span className="text-[#7A8FA6]">27 Estados</span>
-            <ChevronRight className="w-3 h-3 text-[#2A4060]" />
-            <span className="text-[#7A8FA6]">5.570 Municípios</span>
-            <ChevronRight className="w-3 h-3 text-[#2A4060]" />
+            <ChevronRight className="w-3 h-3 text-[#5C7089]" />
+            <span className="text-[#93A5B9]">27 Estados</span>
+            <ChevronRight className="w-3 h-3 text-[#5C7089]" />
+            <span className="text-[#93A5B9]">5.570 Municípios</span>
+            <ChevronRight className="w-3 h-3 text-[#5C7089]" />
             <span className="text-[#C8A44A]">Bairros com dados</span>
           </div>
 
@@ -321,7 +321,7 @@ export default function IntelligenceDashboard({
         <div className="container-custom pt-2.5 pb-0">
           <nav
             aria-label="Localização"
-            className="flex items-center gap-1 text-[10px] text-[#3D5166] font-medium overflow-x-auto scrollbar-hide whitespace-nowrap"
+            className="flex items-center gap-1 text-[10px] text-[#75899E] font-medium overflow-x-auto scrollbar-hide whitespace-nowrap"
           >
             {breadcrumbParts.map((part, i) => (
               <span key={i} className="flex items-center gap-1">
@@ -331,8 +331,8 @@ export default function IntelligenceDashboard({
                     'gold' in part && part.gold
                       ? 'text-[#C8A44A] font-bold'
                       : 'highlight' in part && part.highlight
-                      ? 'text-[#7A8FA6] font-semibold'
-                      : 'text-[#3D5166]'
+                      ? 'text-[#93A5B9] font-semibold'
+                      : 'text-[#75899E]'
                   }
                 >
                   {part.label}
@@ -365,7 +365,7 @@ export default function IntelligenceDashboard({
               onClick={handleRefresh}
               disabled={refreshing}
               title="Atualizar dados"
-              className="shrink-0 w-9 h-9 mt-0.5 flex items-center justify-center rounded-lg bg-[#0B1928] text-[#C8A44A] hover:text-[#556170] border border-[#C8A44A]/30 hover:border-white/[0.06] transition-all duration-200 disabled:opacity-30"
+              className="shrink-0 w-9 h-9 mt-0.5 flex items-center justify-center rounded-lg bg-[#0B1928] text-[#C8A44A] hover:text-[#8496AC] border border-[#C8A44A]/30 hover:border-white/[0.06] transition-all duration-200 disabled:opacity-30"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
             </button>
@@ -433,7 +433,7 @@ export default function IntelligenceDashboard({
                   {currentCityObj?.name ?? selectedCity}
                 </span>
                 {currentMunicipality?.state && (
-                  <span className="text-[#556170] text-base font-normal ml-2">
+                  <span className="text-[#8496AC] text-base font-normal ml-2">
                     · {currentMunicipality.state}
                   </span>
                 )}
@@ -441,8 +441,8 @@ export default function IntelligenceDashboard({
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {lastUpdated && (
-                <span className="hidden sm:flex items-center gap-1 text-[9px] text-[#3D5166] font-medium">
-                  <span className="w-1 h-1 rounded-full bg-[#3D5166]" />
+                <span className="hidden sm:flex items-center gap-1 text-[9px] text-[#75899E] font-medium">
+                  <span className="w-1 h-1 rounded-full bg-[#75899E]" />
                   {lastUpdated.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                 </span>
               )}
@@ -475,8 +475,8 @@ export default function IntelligenceDashboard({
             </div>
           )}
 
-          <p className="text-[10px] text-[#3D5166] mt-6 flex items-center gap-1.5">
-            <span className="inline-block w-3 h-px bg-[#3D5166]" />
+          <p className="text-[10px] text-[#75899E] mt-6 flex items-center gap-1.5">
+            <span className="inline-block w-3 h-px bg-[#75899E]" />
             Use estes números como referência inicial. Consulte um especialista IMI para análise
             personalizada.
           </p>
@@ -521,7 +521,7 @@ export default function IntelligenceDashboard({
             Precisa de uma{' '}
             <span className="text-[#C8A44A] italic">Análise Personalizada</span>?
           </h2>
-          <p className="text-[#7A8FA6] text-sm sm:text-base mb-10 font-light leading-relaxed">
+          <p className="text-[#93A5B9] text-sm sm:text-base mb-10 font-light leading-relaxed">
             Dossiê de bairro, estudo de viabilidade ou laudo técnico com metodologia ABNT.
           </p>
           <a
@@ -551,7 +551,7 @@ function HeroBadge({ icon, label }: { icon: string; label: string }) {
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06]">
       <span className="text-sm leading-none">{icon}</span>
-      <span className="text-[11px] text-[#7A8FA6] font-medium">{label}</span>
+      <span className="text-[11px] text-[#93A5B9] font-medium">{label}</span>
     </div>
   )
 }
@@ -581,10 +581,10 @@ function DataSourceBadge({
     },
     none: {
       label: 'Dados em expansão',
-      dot: '#556170',
+      dot: '#8496AC',
       bg: 'rgba(85,97,112,0.08)',
       border: 'rgba(85,97,112,0.2)',
-      text: '#556170',
+      text: '#8496AC',
     },
   }[source]
 
@@ -621,8 +621,8 @@ function CompactMetric({
       }`}
     >
       <div className="flex items-center gap-1.5 mb-2">
-        <span className={highlight ? 'text-[#C8A44A]/60' : 'text-[#3D5166]'}>{icon}</span>
-        <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#3D5166] leading-tight truncate">
+        <span className={highlight ? 'text-[#C8A44A]/60' : 'text-[#75899E]'}>{icon}</span>
+        <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#75899E] leading-tight truncate">
           {label}
         </div>
       </div>
@@ -661,7 +661,7 @@ function NeighborhoodCard({
   const price = data.median_price_sqm != null ? Number(data.median_price_sqm) : null
   const trend = data.price_trend_12m != null ? Number(data.price_trend_12m) : null
   const isUp = trend != null && trend > 0
-  const trendColor = trend == null ? '#556170' : isUp ? '#4ADE80' : '#F87171'
+  const trendColor = trend == null ? '#8496AC' : isUp ? '#4ADE80' : '#F87171'
 
   const priceRatio = price != null && cityAvgPrice != null ? price / cityAvgPrice : null
   const accentColor =
@@ -704,13 +704,13 @@ function NeighborhoodCard({
               <h3 className="text-sm font-bold text-white group-hover:text-[#C8A44A] transition-colors leading-tight truncate">
                 {data.neighborhood}
               </h3>
-              <span className="text-[9px] text-[#2A4060] font-medium shrink-0">
+              <span className="text-[9px] text-[#5C7089] font-medium shrink-0">
                 #{rank}/{total}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <MapPin className="w-3 h-3 text-[#2A4060] shrink-0" />
-              <span className="text-[10px] text-[#3D5166]">
+              <MapPin className="w-3 h-3 text-[#5C7089] shrink-0" />
+              <span className="text-[10px] text-[#75899E]">
                 {data.city}
                 {data.state ? `, ${data.state}` : ''}
               </span>
@@ -728,7 +728,7 @@ function NeighborhoodCard({
 
         {/* Price */}
         <div className="mb-3">
-          <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#3D5166] mb-0.5">
+          <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#75899E] mb-0.5">
             Preço/m²
           </div>
           <div className="text-2xl font-bold text-white tracking-tight leading-none">
@@ -766,7 +766,7 @@ function NeighborhoodCard({
           ].map(({ label, value }) => (
             <div key={label} className="bg-[#060D16]/60 rounded-lg p-2 text-center border border-white/[0.04]">
               <div className="text-xs font-bold text-white">{value}</div>
-              <div className="text-[8px] text-[#3D5166] mt-0.5">{label}</div>
+              <div className="text-[8px] text-[#75899E] mt-0.5">{label}</div>
             </div>
           ))}
         </div>
@@ -774,7 +774,7 @@ function NeighborhoodCard({
 
       {/* Expand toggle */}
       <div className="px-5 pb-2 flex items-center justify-end">
-        <span className="flex items-center gap-1 text-[10px] text-[#3D5166] group-hover:text-[#556170] transition-colors">
+        <span className="flex items-center gap-1 text-[10px] text-[#75899E] group-hover:text-[#8496AC] transition-colors">
           {expanded ? (
             <>
               <ChevronUp className="w-3 h-3" /> menos
@@ -843,7 +843,7 @@ function NeighborhoodCard({
               },
             ].map(({ label, value }) => (
               <div key={label}>
-                <div className="text-[9px] text-[#3D5166] uppercase tracking-wider mb-0.5">
+                <div className="text-[9px] text-[#75899E] uppercase tracking-wider mb-0.5">
                   {label}
                 </div>
                 <div className="text-xs font-semibold text-white">{value}</div>
@@ -880,12 +880,12 @@ function EmptyState({ city, lang }: { city: string; lang: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="w-16 h-16 rounded-2xl bg-[#0B1928] border border-white/[0.06] flex items-center justify-center mb-5">
-        <Building2 className="w-7 h-7 text-[#1A3250]" />
+        <Building2 className="w-7 h-7 text-[#3E5877]" />
       </div>
       <h3 className="text-base font-bold text-white mb-2">
         Dados em construção para {city}
       </h3>
-      <p className="text-[#556170] text-sm max-w-xs font-light leading-relaxed mb-6">
+      <p className="text-[#8496AC] text-sm max-w-xs font-light leading-relaxed mb-6">
         Estamos coletando e validando indicadores de inteligência para esta região. Em breve
         você terá acesso ao panorama completo.
       </p>
@@ -897,7 +897,7 @@ function EmptyState({ city, lang }: { city: string; lang: string }) {
       >
         Solicitar dados para {city}
       </a>
-      <p className="text-[10px] text-[#2A4060] mt-3">
+      <p className="text-[10px] text-[#5C7089] mt-3">
         ou escolha outra cidade no painel acima
       </p>
     </div>

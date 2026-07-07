@@ -66,9 +66,9 @@ export function LocationSearchPanel({
       {/* ── Global search ── */}
       <div className="relative">
         <div className="relative flex items-center">
-          <Search className="absolute left-3 w-3.5 h-3.5 text-[#556170] pointer-events-none" />
+          <Search className="absolute left-3 w-3.5 h-3.5 text-[#8496AC] pointer-events-none" />
           {isLoading && query.trim() && (
-            <Loader2 className="absolute right-3 w-3.5 h-3.5 text-[#556170] animate-spin pointer-events-none" />
+            <Loader2 className="absolute right-3 w-3.5 h-3.5 text-[#8496AC] animate-spin pointer-events-none" />
           )}
           <input
             ref={inputRef}
@@ -105,7 +105,7 @@ export function LocationSearchPanel({
             placeholder="Busque estado, cidade ou bairro…"
             autoComplete="off"
             className={[
-              'w-full h-9 pl-9 pr-9 rounded-lg text-sm text-white placeholder:text-[#3D5166]',
+              'w-full h-9 pl-9 pr-9 rounded-lg text-sm text-white placeholder:text-[#75899E]',
               'bg-[#0B1928] border border-[#C8A44A]/50',
               'outline-none focus:border-white/[0.08] focus:ring-0',
               'transition-all duration-200',
@@ -146,7 +146,7 @@ export function LocationSearchPanel({
                         <div className="flex-1 min-w-0">
                           <span className="text-sm font-semibold text-white">{s.name}</span>
                           {s.context && (
-                            <span className="text-xs text-[#556170] ml-1.5">{s.context}</span>
+                            <span className="text-xs text-[#8496AC] ml-1.5">{s.context}</span>
                           )}
                         </div>
                         <span
@@ -163,7 +163,7 @@ export function LocationSearchPanel({
             ) : (
               <div className="flex items-center gap-2.5 px-3 py-3">
                 <Search className="w-3.5 h-3.5 text-[#334E68] shrink-0" />
-                <p className="text-xs text-[#556170]">
+                <p className="text-xs text-[#8496AC]">
                   Nenhuma região encontrada. Tente buscar por cidade, estado ou bairro.
                 </p>
               </div>
@@ -261,16 +261,16 @@ function SelectField({
           'outline-none focus:border-white/[0.08] focus:ring-0',
           'transition-all duration-200',
           disabled
-            ? 'text-[#3D5166] cursor-not-allowed opacity-50'
+            ? 'text-[#75899E] cursor-not-allowed opacity-50'
             : 'text-white cursor-pointer',
         ].join(' ')}
       >
-        <option value="" className="text-[#556170]">{placeholder}</option>
+        <option value="" className="text-[#8496AC]">{placeholder}</option>
         {children}
       </select>
       <ChevronDown
         className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none"
-        style={{ color: disabled ? '#334E68' : '#556170' }}
+        style={{ color: disabled ? '#334E68' : '#8496AC' }}
       />
     </div>
   )

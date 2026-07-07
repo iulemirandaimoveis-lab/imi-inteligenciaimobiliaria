@@ -24,7 +24,7 @@ export default function CityCTA({ city, lang }: CityCTAProps) {
                     <h2 className="font-display text-3xl md:text-5xl font-bold mb-8 tracking-tight">
                         Pronto para investir em {city.name}?
                     </h2>
-                    <p className="text-imi-300 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                    <p className="text-imi-200 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
                         Nossa equipe técnica está pronta para desenhar sua estratégia de alocação de capital e proteger seu patrimônio.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
@@ -35,7 +35,7 @@ export default function CityCTA({ city, lang }: CityCTAProps) {
                             </a>
                         </Button>
                     </div>
-                    <p className="mt-8 text-imi-400 text-sm italic">
+                    <p className="mt-8 text-imi-300 text-sm italic">
                         * Atendimento personalizado seguindo normas de compliance internacional.
                     </p>
                 </div>

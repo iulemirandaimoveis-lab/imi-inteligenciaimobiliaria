@@ -56,11 +56,11 @@ function MatchingLots({ intents, lang }: { intents: IntentKey[]; lang: string })
   return (
     <div className="mt-8 pt-8 border-t border-white/[0.05]" aria-label="Lotes que combinam com sua intenção">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-        <p className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-[#7A8FA6]">
+        <p className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-[#93A5B9]">
           <LandPlot className="w-3.5 h-3.5 text-[#C8A44A] flex-shrink-0" aria-hidden="true" />
           Do insight ao inventário · lotes reais no {development.name}
         </p>
-        <span className="text-[10px] text-[#556170] font-medium">
+        <span className="text-[10px] text-[#8496AC] font-medium">
           perfil {profile === 'investor' ? 'investidor' : profile === 'resident' ? 'moradia' : 'equilibrado'}
         </span>
       </div>
@@ -84,16 +84,16 @@ function MatchingLots({ intents, lang }: { intents: IntentKey[]; lang: string })
               </span>
             </div>
             <p
-              className="text-[12px] text-[#7A8FA6]"
+              className="text-[12px] text-[#93A5B9]"
               style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}
             >
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(lot.price)}
-              <span className="text-[#556170]"> · {Math.round(lot.area_m2)} m²</span>
+              <span className="text-[#8496AC]"> · {Math.round(lot.area_m2)} m²</span>
             </p>
             {lot.reasons[0] && (
-              <p className="text-[11px] text-[#556170] leading-relaxed">{lot.reasons[0]}</p>
+              <p className="text-[11px] text-[#8496AC] leading-relaxed">{lot.reasons[0]}</p>
             )}
-            <span className="flex items-center gap-1 mt-auto pt-1 text-[10px] font-bold uppercase tracking-wider text-[#556170] group-hover:text-[#C8A44A] transition-all duration-200">
+            <span className="flex items-center gap-1 mt-auto pt-1 text-[10px] font-bold uppercase tracking-wider text-[#8496AC] group-hover:text-[#C8A44A] transition-all duration-200">
               Ver no explorador
               <ChevronRight className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
             </span>
@@ -180,14 +180,14 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
 
         {/* Entrada em linguagem natural */}
         <div className="relative mb-4">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#556170] pointer-events-none" aria-hidden="true" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8496AC] pointer-events-none" aria-hidden="true" />
           <input
             type="text"
             value={query}
             onChange={(e) => handleQuery(e.target.value)}
             placeholder='Ex.: "quero renda de aluguel com liquidez em bairro que valoriza"'
             aria-label="Descreva sua intenção de investimento"
-            className="w-full h-12 pl-11 pr-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-[#3D5166] focus:outline-none focus:border-[#C8A44A]/50 transition-all duration-200"
+            className="w-full h-12 pl-11 pr-4 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white text-sm placeholder:text-[#75899E] focus:outline-none focus:border-[#C8A44A]/50 transition-all duration-200"
           />
         </div>
 
@@ -204,7 +204,7 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
                 className={`flex items-center gap-1.5 h-9 px-4 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all duration-200 active:scale-[0.98] ${
                   active
                     ? 'bg-[#C8A44A] text-[#060D16] border-[#C8A44A]'
-                    : 'bg-white/[0.04] text-[#7A8FA6] border-white/[0.08] hover:border-[#C8A44A]/40'
+                    : 'bg-white/[0.04] text-[#93A5B9] border-white/[0.08] hover:border-[#C8A44A]/40'
                 }`}
               >
                 {active && <Sparkles className="w-3 h-3 flex-shrink-0" aria-hidden="true" />}
@@ -216,7 +216,7 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
 
         {/* Resultados */}
         {results.length === 0 ? (
-          <p className="text-[#556170] text-sm">
+          <p className="text-[#8496AC] text-sm">
             Selecione ao menos uma intenção — ou descreva o que procura no campo acima.
           </p>
         ) : (
@@ -237,14 +237,14 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
                         style={{
                           fontFamily: "var(--fm, 'JetBrains Mono', monospace)",
                           background: i === 0 ? 'rgba(200,164,74,0.15)' : 'rgba(255,255,255,0.05)',
-                          color: i === 0 ? '#C8A44A' : '#7A8FA6',
+                          color: i === 0 ? '#C8A44A' : '#93A5B9',
                         }}
                       >
                         {i + 1}
                       </span>
                       <div className="min-w-0">
                         <p className="text-white text-sm font-semibold truncate">{r.neighborhood}</p>
-                        <p className="flex items-center gap-1 text-[11px] text-[#556170]">
+                        <p className="flex items-center gap-1 text-[11px] text-[#8496AC]">
                           <MapPin className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                           <span className="truncate">{r.city} · {r.state}</span>
                           {r.source === 'live' && (
@@ -264,7 +264,7 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
                       >
                         {r.fit}
                       </p>
-                      <p className="text-[9px] text-[#3D5166] font-bold uppercase tracking-widest mt-1">IMI Fit</p>
+                      <p className="text-[9px] text-[#75899E] font-bold uppercase tracking-widest mt-1">IMI Fit</p>
                     </div>
                   </div>
 
@@ -279,16 +279,16 @@ export default function IntentDiscovery({ lang }: { lang: string }) {
                     />
                   </div>
 
-                  <p className="text-[12px] text-[#7A8FA6] leading-relaxed">{explainFit(r)}</p>
+                  <p className="text-[12px] text-[#93A5B9] leading-relaxed">{explainFit(r)}</p>
 
                   <div className="flex items-center justify-between mt-auto pt-1">
                     <span
-                      className="text-[11px] text-[#556170]"
+                      className="text-[11px] text-[#8496AC]"
                       style={{ fontFamily: "var(--fm, 'JetBrains Mono', monospace)" }}
                     >
                       {fmtBRL(r.median_price_sqm)}/m²
                     </span>
-                    <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#556170] group-hover:text-[#C8A44A] transition-all duration-200">
+                    <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#8496AC] group-hover:text-[#C8A44A] transition-all duration-200">
                       Explorar {r.city}
                       <ChevronRight className="w-3 h-3 flex-shrink-0" aria-hidden="true" />
                     </span>
