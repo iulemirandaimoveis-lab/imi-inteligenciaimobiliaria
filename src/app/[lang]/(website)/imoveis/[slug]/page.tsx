@@ -489,7 +489,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                             texto e sem altura forçada (o vazio do card de preço some). */}
                         <section id="corretor" className="lg:hidden space-y-4">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            <RealtorCard broker={brokerData as any} propertyName={development.name} />
+                            <RealtorCard broker={brokerData as any} propertyName={development.name} developmentId={development.id} developmentSlug={params.slug} />
                             <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
                         </section>
                     </div>
@@ -497,7 +497,7 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                     {/* Sidebar — desktop only */}
                     <aside className="hidden lg:block lg:col-span-4 self-start space-y-6">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        <RealtorCard broker={brokerData as any} propertyName={development.name} />
+                        <RealtorCard broker={brokerData as any} propertyName={development.name} developmentId={development.id} developmentSlug={params.slug} />
                         <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
                     </aside>
                 </div>

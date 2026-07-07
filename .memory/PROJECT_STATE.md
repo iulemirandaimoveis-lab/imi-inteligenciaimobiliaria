@@ -20,6 +20,18 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-07 (branch claude/broker-calendar-visit-booking-uxhjtc, PR draft): **Agendamento de
+  Visitas — calendário do corretor**. O CTA "Agendar Visita" (RealtorCard) e uma ação dentro da
+  vídeo chamada abrem um calendário completo: modo presencial/vídeo + dia + horário (agenda real
+  via `GET /api/visits/availability`, horários ocupados somem), form nome/e-mail/telefone + upload
+  de documento com foto (reusa `/api/lots/proposal/documents`). `POST /api/visits/book` valida,
+  cria sala de vídeo (modo vídeo), gera convite **.ics** (bucket `visit-invites`), persiste em
+  `visit_bookings` (best-effort), cria evento no Google Calendar do corretor (Service Account,
+  env-gated, RS256 via node:crypto — sem dep nova) e avisa cliente+corretor por WhatsApp. Motor de
+  disponibilidade **puro** em `src/lib/scheduling/` (fuso fixo Recife). Migration
+  `20260707_visit_bookings.sql` **NÃO aplicada** (pendência do dono). 11 testes novos, 966 passed,
+  0 regressão. Detalhe: `.claude/completions/2026-07-07-agendamento-visitas-calendario-corretor.md`
+  · Doc: `docs/AGENDAMENTO_VISITAS.md`.
 - 2026-07-06 (branch claude/imi-commission-reconciliation-eyng5a, PR draft): **conciliação
   de comissões IMI × Mano Imóveis** — estrutura completa pra confirmar repasses recebidos,
   conectando (ou deixando pronto pra conectar) as contas BTG PF/PJ da IMI. Migration nova
@@ -78,6 +90,9 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 - Migration segura APLICADA (`proposal_events` + colunas de tracking). A versão que reescrevia policies foi descartada (proposals não tem `tenant_id`).
 
 ## Pendências quentes (topo da fila)
+-2. **AÇÃO DO DONO — aplicar migration de agendamento de visitas**: `supabase/migrations/20260707_visit_bookings.sql`
+   (versionada, **não aplicada**). A API já notifica por WhatsApp; persistência + anti-conflito de
+   horário ligam após aplicar. Opcional: Service Account do Google Calendar (`docs/AGENDAMENTO_VISITAS.md`).
 -1. **AÇÃO DO DONO — aplicar migration de conciliação de comissões**: `supabase/migrations/20260706_commission_bank_reconciliation.sql` está versionada mas **não aplicada em produção** (mudança de banco exige aprovação explícita). Depois de aplicar: ver `docs/BTG_INTEGRATION_GUIDE.md` pra conectar a conta BTG PJ (ou usar import de CSV, que já funciona sem migration adicional nenhuma além dessa).
 0. **AÇÃO DO DONO — chave da Mano Imóveis**: rodar localmente `node scripts/partner/create-partner-key.mjs --name "Mano Imóveis" --scopes developments:read,lots:read,maps:read,prices:read` e enviar a chave por canal seguro (ela só aparece uma vez). Guia p/ o parceiro: `docs/api/PARTNER_API_GUIDE.md`.
 1. **T-07**: DOMPurify nos 13 `dangerouslySetInnerHTML` (verificação por uso).

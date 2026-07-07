@@ -1,10 +1,12 @@
 'use client'
 
 import Image from 'next/image'
-import { Mail, Phone, MessageCircle, Calendar, Clock, Award } from 'lucide-react'
+import { Mail, Phone, MessageCircle, Clock, Award } from 'lucide-react'
 import VideoCallButton from './VideoCallButton'
+import ScheduleVisitButton from './ScheduleVisitButton'
 
 interface RealtorInfo {
+    id?: string | null
     name: string
     email?: string | null
     phone?: string | null
@@ -27,7 +29,7 @@ function formatBRPhone(raw: string): string {
     return raw
 }
 
-export default function RealtorCard({ broker, propertyName, compact }: { broker: RealtorInfo; propertyName: string; compact?: boolean }) {
+export default function RealtorCard({ broker, propertyName, compact, developmentId, developmentSlug }: { broker: RealtorInfo; propertyName: string; compact?: boolean; developmentId?: string | null; developmentSlug?: string | null }) {
     const initials = broker.name
         .split(' ')
         .map(n => n[0])
@@ -41,10 +43,6 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
 
     const whatsappUrl = broker.phone
         ? `https://wa.me/${broker.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá ${broker.name}! Tenho interesse no ${propertyName}. Gostaria de mais informações.`)}`
-        : null
-
-    const agendarUrl = broker.phone
-        ? `https://wa.me/${broker.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá! Gostaria de agendar uma visita ao ${propertyName}`)}`
         : null
 
     const displayPhone = broker.phone ? formatBRPhone(broker.phone) : null
@@ -222,30 +220,25 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
                             <span style={{ position: 'absolute', bottom: 0, left: '12%', right: '12%', height: 2, background: 'linear-gradient(90deg, transparent, #C8A44A, transparent)', opacity: 0.5 }} />
                         </a>
                     )}
-                    {agendarUrl && (
-                        <a
-                            href={agendarUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`flex items-center justify-center gap-1.5 w-full ${compact ? 'h-9 rounded-lg text-[10px]' : 'h-12 rounded-xl text-[11px]'} font-bold uppercase tracking-wider transition-all duration-200 hover:bg-[#F8F6F2] active:scale-[0.98]`}
-                            style={{
-                                background: '#FFFFFF',
-                                color: '#0B1928',
-                                border: '2px solid #0B1928',
-                                textDecoration: 'none',
-                                fontFamily: "var(--fu, 'Outfit', sans-serif)",
-                            }}
-                        >
-                            <Calendar className="w-3.5 h-3.5" />
-                            {compact ? 'Visita' : 'Agendar Visita'}
-                        </a>
-                    )}
+                    <ScheduleVisitButton
+                        broker={broker}
+                        developmentId={developmentId}
+                        developmentName={propertyName}
+                        developmentSlug={developmentSlug}
+                        whatsappPhone={broker.phone}
+                        compact={compact}
+                        source="property_page"
+                    />
                     {broker.phone && (
                         <VideoCallButton
                             brokerName={firstName}
                             brokerPhone={broker.phone}
                             context={propertyName}
                             compact={compact}
+                            broker={broker}
+                            developmentId={developmentId}
+                            developmentName={propertyName}
+                            developmentSlug={developmentSlug}
                         />
                     )}
                 </div>

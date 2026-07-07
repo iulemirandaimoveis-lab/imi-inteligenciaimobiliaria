@@ -1,6 +1,14 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-07 (avaliações — laudo NBR completo + quadro amostral entregues, PR draft)
+**Atualizado**: 2026-07-07 (agendamento de visitas + laudo NBR/quadro amostral entregues, PRs draft)
+
+## Agendamento de Visitas (calendário do corretor) — ENTREGUE, aplicação pendente
+- Entregue: `src/lib/scheduling/*`, rotas `/api/visits/*`, `VisitBookingModal`/`ScheduleVisitButton`,
+  integração em RealtorCard + VideoCallButton. Migration `20260707_visit_bookings.sql` **não aplicada**.
+  Detalhe: `.claude/completions/2026-07-07-agendamento-visitas-calendario-corretor.md` · `docs/AGENDAMENTO_VISITAS.md`.
+- **AÇÃO DO DONO 1**: aplicar a migration em produção (persistência + anti-conflito de horário).
+- **AÇÃO DO DONO 2 (opcional)**: Service Account do Google Calendar para espelhar na agenda do corretor.
+- Evolução: disponibilidade por corretor (hoje global) + tela de gestão das visitas no console.
 
 ## Avaliações — laudo NBR 14653-2 + quadro amostral ✅ ENTREGUE (2026-07-07, PR draft)
 - Novo motor `src/lib/valuation/quadro-amostral.ts` (saneamento ±20% iterativo, arredondamento
