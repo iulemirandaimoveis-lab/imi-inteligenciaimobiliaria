@@ -100,7 +100,10 @@ const planSuffix = (l: CartLot) =>
 
 // ── Compartilhamento por URL (/carrinho?id=token) ────────────────────────────
 
-export interface CartShare { d: string; ids: string[] }
+/** `p` (proposalToken) é adicionado quando uma proposta já foi enviada a partir
+ *  dessa seleção — permite que o MESMO link vire uma página de status ao vivo
+ *  (rascunho/enviada/aceita/contrato) em vez de só listar os lotes escolhidos. */
+export interface CartShare { d: string; ids: string[]; p?: string }
 
 function toBase64Url(s: string): string {
   const b64 = typeof btoa === 'function'
@@ -116,18 +119,20 @@ function fromBase64Url(t: string): string {
     : Buffer.from(b64 + pad, 'base64').toString('utf8');
 }
 
-/** Codifica empreendimento + ids dos lotes num token URL-safe e compacto. */
+/** Codifica empreendimento + ids dos lotes (+ token de proposta, se houver) num
+ *  token URL-safe e compacto. */
 export function encodeCart(share: CartShare): string {
-  return toBase64Url(JSON.stringify({ d: share.d, i: share.ids }));
+  return toBase64Url(JSON.stringify({ d: share.d, i: share.ids, ...(share.p ? { p: share.p } : {}) }));
 }
 
-/** Decodifica o token; retorna null se inválido (nunca lança). */
+/** Decodifica o token; retorna null se inválido (nunca lança). Links antigos
+ *  sem `p` continuam válidos (campo opcional). */
 export function decodeCart(token: string): CartShare | null {
   try {
-    const obj = JSON.parse(fromBase64Url(token)) as { d?: unknown; i?: unknown };
+    const obj = JSON.parse(fromBase64Url(token)) as { d?: unknown; i?: unknown; p?: unknown };
     if (!obj || typeof obj.d !== 'string' || !Array.isArray(obj.i)) return null;
     const ids = obj.i.filter((x): x is string => typeof x === 'string');
-    return { d: obj.d, ids };
+    return { d: obj.d, ids, ...(typeof obj.p === 'string' ? { p: obj.p } : {}) };
   } catch {
     return null;
   }

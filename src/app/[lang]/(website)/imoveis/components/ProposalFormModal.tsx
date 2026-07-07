@@ -14,8 +14,8 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, ShoppingCart, Loader2, CheckCircle2, ShieldCheck, MessageCircle, FileText, Paperclip, Trash2, UploadCloud } from 'lucide-react';
-import { cartTotals, buildCartWhatsAppMessage, type CartLot } from '@/lib/lotmap/cart';
+import { X, ShoppingCart, Loader2, CheckCircle2, ShieldCheck, MessageCircle, FileText, Paperclip, Trash2, UploadCloud, Link2, Check } from 'lucide-react';
+import { cartTotals, buildCartWhatsAppMessage, buildCartShareUrl, type CartLot } from '@/lib/lotmap/cart';
 
 const GOLD = '#C8A44A';
 const NAVY = '#0B1928';
@@ -32,7 +32,10 @@ interface Props {
   whatsappPhone: string;
   items: CartLot[];
   onClose: () => void;
-  onSubmitted: () => void;
+  /** `proposalToken`, quando presente, identifica o registro de status criado
+   *  em public.proposals — permite ao chamador montar o link de acompanhamento
+   *  (/carrinho?id=...&p=token) se quiser. */
+  onSubmitted: (proposalToken?: string) => void;
 }
 
 export default function ProposalFormModal({
@@ -98,6 +101,7 @@ export default function ProposalFormModal({
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [proposalToken, setProposalToken] = useState<string | undefined>(undefined);
 
   // Documentos anexados pelo cliente (upload para o Supabase via API pública).
   const [docs, setDocs] = useState<{ name: string; url: string }[]>([]);
@@ -177,9 +181,11 @@ export default function ProposalFormModal({
         }),
       });
       // Best-effort: mesmo que o gateway falhe, garantimos o canal via wa.me.
+      const body = await res.json().catch(() => ({} as { proposalToken?: string; error?: string }));
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
         if (res.status === 400 && body?.error) throw new Error(body.error);
+      } else if (body?.proposalToken) {
+        setProposalToken(body.proposalToken);
       }
       setDone(true);
     } catch (e) {
@@ -207,8 +213,17 @@ export default function ProposalFormModal({
     });
     const url = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(msg)}`;
     if (typeof window !== 'undefined') window.open(url, '_blank', 'noopener,noreferrer');
-    onSubmitted();
+    onSubmitted(proposalToken);
   }
+
+  const statusUrl = useMemo(() => {
+    if (!proposalToken || !developmentSlug || typeof window === 'undefined') return undefined;
+    return buildCartShareUrl(window.location.origin, {
+      d: developmentSlug,
+      ids: items.map((l) => l.id),
+      p: proposalToken,
+    });
+  }, [proposalToken, developmentSlug, items]);
 
   return (
     <motion.div
@@ -253,6 +268,7 @@ export default function ProposalFormModal({
             docCount={docs.length}
             error={error}
             onWhatsApp={openWhatsApp}
+            statusUrl={statusUrl}
           />
         ) : (
           <>
@@ -455,7 +471,24 @@ export default function ProposalFormModal({
   );
 }
 
-function SuccessView({ count, docCount, error, onWhatsApp }: { count: number; docCount: number; error: string | null; onWhatsApp: () => void }) {
+function SuccessView({
+  count, docCount, error, onWhatsApp, statusUrl,
+}: {
+  count: number; docCount: number; error: string | null; onWhatsApp: () => void; statusUrl?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  function copyStatusUrl() {
+    if (!statusUrl) return;
+    try {
+      navigator.clipboard.writeText(statusUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* clipboard indisponível */
+    }
+  }
+
   return (
     <div className="px-6 pb-6 pt-2 text-center">
       <div className="flex justify-center mb-4">
@@ -478,11 +511,20 @@ function SuccessView({ count, docCount, error, onWhatsApp }: { count: number; do
       )}
       <button
         onClick={onWhatsApp}
-        className="flex items-center justify-center gap-2 w-full"
+        className="flex items-center justify-center gap-2 w-full mb-2"
         style={{ height: 50, borderRadius: 14, border: 'none', background: '#25D366', color: '#062b16', fontSize: 14, fontWeight: 800, cursor: 'pointer', fontFamily: "'Outfit', sans-serif" }}
       >
         <MessageCircle size={17} /> Confirmar pelo WhatsApp
       </button>
+      {statusUrl && (
+        <button
+          onClick={copyStatusUrl}
+          className="flex items-center justify-center gap-2 w-full"
+          style={{ height: 44, borderRadius: 13, background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.75)', border: '1px solid rgba(255,255,255,0.14)', cursor: 'pointer', fontSize: 12.5, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}
+        >
+          {copied ? <><Check size={15} color="#34D399" /> Link copiado</> : <><Link2 size={15} /> Copiar link para acompanhar o status</>}
+        </button>
+      )}
     </div>
   );
 }

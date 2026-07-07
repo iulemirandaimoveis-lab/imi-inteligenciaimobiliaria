@@ -139,10 +139,16 @@ export async function middleware(request: NextRequest) {
     if (pathnameIsMissingLocale) {
         const locale = getLocale(request)
 
-        // Redirect / to /pt (or detected locale)
-        return NextResponse.redirect(
-            new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
+        // Redirect / to /pt (or detected locale). `new URL(path, request.url)`
+        // only takes the path from `path`, so the original querystring — e.g.
+        // the /carrinho?id=<token> cart-share token — must be re-attached
+        // explicitly or it's silently dropped by the redirect.
+        const url = new URL(
+            `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
+            request.url
         )
+        url.search = request.nextUrl.search
+        return NextResponse.redirect(url)
     }
 
     // If locale is present, just continue
