@@ -93,7 +93,7 @@ const initials = (name: string) =>
 export async function getAltoBellevueDashboard(session: ImiSession): Promise<DashboardData> {
   const project = session.projects.find((p) => p.slug === 'alto-bellevue') ?? session.projects[0]
   const projectName = project?.name ?? 'Alto Bellevue'
-  // Alto Bellevue fica em Garanhuns, PE (Bairro Aloísio Pinto) — NÃO Gravatá.
+  // Alto Bellevue fica em Garanhuns, PE (Bairro Magano) — NÃO Gravatá.
   // Ver .claude/ALTO_BELLEVUE_LOCATION.md (localização imutável).
   const projectCity = [project?.city, project?.state].filter(Boolean).join(', ') || 'Garanhuns, PE'
 
