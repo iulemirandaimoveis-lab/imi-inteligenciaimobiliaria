@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createDailyRoom, isDailyConfigured } from '@/lib/video-call/daily'
+import { createVideoRoom, isVideoCallEnabled } from '@/lib/video-call/provider'
 import { sendWhatsAppText } from '@/lib/notifications/whatsapp'
 import { rateLimit, getClientIP } from '@/lib/rate-limit'
 
@@ -14,9 +14,14 @@ const Schema = z.object({
 })
 
 /**
- * POST /api/video-call — cria uma sala de vídeo chamada ao vivo (Daily.co) e
- * avisa o corretor por WhatsApp com o link, sem precisar de e-mail/cadastro —
- * "réplica de um Meet" acionada direto do site.
+ * POST /api/video-call — cria uma sala de vídeo chamada ao vivo e avisa o
+ * corretor por WhatsApp com o link, sem precisar de e-mail/cadastro — "réplica
+ * de um Meet" acionada direto do site.
+ *
+ * Provedor escolhido automaticamente: Daily.co quando configurado, senão Jitsi
+ * (grátis, sem chave). Por isso a vídeo chamada funciona de imediato mesmo sem
+ * nenhuma integração paga — só fica indisponível se explicitamente desligada
+ * (VIDEO_CALL_DISABLED=1).
  *
  * Rota pública (o cliente ainda não está logado nesse ponto do funil).
  * Best-effort no aviso ao corretor: mesmo que o WhatsApp falhe, devolvemos a
@@ -29,7 +34,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Muitas requisições. Aguarde um minuto.' }, { status: 429 })
   }
 
-  if (!isDailyConfigured()) {
+  if (!isVideoCallEnabled()) {
     return NextResponse.json(
       { error: 'Vídeo chamada indisponível no momento. Fale com o corretor pelo WhatsApp.' },
       { status: 503 }
@@ -42,7 +47,7 @@ export async function POST(req: NextRequest) {
   }
   const { brokerName, brokerPhone, clientName, context } = parsed.data
 
-  const room = await createDailyRoom({ expMinutes: 60 })
+  const room = await createVideoRoom({ expMinutes: 60 })
   if (!room) {
     return NextResponse.json(
       { error: 'Não foi possível criar a sala agora. Fale com o corretor pelo WhatsApp.' },
@@ -56,5 +61,5 @@ export async function POST(req: NextRequest) {
     `Entre pelo link (não precisa instalar nada):\n${room.url}`
   await sendWhatsAppText(brokerPhone, msg).catch(() => {})
 
-  return NextResponse.json({ roomUrl: room.url, brokerName })
+  return NextResponse.json({ roomUrl: room.url, brokerName, provider: room.provider })
 }

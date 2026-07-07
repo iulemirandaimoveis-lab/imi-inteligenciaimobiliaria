@@ -4,6 +4,39 @@
 
 ---
 
+## 2026-07-07 · Cards mobile do imóvel + vídeo chamada zero-config
+
+**Branch**: `claude/mobile-cards-video-call-b76yew`
+
+**Por quê**: dono apontou (print no celular) que (1) os dois cards no rodapé da página do
+imóvel ficavam apertados (`grid-cols-2` compacto → texto quebrando em 3 linhas + vazio enorme
+no card de preço por causa da altura forçada igual) e (2) a vídeo chamada aparecia
+"indisponível no momento".
+
+**O que mudou**:
+- **Vídeo chamada agora funciona sem chave paga.** A causa do "indisponível" era falta de
+  `DAILY_API_KEY` — a rota dava 503. Adicionado provedor **Jitsi** zero-config
+  (`src/lib/video-call/jitsi.ts`, só compõe URL com nome aleatório longo, sem rede/chave) e
+  orquestrador `src/lib/video-call/provider.ts` (`createVideoRoom`: Daily.co se configurado,
+  senão Jitsi; `isVideoCallEnabled` só desliga com `VIDEO_CALL_DISABLED=1`). Rota
+  `/api/video-call` reescrita p/ usar o orquestrador — nunca mais 503 por falta de config.
+  Resposta agora inclui `provider`. `VideoCallButton` ganhou `allowFullScreen` no iframe +
+  rodapé com escape "Falar no WhatsApp" dentro da chamada. Registry: entrada `jitsi` (status
+  `conectado`, grátis) + Daily reclassificado como "premium/opcional".
+- **Cards mobile empilhados full-width.** Seção `#corretor` (`lg:hidden`) trocou o
+  `grid grid-cols-2` compacto por coluna única `space-y-4` com os cards **ricos (não-compactos)**
+  — os mesmos já usados na sidebar desktop. Fim do aperto e do vazio (sem altura forçada).
+  Ordem preservada: corretor primeiro, preço/CTA depois.
+
+**Validação**: tsc limpo (fora ruído de env conhecido), `next lint` ✔ nos 6 arquivos,
+jest `src/__tests__/api/video-call.test.ts` 6/6 (reescrito p/ mockar o provider) + libs 43/43.
+Sem tests dependentes do registry/componentes (sem snapshot quebrado).
+
+**Env opcional (dono)**: `DAILY_API_KEY` (premium) e/ou `JITSI_BASE_URL` (instância própria).
+Nada obrigatório — Jitsi público (`meet.jit.si`) é o default e já funciona.
+
+---
+
 ## 2026-07-06 (4ª rodada) · Conciliação de comissões IMI × Mano Imóveis (BTG PF/PJ)
 
 **Branch**: `claude/imi-commission-reconciliation-eyng5a`
