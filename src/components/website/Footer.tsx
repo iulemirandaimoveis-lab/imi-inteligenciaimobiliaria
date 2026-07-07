@@ -132,7 +132,7 @@ export default function Footer({ lang, settings }: FooterProps) {
 
                             <div className="space-y-[6px]">
                                 <a
-                                    href={`mailto:${settings?.companyEmail || 'iulemirandaimoveis@gmail.com'}`}
+                                    href={`mailto:${settings?.companyEmail || 'iule.miranda.imoveis@gmail.com'}`}
                                     className="flex items-center gap-[10px] hover:bg-white/[0.04] transition-all duration-200 px-[8px] py-[6px] rounded-lg group"
                                 >
                                     <div className="w-[28px] h-[28px] bg-white/[0.06] rounded-md flex items-center justify-center flex-shrink-0 text-white/50 group-hover:text-[#C8A44A] transition-colors border border-white/[0.06]">
