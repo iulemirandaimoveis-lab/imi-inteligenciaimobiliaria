@@ -5,22 +5,30 @@
  *
  * Decodifica o token (src/lib/lotmap/cart.ts), carrega o dataset do
  * empreendimento e mostra os lotes selecionados + totais + ações
- * (WhatsApp / copiar link / imprimir-PDF). Página nova e isolada — não toca
- * nos mapas existentes.
+ * (WhatsApp / copiar link / imprimir-PDF). Quando o token carrega um
+ * `p` (proposalToken — ver ProposalFormModal), busca o status ao vivo em
+ * public.proposals (rascunho/enviada/aceita/contrato) via
+ * /api/lots/proposal/status. Sem proposta ainda, oferece "Preencher
+ * proposta" direto por aqui (mesmo ProposalFormModal do mapa).
  */
 
-import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { ShoppingCart, MessageCircle, Link2, Printer, Check, AlertCircle, MapPin } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  ShoppingCart, MessageCircle, Link2, Printer, Check, AlertCircle, MapPin,
+  FileText, Clock, Send, Eye, CheckCircle2, XCircle, FileSignature,
+} from 'lucide-react';
 import {
   decodeCart,
   toCartLot,
   cartTotals,
   buildCartWhatsAppUrl,
+  buildCartShareUrl,
   type CartLot,
   type RawLotLike,
 } from '@/lib/lotmap/cart';
 import { getDevelopmentBySlug } from '@/lib/lotmap/engine';
+import ProposalFormModal from '../imoveis/components/ProposalFormModal';
 
 const NAVY = '#0B1928';
 const GOLD = '#C8A44A';
@@ -39,13 +47,47 @@ const fmtM2 = (n: number) =>
 type State =
   | { kind: 'loading' }
   | { kind: 'invalid' }
-  | { kind: 'ready'; devName: string; whatsapp?: string; items: CartLot[]; missing: number };
+  | { kind: 'ready'; devName: string; devSlug: string; whatsapp?: string; items: CartLot[]; missing: number };
+
+interface ProposalStatus {
+  status: string;
+  signature_status: string | null;
+  valor_proposta: number | null;
+  valor_entrada: number | null;
+  pdf_url: string | null;
+  signed_pdf_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+const STATUS_LABEL: Record<string, { label: string; icon: typeof Send; color: string }> = {
+  draft: { label: 'Rascunho', icon: FileText, color: '#948F84' },
+  sent: { label: 'Proposta enviada', icon: Send, color: GOLD },
+  viewed: { label: 'Em análise pela equipe', icon: Eye, color: GOLD },
+  negotiating: { label: 'Em negociação', icon: Clock, color: GOLD },
+  countered: { label: 'Contraproposta enviada', icon: Clock, color: GOLD },
+  accepted: { label: 'Proposta aceita', icon: CheckCircle2, color: '#16A34A' },
+  rejected: { label: 'Proposta recusada', icon: XCircle, color: '#DC2626' },
+  expired: { label: 'Proposta expirada', icon: XCircle, color: '#948F84' },
+};
+
+const SIGNATURE_LABEL: Record<string, { label: string; color: string }> = {
+  enviada: { label: 'Contrato enviado para assinatura', color: GOLD },
+  assinada: { label: 'Contrato assinado', color: '#16A34A' },
+  recusada: { label: 'Assinatura recusada', color: '#DC2626' },
+  expirada: { label: 'Assinatura expirada', color: '#948F84' },
+  cancelada: { label: 'Assinatura cancelada', color: '#948F84' },
+};
 
 export default function CarrinhoClient() {
+  const router = useRouter();
   const params = useSearchParams();
   const token = params.get('id');
   const [state, setState] = useState<State>({ kind: 'loading' });
   const [copied, setCopied] = useState(false);
+  const [proposalToken, setProposalToken] = useState<string | undefined>(undefined);
+  const [proposalStatus, setProposalStatus] = useState<ProposalStatus | null>(null);
+  const [showProposalForm, setShowProposalForm] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -54,6 +96,7 @@ export default function CarrinhoClient() {
       setState({ kind: 'invalid' });
       return;
     }
+    setProposalToken(share.p);
     const dev = getDevelopmentBySlug(share.d);
     const url = DATASET[share.d];
     if (!url) {
@@ -73,7 +116,7 @@ export default function CarrinhoClient() {
           if (raw) items.push(toCartLot(raw, { slug: share.d, name: dev?.name }));
           else missing += 1;
         }
-        setState({ kind: 'ready', devName: dev?.name ?? 'Empreendimento', whatsapp: dev?.whatsappContact, items, missing });
+        setState({ kind: 'ready', devName: dev?.name ?? 'Empreendimento', devSlug: share.d, whatsapp: dev?.whatsappContact, items, missing });
       })
       .catch(() => {
         if (alive) setState({ kind: 'invalid' });
@@ -82,6 +125,21 @@ export default function CarrinhoClient() {
       alive = false;
     };
   }, [token]);
+
+  // Status ao vivo da proposta (se este link já tiver uma associada).
+  useEffect(() => {
+    if (!proposalToken) return;
+    let alive = true;
+    fetch(`/api/lots/proposal/status?token=${encodeURIComponent(proposalToken)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body: { proposal?: ProposalStatus } | null) => {
+        if (alive && body?.proposal) setProposalStatus(body.proposal);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [proposalToken]);
 
   const totals = useMemo(() => (state.kind === 'ready' ? cartTotals(state.items) : null), [state]);
 
@@ -95,13 +153,33 @@ export default function CarrinhoClient() {
     }
   }
 
+  // Quando uma proposta é enviada a partir desta própria página, o link
+  // (URL + "Copiar link") passa a carregar o token de status também.
+  const handleProposalSubmitted = useCallback(
+    (newProposalToken?: string) => {
+      setShowProposalForm(false);
+      if (!newProposalToken || state.kind !== 'ready') return;
+      setProposalToken(newProposalToken);
+      const newUrl = buildCartShareUrl(window.location.origin, {
+        d: state.devSlug,
+        ids: state.items.map((l) => l.id),
+        p: newProposalToken,
+      });
+      router.replace(newUrl.replace(window.location.origin, ''));
+    },
+    [router, state]
+  );
+
+  const statusInfo = proposalStatus ? STATUS_LABEL[proposalStatus.status] : null;
+  const signatureInfo = proposalStatus?.signature_status ? SIGNATURE_LABEL[proposalStatus.signature_status] : null;
+
   return (
     <main style={{ minHeight: '100vh', background: '#F8F6F2', padding: '32px 16px 64px' }}>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
         <div className="flex items-center gap-2 mb-1">
           <ShoppingCart size={18} style={{ color: GOLD }} />
           <h1 style={{ fontSize: 22, fontWeight: 800, color: NAVY, margin: 0, fontFamily: "var(--fu, 'Outfit', sans-serif)" }}>
-            Seleção de lotes
+            {proposalStatus ? 'Sua proposta' : 'Seleção de lotes'}
           </h1>
         </div>
 
@@ -126,6 +204,25 @@ export default function CarrinhoClient() {
             <p style={{ fontSize: 13, color: '#948F84', margin: '0 0 18px' }}>
               {state.devName} · {totals.count} {totals.count === 1 ? 'lote' : 'lotes'}
             </p>
+
+            {/* Status ao vivo da proposta, quando este link já tiver uma */}
+            {statusInfo && (
+              <div
+                className="flex items-center gap-3 p-3 rounded-xl mb-3"
+                style={{ background: '#fff', border: `1px solid ${statusInfo.color}40` }}
+              >
+                <statusInfo.icon size={18} style={{ color: statusInfo.color, flexShrink: 0 }} />
+                <div className="flex-1 min-w-0">
+                  <div style={{ fontSize: 14, fontWeight: 800, color: NAVY }}>{statusInfo.label}</div>
+                  {signatureInfo && (
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <FileSignature size={12} style={{ color: signatureInfo.color }} />
+                      <span style={{ fontSize: 12, fontWeight: 700, color: signatureInfo.color }}>{signatureInfo.label}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {totals.count === 0 ? (
               <p style={{ color: '#948F84', fontSize: 14 }}>Nenhum lote nesta seleção.</p>
@@ -184,6 +281,15 @@ export default function CarrinhoClient() {
 
                 {/* Ações */}
                 <div className="flex flex-wrap gap-2 mt-5">
+                  {!proposalToken && (
+                    <button
+                      onClick={() => setShowProposalForm(true)}
+                      className="flex items-center gap-2 px-4 h-11 rounded-xl"
+                      style={{ background: GOLD, color: NAVY, fontWeight: 800, fontSize: 14, border: 'none', cursor: 'pointer' }}
+                    >
+                      <FileText size={16} /> Preencher proposta
+                    </button>
+                  )}
                   {state.whatsapp && (
                     <a
                       href={buildCartWhatsAppUrl(state.whatsapp, state.items, {
@@ -215,6 +321,17 @@ export default function CarrinhoClient() {
                   </button>
                 </div>
               </>
+            )}
+
+            {showProposalForm && (
+              <ProposalFormModal
+                developmentName={state.devName}
+                developmentSlug={state.devSlug}
+                whatsappPhone={state.whatsapp ?? ''}
+                items={state.items}
+                onClose={() => setShowProposalForm(false)}
+                onSubmitted={handleProposalSubmitted}
+              />
             )}
           </>
         )}

@@ -85,6 +85,20 @@ describe('encode/decode (compartilhamento por URL)', () => {
     expect(decodeCart('')).toBeNull();
   });
 
+  it('round-trip preserva o token de proposta (p) quando presente', () => {
+    const share = { d: 'alto-bellevue', ids: ['L-22'], p: 'abc123deadbeef' };
+    const token = encodeCart(share);
+    expect(decodeCart(token)).toEqual(share);
+  });
+
+  it('links antigos sem `p` continuam decodificando normalmente', () => {
+    const share = { d: 'alto-bellevue', ids: ['L-22'] };
+    const token = encodeCart(share);
+    const decoded = decodeCart(token);
+    expect(decoded).toEqual(share);
+    expect(decoded?.p).toBeUndefined();
+  });
+
   it('buildCartShareUrl produz /carrinho?id=token', () => {
     const url = buildCartShareUrl('https://www.iulemirandaimoveis.com.br/', { d: 'alto-bellevue', ids: ['A-1'] });
     expect(url).toMatch(/^https:\/\/www\.iulemirandaimoveis\.com\.br\/carrinho\?id=/);
