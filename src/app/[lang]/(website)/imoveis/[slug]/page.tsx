@@ -445,6 +445,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 <DevelopmentUnits propertyId={development.id} propertyName={development.name} />
                             )}
                         </section>
+                        {/* Cards do corretor + preço logo abaixo dos mapas (mobile).
+                            Cards ricos em coluna única: sem aperto nem altura forçada. */}
+                        <section id="corretor" className="lg:hidden space-y-4">
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <RealtorCard broker={brokerData as any} propertyName={development.name} developmentId={development.id} developmentSlug={params.slug} />
+                            <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
+                        </section>
                         {/* Localização antes de "Sobre": onde fica é decisão nº1 em
                             imóvel, logo após ver a galeria e a disponibilidade. */}
                         <section id="localizacao">
@@ -483,14 +490,6 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 city={development.location?.city}
                                 compact
                             />
-                        </section>
-                        {/* Mobile: broker + CTA stacked full-width at the bottom.
-                            Cards ricos (não-compactos) em coluna única: sem aperto de
-                            texto e sem altura forçada (o vazio do card de preço some). */}
-                        <section id="corretor" className="lg:hidden space-y-4">
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            <RealtorCard broker={brokerData as any} propertyName={development.name} developmentId={development.id} developmentSlug={params.slug} />
-                            <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
                         </section>
                     </div>
 
