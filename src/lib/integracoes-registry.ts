@@ -400,9 +400,30 @@ export const INTEGRACOES: Integracao[] = [
   // VÍDEO CHAMADA
   // ══════════════════════════════════════════════════
   {
+    id: 'jitsi',
+    nome: 'Jitsi Meet (Vídeo Chamada)',
+    descricao: 'Provedor padrão da vídeo chamada — funciona sem nenhuma chave. Cria salas sob demanda para o CTA "Vídeo chamada com o corretor": cliente entra pelo site, corretor recebe o link por WhatsApp, sem e-mail nem cadastro. Opcional: aponte JITSI_BASE_URL para uma instância própria.',
+    categoria: 'video',
+    icon: 'Video',
+    cor: '#1D76BA',
+    status: 'conectado',
+    gratuito: true,
+    docs_url: 'https://jitsi.github.io/handbook/',
+    campos_config: [
+      {
+        key: 'jitsi_base_url',
+        label: 'Instância Jitsi (opcional)',
+        tipo: 'url',
+        placeholder: 'https://meet.jit.si',
+        required: false,
+        descricao: 'Variável de ambiente JITSI_BASE_URL. Deixe em branco para usar o servidor público meet.jit.si.',
+      },
+    ],
+  },
+  {
     id: 'daily_co',
-    nome: 'Daily.co (Vídeo Chamada)',
-    descricao: 'Cria salas de vídeo chamada sob demanda para o CTA "Vídeo chamada com o corretor" — cliente entra pelo site, corretor recebe o link por WhatsApp, sem e-mail nem cadastro. Free tier cobre uso baixo.',
+    nome: 'Daily.co (Vídeo Chamada — premium)',
+    descricao: 'Alternativa opcional ao Jitsi com mais controle/qualidade. Quando DAILY_API_KEY está configurada, vira o provedor preferido da vídeo chamada; senão o Jitsi assume automaticamente. Free tier cobre uso baixo.',
     categoria: 'video',
     icon: 'Video',
     cor: '#1BEBB9',

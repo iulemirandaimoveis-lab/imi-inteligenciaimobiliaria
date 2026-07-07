@@ -479,13 +479,13 @@ export default async function DevelopmentDetailPage({ params }: { params: { slug
                                 compact
                             />
                         </section>
-                        {/* Mobile: broker + CTA side by side at the bottom */}
-                        <section id="corretor" className="lg:hidden">
-                            <div className="grid grid-cols-2 gap-3 items-stretch">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                <RealtorCard broker={brokerData as any} propertyName={development.name} compact />
-                                <DevelopmentCTA development={development} imiData={imiScores} compact {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
-                            </div>
+                        {/* Mobile: broker + CTA stacked full-width at the bottom.
+                            Cards ricos (não-compactos) em coluna única: sem aperto de
+                            texto e sem altura forçada (o vazio do card de preço some). */}
+                        <section id="corretor" className="lg:hidden space-y-4">
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            <RealtorCard broker={brokerData as any} propertyName={development.name} />
+                            <DevelopmentCTA development={development} imiData={imiScores} {...(commercialWhatsapp && { whatsappPhone: commercialWhatsapp })} />
                         </section>
                     </div>
 

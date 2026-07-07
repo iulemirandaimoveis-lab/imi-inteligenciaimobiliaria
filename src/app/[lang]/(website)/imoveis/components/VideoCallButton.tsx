@@ -129,9 +129,27 @@ export default function VideoCallButton({ brokerName, brokerPhone, clientName, c
             <iframe
               src={roomUrl}
               allow="camera; microphone; fullscreen; display-capture; autoplay"
+              allowFullScreen
               style={{ flex: 1, border: 'none' }}
               title="Vídeo chamada"
             />
+            <div
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 flex-shrink-0"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
+                Problemas com a câmera?
+              </span>
+              <a
+                href={whatsappFallback}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1"
+                style={{ fontSize: 11, fontWeight: 700, color: '#25D366', textDecoration: 'none' }}
+              >
+                <MessageCircle size={12} /> Falar no WhatsApp
+              </a>
+            </div>
           </div>
         </div>
       )}
