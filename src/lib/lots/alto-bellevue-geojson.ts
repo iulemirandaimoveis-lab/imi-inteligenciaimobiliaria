@@ -52,22 +52,30 @@ export interface AbCalibration {
 }
 
 export const AB_CALIBRATION_DEFAULT: AbCalibration = {
-  // Ajuste fino a olho (pedido do dono, 2026-07-06): +30% de escala e 5° para
-  // a esquerda (sentido anti-horário) para alinhar o overlay georreferenciado
-  // à imagem de satélite real, igualando a leitura visual da "Mapa de Lotes".
-  // Depois (mesmo dia, 2 rodadas): o dono demarcou o perímetro real do
-  // terreno em vermelho sobre screenshots do próprio "Satélite + Lotes" — uma
-  // vez em produção com dLng=0 (ainda sem esta calibração) e de novo já com
-  // dLng=-0,0014912 ao vivo. Medimos por detecção de cor o centróide dos
-  // lotes renderizados vs. o centróide da área vermelha em cada screenshot;
-  // a 2ª medição (contra o valor já ao vivo, portanto mais confiável que a
-  // 1ª) mostrou que o deslocamento leste-oeste já estava praticamente certo
-  // (~2% de ajuste fino) mas faltava subir para o norte. Consolidamos as
-  // duas medições em dLng=-0,00133 e dLat=+0,00022 (~25 m para o norte).
-  rotationDeg: -5,
-  scale: 1.3,
-  dLng: -0.00133,
-  dLat: 0.00022,
+  // Histórico de ajustes a olho (pedido do dono, 2026-07-06) — rodadas 1-2:
+  // partiram de identidade, passaram por +30% escala/5° rotação e depois por
+  // duas correções de translação (centróide dos lotes vs. centróide de um
+  // perímetro real demarcado à mão sobre screenshots). Cada rodada corrigia
+  // sintoma a sintoma (deslocamento leste-oeste, depois norte-sul) sem nunca
+  // reavaliar a escala/rotação de base — por isso o overlay ainda ficava
+  // ligeiramente menor que o terreno real e um pouco fora de esquadro.
+  //
+  // Rodada 3 (esta): fit de similaridade (rotação+escala+translação) por
+  // mínimos quadrados (Umeyama) usando 4 pares de pontos correspondentes —
+  // topo, ponta leste/entrada, pé sudoeste e base sul — extraídos por
+  // detecção de cor comparando o perímetro renderizado com o contorno real
+  // demarcado em vermelho pelo dono sobre um screenshot do "Satélite +
+  // Lotes". Resolve escala e rotação corretamente (em vez de assumir a
+  // escala anterior como certa), maior aderência à vegetação, curvas da
+  // rodovia, acesso principal e ao próprio traçado das ruas do que qualquer
+  // ajuste anterior. Resíduo do fit ~70-90m nos pontos usados (dado o
+  // traçado à mão livre); o entalhe oeste (reentrância da mata) fica com a
+  // maior folga residual — normal para uma transformação rígida única sobre
+  // um traçado manual.
+  rotationDeg: -7.19,
+  scale: 1.342,
+  dLng: -0.00114,
+  dLat: 0.00043,
 };
 
 let _calibration: AbCalibration = { ...AB_CALIBRATION_DEFAULT };
