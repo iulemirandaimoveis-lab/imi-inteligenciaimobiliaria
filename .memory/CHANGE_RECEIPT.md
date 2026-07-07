@@ -28,6 +28,36 @@ e arrastar a planta para o vazio do fundo — o mapa "se perdia".
 (T1 afastar-além-do-VerTudo trava em home; T2 pan-para-longe preso ao conteúdo; T3 zoom-in
 ≤ MAX_SCALE; T4 home fica enquadrado/centrado).
 
+## 2026-07-07 · Correção do bairro do Alto Bellevue: Aloísio Pinto → Magano
+
+**Por quê**: dono reportou (de novo) que o site mostra "Aloísio Pinto" como bairro do Alto
+Bellevue — o correto é **Magano**. Uma sessão anterior no mesmo dia ("Fix contraste do
+breadcrumb") tinha investigado a mesma reclamação e concluído (errado) que era só um bug
+de contraste CSS, mantendo "Aloísio Pinto" como "invariante". O dado em si sempre esteve
+errado.
+
+**O que mudou**:
+- **Banco de produção** (fonte real do texto na página pública `/imoveis/alto-bellevue`):
+  `UPDATE public.developments SET neighborhood='Magano', description=... WHERE slug=
+  'alto-bellevue'` — aplicado via MCP + versionado em
+  `supabase/migrations/20260707_alto_bellevue_fix_neighborhood_magano.sql`.
+- `src/features/properties/types/index.ts` — chaves `NEIGHBORHOOD_YIELD`/`NEIGHBORHOOD_AVG_SQM`
+  renomeadas de `'Aloísio Pinto'` para `'Magano'` (senão o lookup por bairro cai no fallback
+  genérico e perde os valores curados do Alto Bellevue no backoffice de inteligência).
+- `src/app/[lang]/(website)/projetos/page.tsx` — texto estático da landing `/projetos`.
+- `src/features/users/dashboard/data.ts` — comentário (sem efeito funcional, só doc).
+- `.claude/ALTO_BELLEVUE_LOCATION.md` — endereço corrigido + nota explicando o erro anterior.
+- Migrations antigas (`20260529`/`20260610_alto_bellevue_*.sql`) **não foram editadas** — já
+  aplicadas, são histórico; a correção real é a migration nova acima.
+
+**Como validei**: busca exaustiva (`rg` + varredura Python) confirmou que não sobra nenhuma
+ocorrência de "Aloísio Pinto" em código/migrations/docs; nenhuma tabela além de
+`developments` tinha o valor errado; nenhum slug/URL usa "aloisio-pinto" (troca não quebra
+links). `SELECT` pós-update confirma `neighborhood='Magano'` em produção. Links de Maps/Kuula
+**não foram tocados** (fora do escopo do pedido).
+
+---
+
 ## 2026-07-07 · Avaliações — Laudo NBR 14653-2 completo + Quadro Amostral
 
 **Branch**: `claude/avaliacoes-module-optimize-9zimoh`

@@ -29,6 +29,13 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
   pinça ao vivo alinhada ao home (sem rubber-band). `greenAreas` e camada técnica intactas.
   tsc/lint limpos, 20/20 no teste do mapa, clamp validado com o perímetro real. Detalhe em
   CHANGE_RECEIPT 2026-07-07.
+- 2026-07-07 (branch claude/alto-bellevue-name-fix-8w5l8d, PR draft): **Correção do bairro do
+  Alto Bellevue** — estava "Aloísio Pinto" (errado), corrigido para **Magano** em produção
+  (`developments.neighborhood`/`description`, migration `20260707_alto_bellevue_fix_
+  neighborhood_magano.sql`) + `NEIGHBORHOOD_YIELD`/`NEIGHBORHOOD_AVG_SQM` +
+  `/projetos` + `.claude/ALTO_BELLEVUE_LOCATION.md`. Maps/Kuula links intocados.
+  Causa: sessão anterior tinha tratado a mesma reclamação como bug de contraste CSS e
+  fixado o dado errado como "invariante".
 - 2026-07-07 (branch claude/broker-calendar-visit-booking-uxhjtc, PR draft): **Agendamento de
   Visitas — calendário do corretor**. O CTA "Agendar Visita" (RealtorCard) e uma ação dentro da
   vídeo chamada abrem um calendário completo: modo presencial/vídeo + dia + horário (agenda real
