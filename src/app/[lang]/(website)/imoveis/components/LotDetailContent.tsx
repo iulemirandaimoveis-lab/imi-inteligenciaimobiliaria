@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Scale, ShoppingCart, Check, X } from 'lucide-react';
 import type { SelectedPaymentPlan } from '@/lib/lotmap/cart';
+import VideoCallButton from './VideoCallButton';
 
 // Card de detalhe do lote — conteúdo compartilhado entre "Mapa de Lotes"
 // (AltoBellevuePlanView) e "Lotes + Satélite" (AltoBellevueGeoMap): mesmos
@@ -370,6 +371,17 @@ export default function LotDetailContent({
             >
               Agendar Visita
             </a>
+            {/* Urgência: vídeo chamada ao vivo com o corretor direto do lote.
+                Anfitrião sempre Iule (o WhatsApp do card já é o dele). */}
+            <VideoCallButton
+              brokerName="Iule"
+              brokerPhone={whatsappPhone}
+              context={`${developmentName} — Quadra ${quadra}, Lote ${lotNumber}`}
+              developmentName={developmentName}
+            />
+            <p style={{ fontSize: 9.5, color: '#948F84', textAlign: 'center', fontWeight: 600, margin: '-2px 0 0', fontFamily: "'Outfit', sans-serif" }}>
+              Precisa de atendimento na hora? Chame por vídeo.
+            </p>
           </>
         ) : (
           <a
