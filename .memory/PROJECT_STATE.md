@@ -20,6 +20,15 @@ Plataforma imobiliária (Next.js 14 + Supabase) com 3 mundos: site público i18n
 
 ## Trabalho recente (main)
 
+- 2026-07-07 (branch claude/map-zoom-optimization-ii2mj8, PR draft): **Mapa Alto Bellevue —
+  árvores removidas + zoom corrigido**. Dono relatou zoom "bugando" e mapa pouco prático de
+  apresentar. Removida a arborização puramente decorativa (~120 símbolos SVG) e o filtro morto
+  `ab-canopy-depth`; novo `clampVb` puro trava o afastamento no enquadramento "Ver tudo"
+  (scale ~1.14) e prende o pan aos bounds do conteúdo — antes dava para afastar até scale 0.35
+  e arrastar a planta para o vazio. Aplicado em wheel/botões/double-tap/commit de gesto/momentum;
+  pinça ao vivo alinhada ao home (sem rubber-band). `greenAreas` e camada técnica intactas.
+  tsc/lint limpos, 20/20 no teste do mapa, clamp validado com o perímetro real. Detalhe em
+  CHANGE_RECEIPT 2026-07-07.
 - 2026-07-07 (branch claude/broker-calendar-visit-booking-uxhjtc, PR draft): **Agendamento de
   Visitas — calendário do corretor**. O CTA "Agendar Visita" (RealtorCard) e uma ação dentro da
   vídeo chamada abrem um calendário completo: modo presencial/vídeo + dia + horário (agenda real
