@@ -139,11 +139,11 @@ export default function TermosPage() {
                         <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
                             Fale diretamente com nossa equipe pelo e-mail{' '}
                             <a
-                                href="mailto:iulemirandaimoveis@gmail.com"
+                                href="mailto:iule.miranda.imoveis@gmail.com"
                                 className="font-semibold underline"
                                 style={{ color: '#C8A44A' }}
                             >
-                                iulemirandaimoveis@gmail.com
+                                iule.miranda.imoveis@gmail.com
                             </a>
                         </p>
                     </div>
