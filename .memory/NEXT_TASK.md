@@ -34,6 +34,19 @@
 3. Itens 1.2 (unificar domínio imóveis), 1.3 (3 MediaUploaders) e 1.6 (formatadores BRL divergentes) — UI-visíveis, exigem UI_REGRESSION_POLICY (viável: dev server + Playwright com env stub).
 4. Motor de intenção agora vive em src/lib/intelligence/ (intent-engine.ts + brazil-fallback.ts) — reutilizável em qualquer superfície.
 
+## IMI Geo Intelligence Engine — estado (2026-07-06)
+Fundação v1 ✅ entregue (branch claude/imi-geo-intelligence-engine-vyix5f, PR draft):
+módulo aditivo `src/geo/` + `/api/geo/pois` + `/api/geo/health`. Provider-agnóstico
+(OSM/Google/Mapbox atrás de `GeoProvider`), parametrizado por perfil, chaves só server-side.
+Doc + roadmap completos em `docs/GEO_INTELLIGENCE_ENGINE.md`.
+Próximas fases (ordem sugerida, cada uma exige UI_REGRESSION_POLICY quando toca UI):
+- **F2** painel lateral premium ao clicar no lote (distâncias/tempos) — reusa `LotDetailPanel` + `usePOIs`.
+- **F3** camadas toggleáveis no mapa (estende `AmenityLayer` SVG) sobre `AltoBellevueGeoMap`.
+- **F5** heatmaps preço/m² (dados já em `subdivision_lots`) — reusa `PriceHeatmap`.
+- **F6** `SupabaseGeoCache` — **AÇÃO DO DONO**: aprovar migration `geo_cache`.
+- **F7** assistente IA controlando o mapa (motor em `src/lib/intelligence/` já existe).
+- **F10** consolidar as 3 rotas POI legadas via adapters (preservando contrato) e depreciar `lib/poi-service.ts`.
+
 ## Spatial Intelligence — estado
 Fase 1 (estabilização) ✅ em main (#344). Fase 2 em curso:
 - ✅ Vista "Sat. + Lotes" espelhada no console (/users/map) — reusa AltoBellevueGeoMap.

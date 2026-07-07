@@ -34,6 +34,46 @@ conectar) as contas BTG Pactual PF e PJ.
   auth-gating + fluxo de confirmação), suíte completa 68/916 passed (5 skipped) sem regressão.
 - **Pendências do dono**: aplicar a migration em produção; usar import CSV pra começar a
   conciliar já; conectar PJ via OAuth quando tiver CNPJ+conta BTG Empresas.
+## 2026-07-06 · IMI Geo Intelligence Engine v1 (fundação)
+
+**Branch**: `claude/imi-geo-intelligence-engine-vyix5f`
+
+Auditoria antes do código: motor de mapas maduro já existe (`AltoBellevueGeoMap`,
+`SubdivisionLotMap`, `PropertyMap`, `AerialSatelliteMap`, `JazzBoulevardViewer`) e lógica de
+POI **fragmentada** em 3 rotas (`/api/pois`, `/api/developments/[id]/pois`,
+`/api/intelligence/pois`) com 2 tabelas de cache (`poi_cache`, `property_pois`) e 2 sistemas de
+tipos. Decisão: construir uma **fundação aditiva** que unifica atrás de uma abstração de
+provedor, sem reescrever nem quebrar nada.
+
+**Entregue** (`src/geo/`, todo novo, zero alteração em código existente):
+- `types/` — `GeoPOI` (superset: telefone, website, horário, nota, avaliações, tempos
+  carro/pé/bike/transporte), `GeoProvider`, `GeoIntelligence`, `Isochrone`.
+- `config/categories.ts` — catálogo parametrizado de 20 camadas + perfis (residencial/short_stay/
+  comercial/full). Adicionar camada = 1 entrada.
+- `providers/` — `GeoProvider` + `ProviderRegistry` (fallback ordenado + observabilidade);
+  `OverpassProvider` (OSM, sem chave, baseline), `GooglePlacesProvider` (enriquecimento, atrás de
+  `GOOGLE_PLACES_API_KEY` server-side), `MapboxProvider` (scaffold indisponível).
+- `services/pois` (orquestrador `getGeoIntelligence`: dedupe, travel times, score por categoria +
+  geral ponderado), `services/geocoding` (envolve `lib/geocode.ts`), `services/isochrones` (radial v1).
+- `cache/` (MemoryGeoCache TTL/LRU + interface p/ SupabaseGeoCache futuro), `observability/`
+  (ring buffer + `/api/geo/health`), `utils/` (haversine, travel-time), `hooks/usePOIs.ts` (SWR).
+- Rotas: `GET /api/geo/pois` (zod + `limiters.public` + cache edge; chaves nunca no cliente) e
+  `GET /api/geo/health`.
+- `.env.local.example`: chaves server-side documentadas (`GOOGLE_PLACES_API_KEY`, `MAPBOX_TOKEN`,
+  `OVERPASS_API_URL`, `GEO_CACHE_TTL_HOURS`).
+- `docs/GEO_INTELLIGENCE_ENGINE.md`: arquitetura, fluxo, roadmap F2–F10, segurança, rollback,
+  plano de migração das rotas legadas (F10) e plano de testes.
+
+**Validação**: `tsc --noEmit` limpo (0 erros); `src/__tests__/geo/engine.test.ts` 14/14 passando
+(sem rede: fakes de provider); `eslint` limpo no módulo. Sem migration de banco (invariante DB
+respeitado — `SupabaseGeoCache` fica como ação-do-dono na F6). Providers keyless funcionam por
+padrão (OSM); Google/Mapbox degradam graciosamente sem chave.
+
+**Não feito (roadmap, por design)**: painel lateral premium, camadas renderizadas no mapa,
+heatmaps, assistente IA controlando o mapa, backoffice, bottom sheet mobile — todos com interface
+tipada pronta. Escopo mantido revisável e sem regressão.
+
+---
 
 ## 2026-07-06 (3ª rodada) · Reorganização do menu do mapa (Alto Bellevue) — 4 opções + carrinho único
 
