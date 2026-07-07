@@ -1,6 +1,15 @@
 # NEXT_TASK — Próxima Tarefa
 
-**Atualizado**: 2026-07-06 (conciliação de comissões BTG — estrutura completa, migration pendente de aplicação)
+**Atualizado**: 2026-07-07 (avaliações — laudo NBR completo + quadro amostral entregues, PR draft)
+
+## Avaliações — laudo NBR 14653-2 + quadro amostral ✅ ENTREGUE (2026-07-07, PR draft)
+- Novo motor `src/lib/valuation/quadro-amostral.ts` (saneamento ±20% iterativo, arredondamento
+  técnico máx 1%, faixa ±10%) + gerador de laudo completo reescrito + export ligando os dois.
+- **Passo futuro natural** (sem urgência): expor no formulário `/backoffice/avaliacoes/nova` e
+  `/editar` os campos ricos que o laudo já sabe renderizar (matrícula, fração ideal, cômodos,
+  acabamentos, condomínio, distância de referência) — hoje lidos de `metadata`/`caracteristicas`
+  (JSONB) com fallback normativo. Isso deixaria o dono preencher tudo pela UI.
+- Detalhe: `.claude/completions/2026-07-07-avaliacoes-laudo-nbr-optimize.md`.
 
 ## Conciliação de Comissões (BTG PF/PJ) — estrutura ENTREGUE, aplicação em produção pendente
 - Entregue: migration `20260706_commission_bank_reconciliation.sql` (versionada, **não aplicada**),

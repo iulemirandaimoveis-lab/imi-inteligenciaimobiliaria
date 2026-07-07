@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-07-07 · Avaliações — Laudo NBR 14653-2 completo + Quadro Amostral
+
+**Branch**: `claude/avaliacoes-module-optimize-9zimoh`
+
+**Por quê**: dono enviou avaliação real (Nielda, Boa Viagem/Recife) + planilha do quadro
+amostral e pediu para otimizar o módulo de avaliações. O motor não implementava o método
+de homogeneização efetivamente usado (saneamento por faixa ±20% + arredondamento técnico
+máx 1% + faixa de mercado ±10%), e o export gerava um "PTAM" enxuto, sem a maioria das
+seções de um laudo NBR profissional.
+
+**O que mudou**:
+- Novo `src/lib/valuation/quadro-amostral.ts` — saneamento iterativo ±20%, arredondamento
+  técnico (maior múltiplo de 5k dentro de +1%), faixa ±10%, graus NBR. 11 testes.
+- `src/lib/valuation/generate-ptam-html.ts` reescrito → Laudo Técnico NBR 14653-2 completo
+  (premissas, situação legal/matrícula, descrição, vistoria, contexto urbano, quadro
+  amostral visual com discrepantes riscados + chips da faixa, arredondamento, conclusão,
+  declaração de independência, termo de responsabilidade, currículo, sobre a IMI). Escape
+  HTML (`esc`/`escUrl`) em todo dado interpolado. `numeroPorExtenso` (valor por extenso).
+- `src/app/api/avaliacoes/[id]/export/route.ts` — monta a amostra dos comparáveis e calcula
+  o quadro quando há ≥3 elementos, passando ao gerador.
+- `src/config/avaliador.ts` — currículo (titulos/formacao/atuacao).
+
+**Como validei**: 56 testes passando (avaliações + export + auth-guards); type-check limpo;
+lint limpo nos arquivos tocados; laudo renderizado com Playwright/Chromium (capa + quadro
++ resultado) — visual profissional e números consistentes.
+
+**Sem migration / sem mudança de banco.** Detalhe:
+`.claude/completions/2026-07-07-avaliacoes-laudo-nbr-optimize.md`.
+
+---
+
 ## 2026-07-07 · Cards mobile do imóvel + vídeo chamada zero-config
 
 **Branch**: `claude/mobile-cards-video-call-b76yew`

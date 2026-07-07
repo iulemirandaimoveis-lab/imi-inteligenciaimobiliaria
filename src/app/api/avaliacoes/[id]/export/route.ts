@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { generatePTAMHtml } from '@/lib/valuation/generate-ptam-html'
+import { calcularQuadroAmostral, type AmostraElemento } from '@/lib/valuation/quadro-amostral'
 import { AVALIADOR } from '@/config/avaliador'
 import {
   generateQrHash,
@@ -161,6 +162,43 @@ export async function GET(
       // QR generation is non-blocking — export continues without it
     }
 
+    // ── Quadro amostral: saneamento por faixa ±20% + arredondamento técnico ──
+    // Constrói a amostra a partir dos comparáveis armazenados (tolerante a
+    // múltiplos formatos de campo) e calcula o quadro quando há dados suficientes.
+    let quadro: ReturnType<typeof calcularQuadroAmostral> | undefined
+    try {
+      const num = (v: unknown) => {
+        const n = Number(v)
+        return Number.isFinite(n) && n > 0 ? n : undefined
+      }
+      const amostra: AmostraElemento[] = comparables
+        .map((c) => {
+          const valorTotal = num(c.asking_price) ?? num(c.valorVenda) ?? num(c.valor) ?? num(c.valor_total)
+          const areaC = num(c.area_sqm) ?? num(c.area) ?? num(c.area_total)
+          const valorM2 =
+            num(c.price_per_sqm) ?? num(c.valor_m2) ??
+            (valorTotal && areaC ? valorTotal / areaC : undefined)
+          return {
+            valorM2,
+            valorTotal,
+            area: areaC,
+            bairro: (c.neighborhood as string) || (c.bairro as string) || undefined,
+            quartos: num(c.bedrooms) ?? num(c.quartos),
+            garagem: num(c.parking) ?? num(c.vagas) ?? num(c.garagem),
+            andar: (c.floor as string | number) ?? (c.andar as string | number) ?? undefined,
+            fonte: (c.source as string) || (c.fonte as string) || undefined,
+            link: (c.link as string) || (c.url as string) || undefined,
+          } as AmostraElemento
+        })
+        .filter((e) => (e.valorM2 && e.valorM2 > 0) || (e.valorTotal && e.area))
+
+      if (amostra.length >= 3 && area > 0) {
+        quadro = calcularQuadroAmostral(amostra, area)
+      }
+    } catch {
+      // quadro é opcional — o laudo continua com o resultado do motor
+    }
+
     const html = generatePTAMHtml({
       valuation: {
         ...avaliacao,
@@ -184,6 +222,7 @@ export async function GET(
       photos,
       valorMinimo: valorMin,
       valorMaximo: valorMax,
+      quadro,
       qrCodeSvg,
       numeroLaudo,
       qrHash,

@@ -22,6 +22,27 @@ export const AVALIADOR = {
   // Normas de referência para laudos
   normas: ['NBR 14653-1', 'NBR 14653-2', 'NBR 14653-3', 'IBAPE/PE'],
 
+  // Qualificação do responsável técnico (usada no laudo — seção Currículo)
+  titulos: [
+    'Perito Avaliador Judicial e Extrajudicial',
+    'Consultor Imobiliário',
+    'Especialista em Avaliações Imobiliárias',
+  ],
+  formacao: [
+    'Curso de Avaliação de Imóveis — João Diniz Marcello',
+    'Curso Técnico em Transações Imobiliárias',
+    'Extensão em Wealth Management e Family Office — PUCRS',
+  ],
+  atuacao: [
+    'Avaliações Urbanas',
+    'Avaliações Rurais',
+    'Perícias Judiciais',
+    'Perícias Extrajudiciais',
+    'Consultoria Patrimonial',
+    'Estruturação Imobiliária',
+    'Mercado Imobiliário Nacional e Internacional',
+  ],
+
   // Honorários mínimos absolutos (R$)
   honorarioMinimo: 800,
 
