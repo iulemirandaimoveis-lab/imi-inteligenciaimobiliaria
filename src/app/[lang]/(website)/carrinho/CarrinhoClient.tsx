@@ -29,6 +29,7 @@ import {
 } from '@/lib/lotmap/cart';
 import { getDevelopmentBySlug } from '@/lib/lotmap/engine';
 import ProposalFormModal from '../imoveis/components/ProposalFormModal';
+import VideoCallButton from '../imoveis/components/VideoCallButton';
 
 const NAVY = '#0B1928';
 const GOLD = '#C8A44A';
@@ -320,6 +321,16 @@ export default function CarrinhoClient() {
                     <Printer size={16} /> Imprimir / PDF
                   </button>
                 </div>
+
+                {state.whatsapp && (
+                  <div className="mt-2" style={{ maxWidth: 280 }}>
+                    <VideoCallButton
+                      brokerName="Corretor"
+                      brokerPhone={state.whatsapp}
+                      context={`${state.devName} — ${state.items.map((l) => `Q${l.block}-L${l.lot}`).join(', ')}`}
+                    />
+                  </div>
+                )}
               </>
             )}
 

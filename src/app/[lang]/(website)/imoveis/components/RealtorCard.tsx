@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { Mail, Phone, MessageCircle, Calendar, Clock, Award } from 'lucide-react'
+import VideoCallButton from './VideoCallButton'
 
 interface RealtorInfo {
     name: string
@@ -238,6 +239,14 @@ export default function RealtorCard({ broker, propertyName, compact }: { broker:
                             <Calendar className="w-3.5 h-3.5" />
                             {compact ? 'Visita' : 'Agendar Visita'}
                         </a>
+                    )}
+                    {broker.phone && (
+                        <VideoCallButton
+                            brokerName={firstName}
+                            brokerPhone={broker.phone}
+                            context={propertyName}
+                            compact={compact}
+                        />
                     )}
                 </div>
             </div>

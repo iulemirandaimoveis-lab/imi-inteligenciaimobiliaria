@@ -397,6 +397,32 @@ export const INTEGRACOES: Integracao[] = [
   },
 
   // ══════════════════════════════════════════════════
+  // VÍDEO CHAMADA
+  // ══════════════════════════════════════════════════
+  {
+    id: 'daily_co',
+    nome: 'Daily.co (Vídeo Chamada)',
+    descricao: 'Cria salas de vídeo chamada sob demanda para o CTA "Vídeo chamada com o corretor" — cliente entra pelo site, corretor recebe o link por WhatsApp, sem e-mail nem cadastro. Free tier cobre uso baixo.',
+    categoria: 'video',
+    icon: 'Video',
+    cor: '#1BEBB9',
+    status: 'nao_configurado',
+    gratuito: true,
+    docs_url: 'https://docs.daily.co/reference/rest-api',
+    campos_config: [
+      {
+        key: 'daily_api_key',
+        label: 'API Key',
+        tipo: 'password',
+        placeholder: 'Obtida em dashboard.daily.co/developers',
+        required: true,
+        masked: true,
+        descricao: 'Variável de ambiente DAILY_API_KEY.',
+      },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════
   // CRM / OUTROS
   // ══════════════════════════════════════════════════
   {
@@ -621,4 +647,5 @@ export const CATEGORIAS_INTEGRACAO: Record<string, { label: string; icon: string
   pagamento:          { label: 'Pagamento',           icon: 'CreditCard' },
   crm:                { label: 'Automação / CRM',     icon: 'Zap' },
   ia:              { label: 'Inteligência Artificial', icon: 'Sparkles' },
+  video:              { label: 'Vídeo Chamada',        icon: 'Video' },
 }

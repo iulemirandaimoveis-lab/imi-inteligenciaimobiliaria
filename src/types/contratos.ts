@@ -95,7 +95,7 @@ export interface Signatario {
 export type IntegracaoStatus = 'conectado' | 'desconectado' | 'erro' | 'pendente' | 'nao_configurado'
 export type IntegracaoCategoria =
   | 'assinatura_digital' | 'email' | 'whatsapp'
-  | 'armazenamento' | 'redes_sociais' | 'google' | 'pagamento' | 'crm' | 'ia'
+  | 'armazenamento' | 'redes_sociais' | 'google' | 'pagamento' | 'crm' | 'ia' | 'video'
 
 export interface Integracao {
   id: string
