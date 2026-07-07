@@ -100,7 +100,7 @@ const PROJETOS = [
         tipo: 'Loteamento Residencial Premium',
         status: 'lancamento',
         statusLabel: 'Em Comercialização',
-        localizacao: 'Aloísio Pinto, Garanhuns — PE',
+        localizacao: 'Magano, Garanhuns — PE',
         mercado: 'Brasil',
         destaque: false,
         vgv: 'R$ 96M',

@@ -114,7 +114,7 @@ export const NEIGHBORHOOD_YIELD: Record<string, number> = {
   'Boa Vista': 6.4,
   'Derby': 5.7,
   // Garanhuns — land appreciation in growing secondary market
-  'Aloísio Pinto': 9.2,   // Alto Bellevue: premium gated, high appreciation potential
+  'Magano': 9.2,   // Alto Bellevue: premium gated, high appreciation potential
   'Miguel Marques': 11.5, // Loteamento: affordable entry, strong yield via resale/appreciation
 }
 
@@ -134,6 +134,6 @@ export const NEIGHBORHOOD_AVG_SQM: Record<string, number> = {
   'Boa Vista': 7800,
   'Derby': 8400,
   // Garanhuns
-  'Aloísio Pinto': 760,   // R$205k / 270m² ≈ R$759/m² (premium gated community)
+  'Magano': 760,   // R$205k / 270m² ≈ R$759/m² (premium gated community)
   'Miguel Marques': 157,  // R$21.65k / 138m² ≈ R$157/m² (affordable loteamento)
 }
