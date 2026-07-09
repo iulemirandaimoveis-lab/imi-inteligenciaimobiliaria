@@ -141,3 +141,44 @@ npx jest src/__tests__/lib/lots/alto-bellevue.test.ts
 npx tsc --noEmit                                  # 0 erros esperado
 npx next lint --file <arquivo>
 ```
+
+---
+
+## 8. Entregue nesta leva (branch `claude/alto-bellevue-map-precision-redesign`)
+
+Fonte oficial usada: pasta Drive da Mano Imóveis (planta de parcelamento R05
+em PDF, planilha de disponibilidade e tabela de preços oficiais).
+
+### 8.1 Correção do "lote trocado" D-01 ↔ E-01 (geometria)
+- **Sintoma reportado:** ao filtrar as Quadras D e E, o mesmo trecho do topo
+  acendia nas duas — parecia um lote trocado.
+- **Diagnóstico (conferido contra a planta R05):** os **polígonos** de `D-01`
+  e `E-01` estavam trocados no `public/maps/alto-bellevue-lots.json`. O lote de
+  esquina grande (692,69 m²) é o D-01; o de 436,10 m² é o E-01 (topo da coluna
+  central da E, acima do E-02). Verificação numérica: razão de área oficial
+  D-01/E-01 = 1,589; com os polígonos como estavam dava 0,64 (invertido); ao
+  trocar, 1,56 — batendo com o oficial.
+- **Correção:** troca de `points`/`labelX`/`labelY` entre os dois lotes —
+  **nenhuma coordenada inventada** (só polígonos oficiais devolvidos ao lote
+  certo). Script idempotente reproduzível: `scripts/cad/fix-d01-e01-swap.mjs`.
+- **Nota H (45 × 46):** a planilha comercial lista 46 lotes na Quadra H, mas o
+  CAD (`quadra-truth.mjs`, point-in-polygon) e o JSON canônico têm **45**.
+  Mantido 45 (geometria = fonte de verdade). Divergência é de lista comercial,
+  não de planta — reconciliar no backoffice, sem inventar um H-46.
+
+### 8.2 Redesign visual do mapa (premium/clean, padrão Apple)
+Em `imoveis/components/AltoBellevuePlanView.tsx` — **sem alterar funcionalidade**
+(zoom por viewBox, busca, filtros, comparador, disponibilidade ao vivo, drawer):
+- **Canvas "de-4D":** removido o terreno de pergaminho quente + sombreamento de
+  colina + 9 elipses de curva de nível + grid topográfico. Base plana clara
+  estilo Apple Maps (`#F5F6F8→#EDEFF2`) com realce central sutil.
+- **Ruas:** casing cinza-frio (`rgba(196,201,208,…)`) + centro branco.
+- **Números dos lotes:** maiores e mais legíveis (fontSize 7→9), aparecem mais
+  cedo no zoom (limiar 3→2,2), fonte limpa (Outfit/system, tabular-nums) e maior
+  respiro entre linhas.
+- **Chrome:** acentos quentes esfriados para slate neutro, trilha de progresso
+  neutra, indicador de disponíveis com dot no lugar do emoji.
+
+Validação: `type-check` 0 erros · `jest alto-bellevue` 20/20 · `next lint` limpo ·
+`validate:lots` fonte canônica OK (383, 0 dup, 0 poly inválido, 0 fora do
+perímetro) · `next build` OK.
