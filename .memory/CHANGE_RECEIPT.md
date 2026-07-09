@@ -609,3 +609,11 @@ usa service_role+token, funciona sob a RLS real).
 - Padrão reforçado: rota pública de captação = best-effort total (nunca deixa o cliente sem
   confirmação, mesmo com banco/gateway fora); "conectar agenda" resolvido em 2 camadas (ICS
   universal + Google opcional).
+
+## 2026-07-08 · Mapa AB — polish de usabilidade do zoom (botões no mobile)
+- Branch `claude/map-polish-usability-5a60tj`. Reclamação: zoom "bugado", ruim de manusear.
+- Causa: `+`/`−` só apareciam no desktop (`!isMobile`); no celular só pinça/duplo-toque num
+  mapa pequeno. Fix: pílula segmentada `+`/`−` também no mobile; zoom por botão animado
+  (ease-out 350ms, passo 1,6×); duplo-toque vira toggle detalhe↔"Ver tudo"; mapa +um pouco
+  maior no mobile (500px). Arquivo único: `AltoBellevuePlanView.tsx`.
+- Gates: tsc 0 erros · jest alto-bellevue 27/27 · lint limpo. Sem regressão de pan/pinça/seleção.

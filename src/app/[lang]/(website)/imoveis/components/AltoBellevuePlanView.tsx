@@ -2364,16 +2364,23 @@ export default function AltoBellevuePlanView({
       if (e.pointerType !== 'touch') {
         try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* no-op */ }
       }
-      // Double-tap zoom: zoom in 2.5× at tap point
+      // Double-tap = alterna detalhe ↔ visão geral. Antes só aproximava, então
+      // quem já estava com zoom ficava "preso" e o gesto parecia não responder.
+      // Agora: já ampliado → volta ao "Ver tudo"; caso contrário → aproxima 2,5×
+      // no ponto tocado. Toggle previsível, como o duplo-toque de mapas nativos.
       const now = performance.now();
       const lastTap = lastTapRef.current;
       const el = containerRef.current;
       if (el && lastTap && now - lastTap.time < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 44) {
-        const rect = el.getBoundingClientRect();
         const cur = vbLive.current;
-        const pivotX = cur.x + (e.clientX - rect.left) / rect.width * cur.w;
-        const pivotY = cur.y + (e.clientY - rect.top) / rect.height * cur.h;
-        animateTo(clampVb(zoomViewBox(cur, 0.4, pivotX, pivotY)));
+        if (SVG_W / cur.w >= 6) {
+          animateTo(homeVb);
+        } else {
+          const rect = el.getBoundingClientRect();
+          const pivotX = cur.x + (e.clientX - rect.left) / rect.width * cur.w;
+          const pivotY = cur.y + (e.clientY - rect.top) / rect.height * cur.h;
+          animateTo(clampVb(zoomViewBox(cur, 0.4, pivotX, pivotY)));
+        }
         lastTapRef.current = null;
         didDrag.current = true;
         return;
@@ -2388,7 +2395,7 @@ export default function AltoBellevuePlanView({
       const svg = getSvgEl();
       if (svg) svg.style.willChange = 'transform';
     }
-  }, [animateTo, commitGesture, getSvgEl, clampVb]);
+  }, [animateTo, commitGesture, getSvgEl, clampVb, homeVb]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!pointerCache.current.has(e.pointerId)) return;
@@ -2552,8 +2559,11 @@ export default function AltoBellevuePlanView({
     return () => el.removeEventListener('wheel', onWheel);
   }, [clampVb]);
 
-  const zoomIn = useCallback(() => setVb(prev => clampVb(zoomViewBox(prev, 0.75))), [clampVb]);
-  const zoomOut = useCallback(() => setVb(prev => clampVb(zoomViewBox(prev, 1.33))), [clampVb]);
+  // Zoom por botão: passo maior (1.6×) e ANIMADO (ease-out 350ms) — no mobile a
+  // pinça num mapa pequeno é imprecisa e "estala"; o toque no botão dá um zoom
+  // exato e suave. Lê vbLive (não o `prev` do setter) para casar com o animateTo.
+  const zoomIn = useCallback(() => animateTo(clampVb(zoomViewBox(vbLive.current, 0.625))), [animateTo, clampVb]);
+  const zoomOut = useCallback(() => animateTo(clampVb(zoomViewBox(vbLive.current, 1.6))), [animateTo, clampVb]);
   // "Ver tudo" volta ao enquadramento do empreendimento (conteúdo), não ao canvas.
   const resetView = useCallback(() => animateTo(homeVb), [animateTo, homeVb]);
 
@@ -2758,7 +2768,7 @@ export default function AltoBellevuePlanView({
     : scale < 9 ? 'Testada e profundidade'
     : 'Detalhamento completo';
 
-  const mapHeight = isMobile ? 'max(78vw, 480px)' : 'clamp(520px, 68vh, 820px)';
+  const mapHeight = isMobile ? 'max(84vw, 500px)' : 'clamp(520px, 68vh, 820px)';
 
   return (
     <div
@@ -2994,8 +3004,8 @@ export default function AltoBellevuePlanView({
         {/* Controls — divididos em dois cantos para nunca cobrir os lotes do
             centro-direita no mobile (C4). Camada+expandir no topo; zoom/ver-tudo
             embaixo (convenção Google/Apple Maps). Alvos 44px (Apple HIG).
-            No mobile, +/− são ocultados: pinça, duplo-toque e toque na quadra já
-            dão zoom (padrão nativo) — isso desafoga o canto e libera o FAB. */}
+            +/− agora aparecem TAMBÉM no mobile: o dono relatou que só pinça/duplo-
+            toque num mapa pequeno é impreciso e "bugado". Botão dá controle exato. */}
         {!error && !loading && (
           <>
             <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
@@ -3014,11 +3024,41 @@ export default function AltoBellevuePlanView({
               </MapBtn>
             </div>
             <div
-              className="absolute right-3 flex flex-col gap-2 z-10"
+              className="absolute right-3 flex flex-col items-end gap-2 z-10"
               style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
             >
-              {!isMobile && <MapBtn onClick={zoomIn} label="Aproximar"><ZoomIn size={17} /></MapBtn>}
-              {!isMobile && <MapBtn onClick={zoomOut} label="Afastar"><ZoomOut size={17} /></MapBtn>}
+              {/* Zoom + / − — pílula segmentada única (mais limpa e compacta que
+                  dois botões soltos). Um só bloco navy/dourado, divisor no meio. */}
+              <div
+                className="flex flex-col overflow-hidden rounded-xl"
+                style={{
+                  background: 'rgba(8,21,36,0.92)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1.5px solid rgba(200,164,74,0.42)',
+                  boxShadow: '0 2px 10px rgba(0,0,0,0.45)',
+                }}
+              >
+                <button
+                  onClick={(e) => { e.stopPropagation(); zoomIn(); }}
+                  aria-label="Aproximar"
+                  title="Aproximar"
+                  className="w-11 h-11 flex items-center justify-center transition-transform active:scale-90"
+                  style={{ color: 'rgba(255,255,255,0.9)', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                >
+                  <ZoomIn size={18} />
+                </button>
+                <div style={{ height: 1, background: 'rgba(200,164,74,0.28)', margin: '0 6px' }} />
+                <button
+                  onClick={(e) => { e.stopPropagation(); zoomOut(); }}
+                  aria-label="Afastar"
+                  title="Afastar"
+                  className="w-11 h-11 flex items-center justify-center transition-transform active:scale-90"
+                  style={{ color: 'rgba(255,255,255,0.9)', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                >
+                  <ZoomOut size={18} />
+                </button>
+              </div>
               {/* "Ver tudo" só aparece quando há para onde voltar (não no overview). */}
               {!atHome && <MapBtn onClick={resetView} label="Ver tudo"><RotateCcw size={15} /></MapBtn>}
             </div>
@@ -3131,7 +3171,7 @@ export default function AltoBellevuePlanView({
                   boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
                 }}
               >
-                Toque em um lote · dois dedos ou duplo-toque para zoom
+                Toque num lote · use + / − ou dois dedos para dar zoom
               </span>
             </motion.div>
           )}
