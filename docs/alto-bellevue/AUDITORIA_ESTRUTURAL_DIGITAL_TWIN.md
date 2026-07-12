@@ -155,13 +155,20 @@ reescrita desnecessária e arriscada.
 
 ---
 
-## 6. ROADMAP TÉCNICO (sprints) — **proposta, não execução**
+## 6. ROADMAP TÉCNICO (sprints)
 
-**Sprint 1 — Correções obrigatórias (fundação correta)**
-- Aplicar `coworking` na posição CAD real (`BLOCO ADM`, já em `.cache/transform.json`).
-- Resolver slot órfão `capela` (extrair do CAD ou remover do backoffice).
-- Reprocessar/validar o pipeline `scripts/cad/*` e publicar `scripts/validate-map`.
-- Cobertura de teste do merge de mídia por id.
+**Sprint 1 — Correções obrigatórias (fundação correta)** — _em andamento_
+- [x] **Publicar `npm run validate:map`** (`scripts/validate-map.mjs`) — valida estrutura,
+      limites de coordenadas, integridade das áreas comuns, **alcance de mídia**
+      (detecta slots órfãos) e **cobertura dos equipamentos**. Saída atual (prova):
+      `erros 0`, `avisos 3` → órfão `capela`; clusters `portaria↔coworking (11.9u)` e
+      `lazer↔recreativa-01 (10.5u)`; cobertura `3/20 (15%)`.
+- [ ] Aplicar `coworking` na posição CAD real (`BLOCO ADM`). **Bloqueado neste ambiente:**
+      depende de `scripts/cad/.cache/transform.json` + DXF, que **não estão versionados**
+      no repo (gerados localmente a partir do DWG). Requer rodar `scripts/cad/extract-dxf`
+      + `build-transform` + `build-lots` na máquina que tem o DWG. **Não inventar coordenada.**
+- [ ] Resolver slot órfão `capela` (extrair ponto do CAD ou remover o slot do backoffice).
+- [ ] Cobertura de teste do merge de mídia por id.
 
 **Sprint 2 — Georreferenciamento**
 - Definir 2–3 pontos de controle (cantos do perímetro) via Google Earth.
